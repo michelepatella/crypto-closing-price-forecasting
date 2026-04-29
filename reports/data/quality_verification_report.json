@@ -1,0 +1,801 @@
+{
+    "BTC": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 465,
+            "High": 465,
+            "Low": 465,
+            "Close": 465,
+            "Adj Close": 465,
+            "Volume": 465
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.017661804922515952,
+            "High": 0.017661804922515952,
+            "Low": 0.017661804922515952,
+            "Close": 0.017661804922515952,
+            "Adj Close": 0.017661804922515952,
+            "Volume": 0.017661804922515952
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 0,
+            "High": 0,
+            "Low": 0,
+            "Close": 0
+        }
+    },
+    "XRP": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 428,
+            "High": 428,
+            "Low": 428,
+            "Close": 428,
+            "Adj Close": 428,
+            "Volume": 428
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.01625645700395017,
+            "High": 0.01625645700395017,
+            "Low": 0.01625645700395017,
+            "Close": 0.01625645700395017,
+            "Adj Close": 0.01625645700395017,
+            "Volume": 0.01625645700395017
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 372,
+            "High": 389,
+            "Low": 353,
+            "Close": 373
+        }
+    },
+    "MAID": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 423,
+            "High": 423,
+            "Low": 423,
+            "Close": 423,
+            "Adj Close": 423,
+            "Volume": 423
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.016066545123062898,
+            "High": 0.016066545123062898,
+            "Low": 0.016066545123062898,
+            "Close": 0.016066545123062898,
+            "Adj Close": 0.016066545123062898,
+            "Volume": 0.016066545123062898
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 487,
+            "High": 486,
+            "Low": 488,
+            "Close": 487
+        }
+    },
+    "BTS": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 423,
+            "High": 423,
+            "Low": 423,
+            "Close": 423,
+            "Adj Close": 423,
+            "Volume": 423
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.016066545123062898,
+            "High": 0.016066545123062898,
+            "Low": 0.016066545123062898,
+            "Close": 0.016066545123062898,
+            "Adj Close": 0.016066545123062898,
+            "Volume": 0.016066545123062898
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 1267,
+            "High": 1270,
+            "Low": 1260,
+            "Close": 1270
+        }
+    },
+    "IOC": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 420,
+            "High": 420,
+            "Low": 420,
+            "Close": 420,
+            "Adj Close": 420,
+            "Volume": 420
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.015952597994530537,
+            "High": 0.015952597994530537,
+            "Low": 0.015952597994530537,
+            "Close": 0.015952597994530537,
+            "Adj Close": 0.015952597994530537,
+            "Volume": 0.015952597994530537
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 979,
+            "High": 898,
+            "Low": 988,
+            "Close": 983
+        }
+    },
+    "DGB": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 423,
+            "High": 423,
+            "Low": 423,
+            "Close": 423,
+            "Adj Close": 423,
+            "Volume": 423
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.016066545123062898,
+            "High": 0.016066545123062898,
+            "Low": 0.016066545123062898,
+            "Close": 0.016066545123062898,
+            "Adj Close": 0.016066545123062898,
+            "Volume": 0.016066545123062898
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 859,
+            "High": 866,
+            "Low": 853,
+            "Close": 860
+        }
+    },
+    "XMR": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 426,
+            "High": 426,
+            "Low": 426,
+            "Close": 426,
+            "Adj Close": 426,
+            "Volume": 426
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.01618049225159526,
+            "High": 0.01618049225159526,
+            "Low": 0.01618049225159526,
+            "Close": 0.01618049225159526,
+            "Adj Close": 0.01618049225159526,
+            "Volume": 0.01618049225159526
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 529,
+            "High": 535,
+            "Low": 521,
+            "Close": 530
+        }
+    },
+    "MONA": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 420,
+            "High": 420,
+            "Low": 420,
+            "Close": 420,
+            "Adj Close": 420,
+            "Volume": 420
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.015952597994530537,
+            "High": 0.015952597994530537,
+            "Low": 0.015952597994530537,
+            "Close": 0.015952597994530537,
+            "Adj Close": 0.015952597994530537,
+            "Volume": 0.015952597994530537
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 308,
+            "High": 319,
+            "Low": 308,
+            "Close": 307
+        }
+    },
+    "XLM": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 436,
+            "High": 436,
+            "Low": 436,
+            "Close": 436,
+            "Adj Close": 436,
+            "Volume": 436
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.016560316013369797,
+            "High": 0.016560316013369797,
+            "Low": 0.016560316013369797,
+            "Close": 0.016560316013369797,
+            "Adj Close": 0.016560316013369797,
+            "Volume": 0.016560316013369797
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 443,
+            "High": 454,
+            "Low": 435,
+            "Close": 443
+        }
+    },
+    "VTC": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 422,
+            "High": 422,
+            "Low": 422,
+            "Close": 422,
+            "Adj Close": 422,
+            "Volume": 422
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.016028562746885446,
+            "High": 0.016028562746885446,
+            "Low": 0.016028562746885446,
+            "Close": 0.016028562746885446,
+            "Adj Close": 0.016028562746885446,
+            "Volume": 0.016028562746885446
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 728,
+            "High": 741,
+            "Low": 719,
+            "Close": 727
+        }
+    },
+    "XCP": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 422,
+            "High": 422,
+            "Low": 422,
+            "Close": 422,
+            "Adj Close": 422,
+            "Volume": 422
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.016028562746885446,
+            "High": 0.016028562746885446,
+            "Low": 0.016028562746885446,
+            "Close": 0.016028562746885446,
+            "Adj Close": 0.016028562746885446,
+            "Volume": 0.016028562746885446
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 3180,
+            "High": 2955,
+            "Low": 3350,
+            "Close": 3185
+        }
+    },
+    "ETH": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 453,
+            "High": 453,
+            "Low": 453,
+            "Close": 453,
+            "Adj Close": 453,
+            "Volume": 453
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.01720601640838651,
+            "High": 0.01720601640838651,
+            "Low": 0.01720601640838651,
+            "Close": 0.01720601640838651,
+            "Adj Close": 0.01720601640838651,
+            "Volume": 0.01720601640838651
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 0,
+            "High": 0,
+            "Low": 0,
+            "Close": 0
+        }
+    },
+    "SYS": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 422,
+            "High": 422,
+            "Low": 422,
+            "Close": 422,
+            "Adj Close": 422,
+            "Volume": 422
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.016028562746885446,
+            "High": 0.016028562746885446,
+            "Low": 0.016028562746885446,
+            "Close": 0.016028562746885446,
+            "Adj Close": 0.016028562746885446,
+            "Volume": 0.016028562746885446
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 2104,
+            "High": 2103,
+            "Low": 2098,
+            "Close": 2102
+        }
+    },
+    "DASH": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 426,
+            "High": 426,
+            "Low": 426,
+            "Close": 426,
+            "Adj Close": 426,
+            "Volume": 426
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.01618049225159526,
+            "High": 0.01618049225159526,
+            "Low": 0.01618049225159526,
+            "Close": 0.01618049225159526,
+            "Adj Close": 0.01618049225159526,
+            "Volume": 0.01618049225159526
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 1230,
+            "High": 1237,
+            "Low": 1210,
+            "Close": 1232
+        }
+    },
+    "LTC": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 426,
+            "High": 426,
+            "Low": 426,
+            "Close": 426,
+            "Adj Close": 426,
+            "Volume": 426
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.01618049225159526,
+            "High": 0.01618049225159526,
+            "Low": 0.01618049225159526,
+            "Close": 0.01618049225159526,
+            "Adj Close": 0.01618049225159526,
+            "Volume": 0.01618049225159526
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 336,
+            "High": 339,
+            "Low": 331,
+            "Close": 336
+        }
+    },
+    "DOGE": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 424,
+            "High": 424,
+            "Low": 424,
+            "Close": 424,
+            "Adj Close": 424,
+            "Volume": 424
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.01610452749924035,
+            "High": 0.01610452749924035,
+            "Low": 0.01610452749924035,
+            "Close": 0.01610452749924035,
+            "Adj Close": 0.01610452749924035,
+            "Volume": 0.01610452749924035
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 461,
+            "High": 489,
+            "Low": 432,
+            "Close": 461
+        }
+    },
+    "NAV": {
+        "num_missing_values": {
+            "Date": 0,
+            "Open": 436,
+            "High": 436,
+            "Low": 436,
+            "Close": 436,
+            "Adj Close": 436,
+            "Volume": 436
+        },
+        "missing_value_ratio": {
+            "Date": 0.0,
+            "Open": 0.016560316013369797,
+            "High": 0.016560316013369797,
+            "Low": 0.016560316013369797,
+            "Close": 0.016560316013369797,
+            "Adj Close": 0.016560316013369797,
+            "Volume": 0.016560316013369797
+        },
+        "are_columns_valid": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "num_invalid_timestamps": 0,
+        "num_duplicate_timestamps": 3,
+        "is_time_sorted": true,
+        "time_frequency": {
+            "0 days 01:00:00": 26321,
+            "0 days 02:00:00": 3,
+            "0 days 00:00:00": 3
+        },
+        "num_irregular_time_steps": 7,
+        "date_range": {
+            "start": "2020-01-22 00:00:00",
+            "end": "2023-01-22 23:00:00"
+        },
+        "num_invalid_rows": 0,
+        "high_low_violations": 0,
+        "open_high_violations": 0,
+        "open_low_violations": 0,
+        "close_bounds_violations": 0,
+        "num_outliers_iqr": {
+            "Open": 642,
+            "High": 660,
+            "Low": 633,
+            "Close": 644
+        }
+    }
+}

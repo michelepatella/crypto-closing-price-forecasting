@@ -1,0 +1,127 @@
+"""src/data/quality_verification.py
+
+Data quality verification for cryptocurrency time series datasets.
+"""
+
+import sys
+import os
+import json
+import pandas as pd
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+from pathlib import Path
+from src.utils import load_data
+
+
+DATE_COLUMN = "Date"
+OPEN_COLUMN = "Open"
+HIGH_COLUMN = "High"
+LOW_COLUMN = "Low"
+CLOSE_COLUMN = "Close"
+ADJ_CLOSE_COLUMN = "Adj Close"
+VOLUME_COLUMN = "Volume"
+DATASET_COLUMNS = [DATE_COLUMN, OPEN_COLUMN, HIGH_COLUMN, LOW_COLUMN, CLOSE_COLUMN, ADJ_CLOSE_COLUMN, VOLUME_COLUMN]
+
+DATA_QUALITY_VERIFICATION_REPORT_PATH = Path("reports/data/quality_verification_report.json")
+RAW_DATA_PATH = Path("data/raw")
+RAW_DATA_FORMAT = "*.csv"
+
+
+def verify_data_quality(file_path: str) -> dict:
+    """
+    Verify data quality and produce a comprehensive report.
+
+    Args:
+        file_path (str): Path to the CSV file.
+
+    Returns:
+        None
+    """
+    df = load_data(file_path)
+    df = df.copy()
+
+    report = {}
+
+    # ===================================
+    # BASIC COMPLETENESS
+    # ===================================
+    report["num_missing_values"] = df.isnull().sum().to_dict()
+    report["missing_value_ratio"] = (df.isnull().sum() / len(df)).to_dict()
+
+    # ===================================
+    # SCHEMA CONSISTENCY
+    # ===================================
+    report["are_columns_valid"] = (list(df.columns) == DATASET_COLUMNS)
+    report["missing_columns"] = list(set(DATASET_COLUMNS) - set(df.columns))
+    report["extra_columns"] = list(set(df.columns) - set(DATASET_COLUMNS))
+
+    # ===================================
+    # TIMESTAMP QUALITY
+    # ===================================
+    df[DATE_COLUMN] = pd.to_datetime(df[DATE_COLUMN], errors="coerce")
+
+    report["num_invalid_timestamps"] = int(df[DATE_COLUMN].isnull().sum())
+    report["num_duplicate_timestamps"] = int(df[DATE_COLUMN].duplicated().sum())
+    report["is_time_sorted"] = bool(df[DATE_COLUMN].is_monotonic_increasing)
+
+    # ===================================
+    # TIME FREQUENCY ANALYSIS
+    # ===================================
+    report["time_frequency"] = {str(k): int(v) for k, v in (df[DATE_COLUMN].diff().value_counts()).items()}
+    report["num_irregular_time_steps"] = int((df[DATE_COLUMN].diff() != pd.Timedelta("1h")).sum())
+
+    # ===================================
+    # DATE RANGE ANALYSIS
+    # ===================================
+    report["date_range"] = {
+        "start": str(df[DATE_COLUMN].min()),
+        "end": str(df[DATE_COLUMN].max())
+    }
+
+    # ===================================
+    # VALUE VALIDITY
+    # ===================================
+    report["num_invalid_rows"] = len(df[
+        (df[HIGH_COLUMN] < df[LOW_COLUMN]) |
+        (df[OPEN_COLUMN] < 0) |
+        (df[CLOSE_COLUMN] < 0) |
+        (df[VOLUME_COLUMN] < 0)
+    ])
+
+    report["high_low_violations"] = int((df[HIGH_COLUMN] < df[LOW_COLUMN]).sum())
+    report["open_high_violations"] = int((df[OPEN_COLUMN] > df[HIGH_COLUMN]).sum())
+    report["open_low_violations"] = int((df[OPEN_COLUMN] < df[LOW_COLUMN]).sum())
+    report["close_bounds_violations"] = int(
+        ((df[CLOSE_COLUMN] > df[HIGH_COLUMN]) | (df[CLOSE_COLUMN] < df[LOW_COLUMN])).sum()
+    )
+
+    # ===================================
+    # OUTLIER DETECTION (IQR METHOD)
+    # ===================================
+    outlier_report = {}
+    for col in [OPEN_COLUMN, HIGH_COLUMN, LOW_COLUMN, CLOSE_COLUMN]:
+
+        q1 = df[col].quantile(0.25)
+        q3 = df[col].quantile(0.75)
+        iqr = q3 - q1
+
+        lower = q1 - 1.5 * iqr
+        upper = q3 + 1.5 * iqr
+
+        outliers = ((df[col] < lower) | (df[col] > upper)).sum()
+        outlier_report[col] = int(outliers)
+
+    report["num_outliers_iqr"] = outlier_report
+
+    return report
+
+
+if __name__ == "__main__":
+    full_report = {}
+    for file_path in RAW_DATA_PATH.glob(RAW_DATA_FORMAT):
+        report = verify_data_quality(str(file_path))
+        full_report[Path(file_path).stem] = report
+
+    with open(DATA_QUALITY_VERIFICATION_REPORT_PATH, "w") as f:
+        json.dump(full_report, f, indent=4)
