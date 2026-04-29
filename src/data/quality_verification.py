@@ -68,9 +68,13 @@ def verify_data_quality(file_path: str) -> dict:
     # ===================================
     # TIME FREQUENCY ANALYSIS
     # ===================================
-    report["time_frequency"] = {str(k): int(v) for k, v in (df[DATE_COLUMN].diff().value_counts()).items()}
-    report["num_irregular_time_steps"] = int((df[DATE_COLUMN].diff() != pd.Timedelta("1h")).sum())
+    df = df.sort_values(DATE_COLUMN)
+    df_time = df.drop_duplicates(subset=[DATE_COLUMN]).dropna(subset=[DATE_COLUMN])
+    time_diffs = df_time[DATE_COLUMN].diff().dropna()
 
+    report["time_frequency"] = {str(k): int(v) for k, v in time_diffs.value_counts().items()}
+    report["num_irregular_time_steps"] = int((time_diffs != pd.Timedelta("1h")).sum())
+    
     # ===================================
     # DATE RANGE ANALYSIS
     # ===================================
