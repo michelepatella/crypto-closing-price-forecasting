@@ -28,10 +28,10 @@ NUMERIC_COLUMNS = [
     VOLUME_COLUMN,
 ]
 
-RAW_DATA_PATH = Path("data/raw")
 RAW_DATA_FORMAT = "*.csv"
 
+RAW_DATA_PATH = Path("data/raw")
 DATA_QUALITY_VERIFICATION_REPORT_PATH = Path(
-    "reports/data/quality_verification_report.json"
+    "reports/data/quality_verification/report.json"
 )
-DATA_EXPLORATION_REPORT_PATH = Path("reports/data/exploration_report.json")
+DATA_EXPLORATION_REPORT_PATH = Path("reports/data/exploration/report.json")
