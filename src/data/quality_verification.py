@@ -12,20 +12,18 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 
 from pathlib import Path
 from src.utils import load_data
-
-
-DATE_COLUMN = "Date"
-OPEN_COLUMN = "Open"
-HIGH_COLUMN = "High"
-LOW_COLUMN = "Low"
-CLOSE_COLUMN = "Close"
-ADJ_CLOSE_COLUMN = "Adj Close"
-VOLUME_COLUMN = "Volume"
-DATASET_COLUMNS = [DATE_COLUMN, OPEN_COLUMN, HIGH_COLUMN, LOW_COLUMN, CLOSE_COLUMN, ADJ_CLOSE_COLUMN, VOLUME_COLUMN]
-
-DATA_QUALITY_VERIFICATION_REPORT_PATH = Path("reports/data/quality_verification_report.json")
-RAW_DATA_PATH = Path("data/raw")
-RAW_DATA_FORMAT = "*.csv"
+from src.const import (
+    DATE_COLUMN,
+    OPEN_COLUMN,
+    HIGH_COLUMN,
+    LOW_COLUMN,
+    CLOSE_COLUMN,
+    VOLUME_COLUMN,
+    DATASET_COLUMNS,
+    RAW_DATA_PATH,
+    RAW_DATA_FORMAT,
+    DATA_QUALITY_VERIFICATION_REPORT_PATH,
+)
 
 
 def verify_data_quality(file_path: str) -> dict:
@@ -36,7 +34,7 @@ def verify_data_quality(file_path: str) -> dict:
         file_path (str): Path to the CSV file.
 
     Returns:
-        None
+        dict: A comprehensive data quality report.
     """
     df = load_data(file_path)
     df = df.copy()
@@ -52,7 +50,7 @@ def verify_data_quality(file_path: str) -> dict:
     # ===================================
     # SCHEMA CONSISTENCY
     # ===================================
-    report["are_columns_valid"] = (list(df.columns) == DATASET_COLUMNS)
+    report["are_columns_valid"] = list(df.columns) == DATASET_COLUMNS
     report["missing_columns"] = list(set(DATASET_COLUMNS) - set(df.columns))
     report["extra_columns"] = list(set(df.columns) - set(DATASET_COLUMNS))
 
@@ -72,32 +70,38 @@ def verify_data_quality(file_path: str) -> dict:
     df_time = df.drop_duplicates(subset=[DATE_COLUMN]).dropna(subset=[DATE_COLUMN])
     time_diffs = df_time[DATE_COLUMN].diff().dropna()
 
-    report["time_frequency"] = {str(k): int(v) for k, v in time_diffs.value_counts().items()}
+    report["time_frequency"] = {
+        str(k): int(v) for k, v in time_diffs.value_counts().items()
+    }
     report["num_irregular_time_steps"] = int((time_diffs != pd.Timedelta("1h")).sum())
-    
+
     # ===================================
     # DATE RANGE ANALYSIS
     # ===================================
     report["date_range"] = {
         "start": str(df[DATE_COLUMN].min()),
-        "end": str(df[DATE_COLUMN].max())
+        "end": str(df[DATE_COLUMN].max()),
     }
 
     # ===================================
     # VALUE VALIDITY
     # ===================================
-    report["num_invalid_rows"] = len(df[
-        (df[HIGH_COLUMN] < df[LOW_COLUMN]) |
-        (df[OPEN_COLUMN] < 0) |
-        (df[CLOSE_COLUMN] < 0) |
-        (df[VOLUME_COLUMN] < 0)
-    ])
+    report["num_invalid_rows"] = len(
+        df[
+            (df[HIGH_COLUMN] < df[LOW_COLUMN])
+            | (df[OPEN_COLUMN] < 0)
+            | (df[CLOSE_COLUMN] < 0)
+            | (df[VOLUME_COLUMN] < 0)
+        ]
+    )
 
     report["high_low_violations"] = int((df[HIGH_COLUMN] < df[LOW_COLUMN]).sum())
     report["open_high_violations"] = int((df[OPEN_COLUMN] > df[HIGH_COLUMN]).sum())
     report["open_low_violations"] = int((df[OPEN_COLUMN] < df[LOW_COLUMN]).sum())
     report["close_bounds_violations"] = int(
-        ((df[CLOSE_COLUMN] > df[HIGH_COLUMN]) | (df[CLOSE_COLUMN] < df[LOW_COLUMN])).sum()
+        (
+            (df[CLOSE_COLUMN] > df[HIGH_COLUMN]) | (df[CLOSE_COLUMN] < df[LOW_COLUMN])
+        ).sum()
     )
 
     # ===================================
@@ -105,7 +109,6 @@ def verify_data_quality(file_path: str) -> dict:
     # ===================================
     outlier_report = {}
     for col in [OPEN_COLUMN, HIGH_COLUMN, LOW_COLUMN, CLOSE_COLUMN]:
-
         q1 = df[col].quantile(0.25)
         q3 = df[col].quantile(0.75)
         iqr = q3 - q1
