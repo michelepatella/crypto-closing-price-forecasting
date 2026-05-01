@@ -1,6 +1,8 @@
 from pathlib import Path
 
-
+# ===================================
+# DATA
+# ===================================
 DATE_COLUMN = "Date"
 OPEN_COLUMN = "Open"
 HIGH_COLUMN = "High"
@@ -30,6 +32,12 @@ NUMERIC_COLUMNS = [
 
 RAW_DATA_FORMAT = "*.csv"
 
+WINDOW_SIZE = 168
+
+
+# ===================================
+# PATHS
+# ===================================
 RAW_DATA_PATH = Path("data/raw")
 DATA_QUALITY_VERIFICATION_REPORT_PATH = Path(
     "reports/data/quality_verification/report.json"

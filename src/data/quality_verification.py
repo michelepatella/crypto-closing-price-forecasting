@@ -11,7 +11,6 @@ import pandas as pd
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from pathlib import Path
-from src.utils import load_data
 from src.const import (
     DATE_COLUMN,
     OPEN_COLUMN,
@@ -36,7 +35,7 @@ def verify_data_quality(file_path: str) -> dict:
     Returns:
         dict: A comprehensive data quality report.
     """
-    df = load_data(file_path)
+    df = pd.read_csv(file_path)
     df = df.copy()
 
     report = {}

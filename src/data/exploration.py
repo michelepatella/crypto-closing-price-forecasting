@@ -6,11 +6,11 @@ Data exploration for cryptocurrency time series datasets.
 import sys
 import os
 import json
+import pandas as pd
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from pathlib import Path
-from src.utils import load_data
 from src.const import (
     NUMERIC_COLUMNS,
     DATE_COLUMN,
@@ -33,7 +33,7 @@ def explore_data(file_path: str) -> dict:
     Returns:
         dict: Exploration report.
     """
-    df = load_data(file_path)
+    df = pd.read_csv(file_path)
     df = df.copy()
 
     report = {}
