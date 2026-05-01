@@ -60,7 +60,7 @@ def prepare_data(file_paths: list):
         df = df.sort_values(DATE_COLUMN)
 
         # Missing values
-        df = df.fillna(method="ffill").fillna(method="bfill")
+        df = df.ffill()
 
         # Remove duplicates
         df = df.drop_duplicates(subset=[DATE_COLUMN])
@@ -130,14 +130,15 @@ def prepare_data(file_paths: list):
         feature_per_crypto = []
 
         for name in dataframes.keys():
-            cols = [f"{name}_{col}" for col in NUMERIC_COLUMNS]
+            cols = [f"{name}_{col}" for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN]
             feature_per_crypto.append(df[cols].values)
 
         data = np.stack(feature_per_crypto, axis=1)
 
         X, y = [], []
 
-        close_idx = NUMERIC_COLUMNS.index(CLOSE_COLUMN)
+        feature_cols = [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN]
+        close_idx = feature_cols.index(CLOSE_COLUMN)
 
         for i in range(len(df) - WINDOW_SIZE):
             window = data[i : i + WINDOW_SIZE]
@@ -167,7 +168,7 @@ def prepare_data(file_paths: list):
     def reshape_X(X):
         X = X.reshape(X.shape[0], WINDOW_SIZE, num_cryptos, num_features)
         X = np.transpose(X, (0, 3, 2, 1))
-        return X.reshape(X.shape[0], num_features, num_nodes, WINDOW_SIZE)
+        return X
 
     X_train = reshape_X(X_train)
     X_test = reshape_X(X_test)
