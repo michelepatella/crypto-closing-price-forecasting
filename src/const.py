@@ -30,15 +30,16 @@ NUMERIC_COLUMNS = [
     VOLUME_COLUMN,
 ]
 
-RAW_DATA_FORMAT = "*.csv"
+DATA_FORMAT = "*.csv"
 
 WINDOW_SIZE = 168
 
+TRAIN_RATIO = 0.8
 
 # ===================================
 # PATHS
 # ===================================
-RAW_DATA_PATH = Path("data/raw")
+DATA_PATH = Path("data")
 DATA_QUALITY_VERIFICATION_REPORT_PATH = Path(
     "reports/data/quality_verification/report.json"
 )

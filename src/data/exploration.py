@@ -17,8 +17,8 @@ from src.const import (
     HIGH_COLUMN,
     LOW_COLUMN,
     CLOSE_COLUMN,
-    RAW_DATA_PATH,
-    RAW_DATA_FORMAT,    
+    DATA_PATH,
+    DATA_FORMAT,
     DATA_EXPLORATION_REPORT_PATH,
 )
 
@@ -116,7 +116,7 @@ def explore_data(file_path: str) -> dict:
 
 if __name__ == "__main__":
     full_report = {}
-    for file_path in RAW_DATA_PATH.glob(RAW_DATA_FORMAT):
+    for file_path in DATA_PATH.glob(DATA_FORMAT):
         report = explore_data(str(file_path))
         full_report[Path(file_path).stem] = report
 

@@ -19,8 +19,8 @@ from src.const import (
     CLOSE_COLUMN,
     VOLUME_COLUMN,
     DATASET_COLUMNS,
-    RAW_DATA_PATH,
-    RAW_DATA_FORMAT,
+    DATA_PATH,
+    DATA_FORMAT,
     DATA_QUALITY_VERIFICATION_REPORT_PATH,
 )
 
@@ -125,7 +125,7 @@ def verify_data_quality(file_path: str) -> dict:
 
 if __name__ == "__main__":
     full_report = {}
-    for file_path in RAW_DATA_PATH.glob(RAW_DATA_FORMAT):
+    for file_path in DATA_PATH.glob(DATA_FORMAT):
         report = verify_data_quality(str(file_path))
         full_report[Path(file_path).stem] = report
 
