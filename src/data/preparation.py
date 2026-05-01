@@ -58,12 +58,24 @@ def prepare_data(file_paths: list):
     # ===================================
     for name, df in dataframes.items():
         df = df.sort_values(DATE_COLUMN)
-
+        
+        # Remove duplicates
+        df = df.drop_duplicates(subset=[DATE_COLUMN])
+        
         # Missing values
         df = df.ffill()
 
-        # Remove duplicates
-        df = df.drop_duplicates(subset=[DATE_COLUMN])
+        price_cols = ["Open", "High", "Low", "Close"]
+        for col in price_cols:
+            df[col] = df[col].astype(float)
+
+        high = df["High"]
+        low = df["Low"]
+        open_ = df["Open"]
+        close = df["Close"]
+
+        df["High"] = np.maximum.reduce([high, open_, close, low])
+        df["Low"] = np.minimum.reduce([high, open_, close, low])
 
         dataframes[name] = df
 
@@ -100,7 +112,7 @@ def prepare_data(file_paths: list):
     def apply_transform(df):
         df = df.copy()
 
-        # Log transform Volume
+        # Stabilize heavy-tailed volume distribution
         for col in volume_cols:
             df[col] = np.log1p(df[col])
 
@@ -127,57 +139,45 @@ def prepare_data(file_paths: list):
     # SLIDING WINDOW CONSTRUCTION
     # ===================================
     def build_windows(df):
-        feature_per_crypto = []
-
-        for name in dataframes.keys():
-            cols = [f"{name}_{col}" for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN]
-            feature_per_crypto.append(df[cols].values)
-
-        data = np.stack(feature_per_crypto, axis=1)
-
-        X, y = [], []
+        X = []
+        y = []
 
         feature_cols = [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN]
-        close_idx = feature_cols.index(CLOSE_COLUMN)
+        names = list(dataframes.keys())
 
         for i in range(len(df) - WINDOW_SIZE):
-            window = data[i : i + WINDOW_SIZE]
-            target = data[i + WINDOW_SIZE, :, close_idx]
 
-            X.append(window)
-            y.append(target)
+            sequences = []
+            targets = []
+
+            # Temporal graphs
+            for name in names:
+
+                cols = [f"{name}_{col}" for col in feature_cols]
+
+                seq = df.iloc[i:i + WINDOW_SIZE][cols].values
+                sequences.append(seq)
+
+                close_col = f"{name}_{CLOSE_COLUMN}"
+                targets.append(df.iloc[i + WINDOW_SIZE][close_col])
+
+            X.append(np.stack(sequences, axis=0))
+            y.append(np.array(targets))
 
         return np.array(X), np.array(y)
 
     # ===================================
-    # TRAIN/TEST SETS CONSTRUCTION
+    # TRAIN / TEST CONSTRUCTION
     # ===================================
     X_train, y_train = build_windows(train_df)
     X_test, y_test = build_windows(test_df)
-
-    # ===================================
-    # GRAPH STRUCTURE DEFINITION
-    # ===================================
-    num_cryptos = len(dataframes)
-    num_features = len([col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN])
-    num_nodes = num_cryptos * WINDOW_SIZE
-
-    # ===================================
-    # RESHAPE FOR T-MTGNN
-    # ===================================
-    def reshape_X(X):
-        X = X.reshape(X.shape[0], WINDOW_SIZE, num_cryptos, num_features)
-        X = np.transpose(X, (0, 3, 2, 1))
-        return X
-
-    X_train = reshape_X(X_train)
-    X_test = reshape_X(X_test)
 
     return {
         "X_train": X_train,
         "y_train": y_train,
         "X_test": X_test,
         "y_test": y_test,
+        "stats": stats
     }
 
 
