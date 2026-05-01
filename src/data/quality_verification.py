@@ -107,7 +107,7 @@ def verify_data_quality(file_path: str) -> dict:
     # OUTLIER DETECTION (IQR METHOD)
     # ===================================
     outlier_report = {}
-    for col in [OPEN_COLUMN, HIGH_COLUMN, LOW_COLUMN, CLOSE_COLUMN]:
+    for col in [OPEN_COLUMN, HIGH_COLUMN, LOW_COLUMN, CLOSE_COLUMN, VOLUME_COLUMN]:
         q1 = df[col].quantile(0.25)
         q3 = df[col].quantile(0.75)
         iqr = q3 - q1
