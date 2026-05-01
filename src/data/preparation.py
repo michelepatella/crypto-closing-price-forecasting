@@ -61,9 +61,9 @@ def prepare_data(file_paths: list):
         
         # Remove duplicates
         df = df.drop_duplicates(subset=[DATE_COLUMN])
-        
+
         # Missing values
-        df = df.ffill()
+        df = df.ffill().bfill()
 
         price_cols = ["Open", "High", "Low", "Close"]
         for col in price_cols:
