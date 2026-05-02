@@ -1,0 +1,523 @@
+{
+    "num_missing_values_before": {
+        "BTC": {
+            "Date": 0,
+            "Open": 465,
+            "High": 465,
+            "Low": 465,
+            "Close": 465,
+            "Adj Close": 465,
+            "Volume": 465
+        },
+        "XRP": {
+            "Date": 0,
+            "Open": 428,
+            "High": 428,
+            "Low": 428,
+            "Close": 428,
+            "Adj Close": 428,
+            "Volume": 428
+        },
+        "MAID": {
+            "Date": 0,
+            "Open": 423,
+            "High": 423,
+            "Low": 423,
+            "Close": 423,
+            "Adj Close": 423,
+            "Volume": 423
+        },
+        "BTS": {
+            "Date": 0,
+            "Open": 423,
+            "High": 423,
+            "Low": 423,
+            "Close": 423,
+            "Adj Close": 423,
+            "Volume": 423
+        },
+        "IOC": {
+            "Date": 0,
+            "Open": 420,
+            "High": 420,
+            "Low": 420,
+            "Close": 420,
+            "Adj Close": 420,
+            "Volume": 420
+        },
+        "DGB": {
+            "Date": 0,
+            "Open": 423,
+            "High": 423,
+            "Low": 423,
+            "Close": 423,
+            "Adj Close": 423,
+            "Volume": 423
+        },
+        "XMR": {
+            "Date": 0,
+            "Open": 426,
+            "High": 426,
+            "Low": 426,
+            "Close": 426,
+            "Adj Close": 426,
+            "Volume": 426
+        },
+        "MONA": {
+            "Date": 0,
+            "Open": 420,
+            "High": 420,
+            "Low": 420,
+            "Close": 420,
+            "Adj Close": 420,
+            "Volume": 420
+        },
+        "XLM": {
+            "Date": 0,
+            "Open": 436,
+            "High": 436,
+            "Low": 436,
+            "Close": 436,
+            "Adj Close": 436,
+            "Volume": 436
+        },
+        "VTC": {
+            "Date": 0,
+            "Open": 422,
+            "High": 422,
+            "Low": 422,
+            "Close": 422,
+            "Adj Close": 422,
+            "Volume": 422
+        },
+        "XCP": {
+            "Date": 0,
+            "Open": 422,
+            "High": 422,
+            "Low": 422,
+            "Close": 422,
+            "Adj Close": 422,
+            "Volume": 422
+        },
+        "ETH": {
+            "Date": 0,
+            "Open": 453,
+            "High": 453,
+            "Low": 453,
+            "Close": 453,
+            "Adj Close": 453,
+            "Volume": 453
+        },
+        "SYS": {
+            "Date": 0,
+            "Open": 422,
+            "High": 422,
+            "Low": 422,
+            "Close": 422,
+            "Adj Close": 422,
+            "Volume": 422
+        },
+        "DASH": {
+            "Date": 0,
+            "Open": 426,
+            "High": 426,
+            "Low": 426,
+            "Close": 426,
+            "Adj Close": 426,
+            "Volume": 426
+        },
+        "LTC": {
+            "Date": 0,
+            "Open": 426,
+            "High": 426,
+            "Low": 426,
+            "Close": 426,
+            "Adj Close": 426,
+            "Volume": 426
+        },
+        "DOGE": {
+            "Date": 0,
+            "Open": 424,
+            "High": 424,
+            "Low": 424,
+            "Close": 424,
+            "Adj Close": 424,
+            "Volume": 424
+        },
+        "NAV": {
+            "Date": 0,
+            "Open": 436,
+            "High": 436,
+            "Low": 436,
+            "Close": 436,
+            "Adj Close": 436,
+            "Volume": 436
+        }
+    },
+    "data_cleaning_statistics": {
+        "BTC": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "XRP": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "MAID": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "BTS": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "IOC": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "DGB": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "XMR": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "MONA": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "XLM": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "VTC": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "XCP": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "ETH": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "SYS": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "DASH": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "LTC": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "DOGE": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        },
+        "NAV": {
+            "num_rows_before": 26328,
+            "num_rows_after": 26325,
+            "num_missing_values_after": {
+                "Date": 0,
+                "Open": 0,
+                "High": 0,
+                "Low": 0,
+                "Close": 0,
+                "Volume": 0,
+                "Crypto": 0
+            }
+        }
+    },
+    "train_test_split_statistics": {
+        "per_crypto": {
+            "BTC": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "BTS": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "DASH": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "DGB": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "DOGE": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "ETH": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "IOC": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "LTC": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "MAID": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "MONA": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "NAV": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "SYS": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "VTC": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "XCP": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "XLM": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "XMR": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            },
+            "XRP": {
+                "num_rows": 26325,
+                "num_train_rows": 21060,
+                "num_test_rows": 5265
+            }
+        },
+        "total": {
+            "num_train_rows": 358020,
+            "num_test_rows": 89505,
+            "train_ratio": 0.8,
+            "test_ratio": 0.19999999999999996
+        }
+    },
+    "volume_transformation": {
+        "before_log1p": {
+            "Volume": {
+                "min_train": 0.0,
+                "max_train": 1410152668051456.0,
+                "mean_train": 4898612252.240705,
+                "std_train": 2386667980314.6216
+            }
+        },
+        "after_log1p": {
+            "Volume": {
+                "min_train": 0.0,
+                "max_train": 34.88247436865322,
+                "mean_train": 6.304102066798818,
+                "std_train": 7.252669539818318
+            }
+        }
+    },
+    "normalization_statistics": {
+        "Open": {
+            "mean": 1980.5964283436974,
+            "std": 8596.969935093139
+        },
+        "High": {
+            "mean": 1989.4795608551847,
+            "std": 8635.230567968365
+        },
+        "Low": {
+            "mean": 1971.3605891453537,
+            "std": 8557.101424410112
+        },
+        "Close": {
+            "mean": 1980.6277815372973,
+            "std": 8597.000373631794
+        },
+        "Volume": {
+            "mean": 6.304102066798818,
+            "std": 7.252669539818318
+        }
+    },
+    "sliding_window_statistics": {
+        "window_size": 24,
+        "num_cryptos": 17,
+        "num_features": 5,
+        "num_nodes": 408,
+        "num_windows_train": 21036,
+        "num_windows_test": 5241
+    }
+}
