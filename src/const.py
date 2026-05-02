@@ -32,10 +32,6 @@ NUMERIC_COLUMNS = [
 
 DATA_FORMAT = "*.csv"
 
-WINDOW_SIZE = 168
-
-TRAIN_RATIO = 0.8
-
 # ===================================
 # PATHS
 # ===================================
