@@ -57,6 +57,7 @@ def prepare_data(file_paths: list):
     # DATA CLEANING
     # ===================================
     cleaned_dfs = []
+
     for name, df in dataframes.items():
         df = df.sort_values(DATE_COLUMN)
 
@@ -93,10 +94,22 @@ def prepare_data(file_paths: list):
     # ===================================
     # TRAIN-TEST SPLITTING
     # ===================================
-    split_idx = int(len(full_df) * TRAIN_RATIO)
+    train_parts = []
+    test_parts = []
 
-    train_df = full_df.iloc[:split_idx].copy()
-    test_df = full_df.iloc[split_idx:].copy()
+    for crypto in full_df["crypto"].unique():
+        crypto_df = full_df[full_df["crypto"] == crypto].sort_values(DATE_COLUMN)
+
+        split_idx = int(len(crypto_df) * TRAIN_RATIO)
+
+        train_parts.append(crypto_df.iloc[:split_idx])
+        test_parts.append(crypto_df.iloc[split_idx:])
+
+    train_df = pd.concat(train_parts, axis=0)
+    test_df = pd.concat(test_parts, axis=0)
+
+    train_df = train_df.sort_values(["crypto", DATE_COLUMN])
+    test_df = test_df.sort_values(["crypto", DATE_COLUMN])
 
     # ===================================
     # FEATURE TRANSFORMATION
