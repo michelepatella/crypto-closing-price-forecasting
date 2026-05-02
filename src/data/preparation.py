@@ -225,6 +225,7 @@ def prepare_data(file_paths: list):
         A = []
 
         feature_cols = [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN]
+        num_features = len(feature_cols)
         cryptos = sorted(df[CRYPTO_COLUMN].unique())
         num_cryptos = len(cryptos)
         num_nodes = num_cryptos * WINDOW_SIZE
@@ -250,19 +251,13 @@ def prepare_data(file_paths: list):
 
         # Extract windows with corresponding next-step targets
         for i in range(num_samples):
-            # Gather window for each cryptocurrency
-            window_all_cryptos = []
-            for crypto in cryptos:
-                window = crypto_data[crypto][i:i + WINDOW_SIZE]
-                window_all_cryptos.append(window)
-
-            # Stack and reshape to (features, nodes, timesteps)
-            X_window = np.stack(window_all_cryptos, axis=0)
-            X_window = X_window.transpose(1, 0, 2)
-            X_window = X_window.reshape(WINDOW_SIZE, num_cryptos * len(feature_cols))
-            X_window = X_window.T
-            X_window = X_window.reshape(len(feature_cols), num_cryptos, WINDOW_SIZE)
-            X_window = X_window.reshape(len(feature_cols), num_nodes, WINDOW_SIZE)
+            # Create window for all nodes
+            X_window = np.zeros((num_features, num_nodes, WINDOW_SIZE), dtype=np.float32)
+            
+            for crypto_idx, crypto in enumerate(cryptos):
+                for t in range(WINDOW_SIZE):
+                    node_idx = crypto_idx * WINDOW_SIZE + t
+                    X_window[:, node_idx, :] = crypto_data[crypto][i:i + WINDOW_SIZE, :].T
 
             X.append(X_window)
 
