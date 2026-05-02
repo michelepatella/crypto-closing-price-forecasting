@@ -130,8 +130,6 @@ def prepare_data(file_paths: list):
     # ===================================
     # Z-SCORE NORMALIZATION
     # ===================================
-    stats = {}
-
     numeric_cols = [col for col in full_df.columns
                     if col not in [DATE_COLUMN, "crypto"]]
 
@@ -139,44 +137,83 @@ def prepare_data(file_paths: list):
         mean = train_df[col].mean()
         std = train_df[col].std() if train_df[col].std() != 0 else 1.0
 
-        stats[col] = (mean, std)
-
         train_df[col] = (train_df[col] - mean) / std
         test_df[col] = (test_df[col] - mean) / std
-
+    
     # ===================================
     # SLIDING WINDOW CONSTRUCTION
     # ===================================
     def build_windows(df):
         X = []
         y = []
+        A = []
 
         feature_cols = [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN]
-        cryptos = df["crypto"].unique()
-
+        cryptos = sorted(df["crypto"].unique())
+        num_cryptos = len(cryptos)
+        num_nodes = num_cryptos * WINDOW_SIZE
+        
+        # Prepare data per crypto for efficient windowing
+        crypto_data = {}
         for crypto in cryptos:
             crypto_df = df[df["crypto"] == crypto].sort_values(DATE_COLUMN)
+            crypto_data[crypto] = crypto_df[feature_cols].values
+        
+        min_length = min(len(crypto_data[c]) for c in cryptos)
+        
+        for i in range(min_length - WINDOW_SIZE):
+            # Concatenate windows for all cryptos at this timestep
+            window_all_cryptos = []
+            for crypto_idx, crypto in enumerate(cryptos):
+                window = crypto_data[crypto][i:i + WINDOW_SIZE]
+                window_all_cryptos.append(window)
+            
+            X_window = np.stack(window_all_cryptos, axis=0)
+            
+            X_window = X_window.transpose(2, 0, 1)
+            X_window = X_window.reshape(len(feature_cols), num_nodes, WINDOW_SIZE)
+            
+            X.append(X_window)
+            
+            # Target: Close price for each crypto at next timestep
+            y_sample = []
+            for crypto in cryptos:
+                close_idx = feature_cols.index(CLOSE_COLUMN)
+                target = crypto_data[crypto][i + WINDOW_SIZE, close_idx]
+                y_sample.append(target)
+            y.append(y_sample)
+            
+            # Adjacency matrix for this window
+            adj = np.zeros((num_nodes, num_nodes), dtype=np.float32)
+            for crypto_idx in range(num_cryptos):
+                for t in range(WINDOW_SIZE - 1):
+                    node_t = crypto_idx * WINDOW_SIZE + t
+                    node_t_plus_1 = crypto_idx * WINDOW_SIZE + t + 1
+                    adj[node_t, node_t_plus_1] = 1.0
+            
+            A.append(adj)
+        
+        # (num_samples, num_features, num_nodes, WINDOW_SIZE)
+        X = np.stack(X, axis=0)
+        
+        # (num_samples, num_cryptos)
+        y = np.array(y)
+        
+        # (num_samples, num_nodes, num_nodes)
+        A = np.array(A)
+        
+        return X, y, A
 
-            values = crypto_df[feature_cols].values
-
-            for i in range(len(values) - WINDOW_SIZE):
-                window = values[i:i + WINDOW_SIZE]
-                target = values[i + WINDOW_SIZE][feature_cols.index(CLOSE_COLUMN)]
-
-                X.append(window)
-                y.append(target)
-
-        return np.array(X), np.array(y)
-
-    X_train, y_train = build_windows(train_df)
-    X_test, y_test = build_windows(test_df)
+    X_train, y_train, A_train = build_windows(train_df)
+    X_test, y_test, A_test = build_windows(test_df)
 
     return {
         "X_train": X_train,
         "y_train": y_train,
+        "A_train": A_train,
         "X_test": X_test,
         "y_test": y_test,
-        "stats": stats
+        "A_test": A_test,
     }
 
 
