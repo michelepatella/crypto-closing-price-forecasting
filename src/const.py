@@ -42,3 +42,4 @@ DATA_QUALITY_VERIFICATION_REPORT_PATH = Path(
     "reports/data/quality_verification/report.json"
 )
 DATA_EXPLORATION_REPORT_PATH = Path("reports/data/exploration/report.json")
+DATA_PREPARATION_REPORT_PATH = Path("reports/data/preparation/report.json")
