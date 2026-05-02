@@ -1,4 +1,5 @@
-"""src/data/preparation.py
+"""
+src/data/preparation.py
 
 Data preparation for cryptocurrency time series datasets.
 """
@@ -11,6 +12,7 @@ import pandas as pd
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from pathlib import Path
+from src.config import TRAIN_RATIO, WINDOW_SIZE
 from src.const import (
     NUMERIC_COLUMNS,
     DATE_COLUMN,
@@ -19,8 +21,6 @@ from src.const import (
     VOLUME_COLUMN,
     DATA_PATH,
     DATA_FORMAT,
-    WINDOW_SIZE,
-    TRAIN_RATIO,
 )
 
 
@@ -44,7 +44,7 @@ def prepare_data(file_paths: list):
         df = pd.read_csv(file_path)
         df = df.copy()
 
-        # Remove the Adj Close column
+        # Remove Adj Close column
         if ADJ_CLOSE_COLUMN in df.columns:
             df = df.drop(columns=[ADJ_CLOSE_COLUMN])
 
@@ -56,19 +56,21 @@ def prepare_data(file_paths: list):
     # ===================================
     # DATA CLEANING
     # ===================================
+    cleaned_dfs = []
     for name, df in dataframes.items():
         df = df.sort_values(DATE_COLUMN)
-        
+
         # Remove duplicates
         df = df.drop_duplicates(subset=[DATE_COLUMN])
 
-        # Missing values
-        df = df.ffill().bfill()
-
+        # Ensure numeric stability
         price_cols = ["Open", "High", "Low", "Close"]
-        for col in price_cols:
-            df[col] = df[col].astype(float)
+        df[price_cols] = df[price_cols].astype(float)
 
+        # Forward fill
+        df = df.ffill()
+
+        # Price consistency correction
         high = df["High"]
         low = df["Low"]
         open_ = df["Open"]
@@ -77,42 +79,33 @@ def prepare_data(file_paths: list):
         df["High"] = np.maximum.reduce([high, open_, close, low])
         df["Low"] = np.minimum.reduce([high, open_, close, low])
 
-        dataframes[name] = df
+        # Add crypto identifier
+        df["crypto"] = name
+
+        cleaned_dfs.append(df)
 
     # ===================================
     # DATA INTEGRATION
     # ===================================
-    merged_df = None
-
-    for name, df in dataframes.items():
-        df = df.set_index(DATE_COLUMN)
-        df = df.add_prefix(f"{name}_")
-
-        if merged_df is None:
-            merged_df = df
-        else:
-            merged_df = merged_df.join(df, how="inner")
-
-    merged_df = merged_df.dropna()
-    merged_df = merged_df.sort_index()
+    full_df = pd.concat(cleaned_dfs, axis=0)
+    full_df = full_df.sort_values(["crypto", DATE_COLUMN])
 
     # ===================================
     # TRAIN-TEST SPLITTING
     # ===================================
-    split_idx = int(len(merged_df) * TRAIN_RATIO)
+    split_idx = int(len(full_df) * TRAIN_RATIO)
 
-    train_df = merged_df.iloc[:split_idx].copy()
-    test_df = merged_df.iloc[split_idx:].copy()
+    train_df = full_df.iloc[:split_idx].copy()
+    test_df = full_df.iloc[split_idx:].copy()
 
     # ===================================
     # FEATURE TRANSFORMATION
     # ===================================
-    volume_cols = [col for col in merged_df.columns if VOLUME_COLUMN in col]
+    volume_cols = [col for col in full_df.columns if VOLUME_COLUMN in col]
 
     def apply_transform(df):
         df = df.copy()
 
-        # Stabilize heavy-tailed volume distribution
         for col in volume_cols:
             df[col] = np.log1p(df[col])
 
@@ -126,7 +119,10 @@ def prepare_data(file_paths: list):
     # ===================================
     stats = {}
 
-    for col in train_df.columns:
+    numeric_cols = [col for col in full_df.columns
+                    if col not in [DATE_COLUMN, "crypto"]]
+
+    for col in numeric_cols:
         mean = train_df[col].mean()
         std = train_df[col].std() if train_df[col].std() != 0 else 1.0
 
@@ -143,32 +139,22 @@ def prepare_data(file_paths: list):
         y = []
 
         feature_cols = [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN]
-        names = list(dataframes.keys())
+        cryptos = df["crypto"].unique()
 
-        for i in range(len(df) - WINDOW_SIZE):
+        for crypto in cryptos:
+            crypto_df = df[df["crypto"] == crypto].sort_values(DATE_COLUMN)
 
-            sequences = []
-            targets = []
+            values = crypto_df[feature_cols].values
 
-            # Temporal graphs
-            for name in names:
+            for i in range(len(values) - WINDOW_SIZE):
+                window = values[i:i + WINDOW_SIZE]
+                target = values[i + WINDOW_SIZE][feature_cols.index(CLOSE_COLUMN)]
 
-                cols = [f"{name}_{col}" for col in feature_cols]
-
-                seq = df.iloc[i:i + WINDOW_SIZE][cols].values
-                sequences.append(seq)
-
-                close_col = f"{name}_{CLOSE_COLUMN}"
-                targets.append(df.iloc[i + WINDOW_SIZE][close_col])
-
-            X.append(np.stack(sequences, axis=0))
-            y.append(np.array(targets))
+                X.append(window)
+                y.append(target)
 
         return np.array(X), np.array(y)
 
-    # ===================================
-    # TRAIN / TEST CONSTRUCTION
-    # ===================================
     X_train, y_train = build_windows(train_df)
     X_test, y_test = build_windows(test_df)
 
