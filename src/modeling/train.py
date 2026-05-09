@@ -9,7 +9,6 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from sklearn.model_selection import TimeSeriesSplit
 from tmtgnn.config import (
     DiffusionConfig,
     GraphConfig,
@@ -403,6 +402,11 @@ class TimeSeriesTrainer:
                 """
                 return self.X[idx], self.y[idx], self.A
 
+        def collate_batch(batch: list[tuple]) -> tuple:
+            """Stack features and targets while keeping a single adjacency matrix."""
+            X_batch, y_batch, A_batch = zip(*batch)
+            return torch.stack(X_batch), torch.stack(y_batch), A_batch[0]
+
         # Create datasets for training and validation
         train_dataset = TimeSeriesDataset(X_train, y_train, A_train)
         val_dataset = TimeSeriesDataset(X_val, y_val, A_val)
@@ -412,12 +416,14 @@ class TimeSeriesTrainer:
             train_dataset,
             batch_size=batch_size,
             pin_memory=True,
+            collate_fn=collate_batch,
         )
 
         val_loader = torch.utils.data.DataLoader(
             val_dataset,
             batch_size=batch_size,
             pin_memory=True,
+            collate_fn=collate_batch,
         )
 
         return train_loader, val_loader
@@ -428,9 +434,9 @@ class TimeSeriesTrainer:
         y_train: np.ndarray,
         A_train: np.ndarray,
         batch_size: int,
-        num_splits: int,
+        val_ratio: float = 0.2,
     ) -> dict:
-        """Execute complete training pipeline.
+        """Execute complete training pipeline with a single hold-out split.
 
         Args:
             X_train (np.ndarray):
@@ -441,146 +447,117 @@ class TimeSeriesTrainer:
                 Training adjacency matrix.
             batch_size (int):
                 Batch size for training.
-            num_splits (int):
-                Number of splits for Time Series Split.
+            val_ratio (float):
+                Fraction of the training set reserved for validation.
         """
-        # Initialize Time Series Split
-        tscv = TimeSeriesSplit(n_splits=num_splits)
+        if not 0.0 < val_ratio < 1.0:
+            raise ValueError("val_ratio must be between 0 and 1")
 
-        split_reports = []
+        split_idx = int(len(X_train) * (1.0 - val_ratio))
+        if split_idx <= 0 or split_idx >= len(X_train):
+            raise ValueError(
+                "val_ratio produces an empty train or validation split",
+            )
+
+        X_split = X_train[:split_idx]
+        y_split = y_train[:split_idx]
+        X_val = X_train[split_idx:]
+        y_val = y_train[split_idx:]
+
+        num_nodes = X_train.shape[2]
+        in_channels = X_train.shape[1]
+        seq_length = X_train.shape[3]
+        out_channels = 1
+
+        model = self.create_model(
+            num_nodes,
+            in_channels,
+            seq_length,
+            out_channels,
+        )
+
+        optimizer = torch.optim.AdamW(
+            model.parameters(),
+            lr=1e-3,
+            weight_decay=1e-4,
+            betas=(0.9, 0.999),
+            eps=1e-8,
+        )
+        criterion = nn.MSELoss()
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer,
+            mode="min",
+            factor=0.5,
+            patience=5,
+            min_lr=1e-6,
+        )
+
+        train_loader, val_loader = self.create_data_loaders(
+            X_split,
+            y_split,
+            A_train,
+            X_val,
+            y_val,
+            A_train,
+            batch_size,
+        )
+
+        early_stopping = EarlyStopping(patience=5, delta=1e-4)
+
+        train_losses = []
+        val_losses = []
         best_model_state = None
-        best_global_loss = float("inf")
-        for split_idx, (train_idx, val_idx) in enumerate(tscv.split(X_train)):
-            # Create model
-            num_nodes = X_train.shape[2]
-            in_channels = X_train.shape[1]
-            seq_length = X_train.shape[3]
-            out_channels = 1
 
-            model = self.create_model(
-                num_nodes,
-                in_channels,
-                seq_length,
-                out_channels,
-            )
+        epoch_bar = tqdm(range(500), desc="Training")
 
-            # Create optimizers and loss
-            optimizer = torch.optim.AdamW(
-                model.parameters(),
-                lr=1e-3,
-                weight_decay=1e-4,
-                betas=(0.9, 0.999),
-                eps=1e-8,
-            )
-            criterion = nn.MSELoss()
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        for epoch in epoch_bar:
+            train_loss = self.train_epoch(
+                model,
+                train_loader,
+                criterion,
                 optimizer,
-                mode="min",
-                factor=0.5,
-                patience=5,
-                min_lr=1e-6,
             )
+            train_losses.append(train_loss)
 
-            # Prepare split data
-            X_split = X_train[train_idx]
-            y_split = y_train[train_idx]
-            A_split = A_train
-            X_val = X_train[val_idx]
-            y_val = y_train[val_idx]
-            A_val = A_train
+            val_loss = self.validate(model, val_loader, criterion)
+            val_losses.append(val_loss)
 
-            # Create data loaders
-            train_loader, val_loader = self.create_data_loaders(
-                X_split,
-                y_split,
-                A_split,
-                X_val,
-                y_val,
-                A_val,
-                batch_size,
-            )
+            scheduler.step(val_loss)
 
-            # Initialize early stopping
-            early_stopping = EarlyStopping(patience=5, delta=1e-4)
-
-            # Training loop
-            train_losses = []
-            val_losses = []
-
-            epoch_bar = tqdm(
-                range(500),
-                desc=f"Split {split_idx + 1}",
-            )
-
-            for epoch in epoch_bar:
-                # Train
-                train_loss = self.train_epoch(
-                    model,
-                    train_loader,
-                    criterion,
-                    optimizer,
-                )
-                train_losses.append(train_loss)
-
-                # Validate
-                val_loss = self.validate(model, val_loader, criterion)
-                val_losses.append(val_loss)
-
-                # Learning rate scheduler
-                scheduler.step(val_loss)
-
-                if val_loss < best_global_loss - 1e-4:
-                    best_global_loss = val_loss
-                    best_model_state = copy.deepcopy(model.state_dict())
-
-                    torch.save(
-                        {
-                            "model_state_dict": best_model_state,
-                            "val_loss": val_loss,
-                            "epoch": epoch,
-                            "split": split_idx,
-                        },
-                        BEST_MODEL_PATH,
-                    )
-
-                # Early stopping check
-                if early_stopping(val_loss, epoch):
-                    print(f"\nEarly stopping triggered at epoch {epoch + 1}")
-                    print(
-                        f"Best validation loss: {early_stopping.best_loss:.6f} at epoch {early_stopping.best_epoch + 1}",
-                    )
-                    break
-
-                epoch_bar.set_postfix(
+            if val_loss <= early_stopping.best_loss - early_stopping.delta:
+                best_model_state = copy.deepcopy(model.state_dict())
+                torch.save(
                     {
-                        "train": f"{train_loss:.4f}",
-                        "val": f"{val_loss:.4f}",
+                        "model_state_dict": best_model_state,
+                        "val_loss": val_loss,
+                        "epoch": epoch,
                     },
+                    BEST_MODEL_PATH,
                 )
 
-            # Collect split report
-            split_report = {
-                "split": split_idx + 1,
-                "num_train_samples": len(train_idx),
-                "num_val_samples": len(val_idx),
-                "best_epoch": early_stopping.best_epoch + 1,
-                "best_val_loss": float(early_stopping.best_loss),
-                "final_train_loss": float(train_losses[-1]),
-                "final_val_loss": float(val_losses[-1]),
-                "min_train_loss": float(min(train_losses)),
-                "min_val_loss": float(min(val_losses)),
-                "train_losses": [float(x) for x in train_losses],
-                "val_losses": [float(x) for x in val_losses],
-            }
-            split_reports.append(split_report)
+            if early_stopping(val_loss, epoch):
+                print(f"\nEarly stopping triggered at epoch {epoch + 1}")
+                print(
+                    f"Best validation loss: {early_stopping.best_loss:.6f} at epoch {early_stopping.best_epoch + 1}",
+                )
+                break
 
-        # Aggregate report
+            epoch_bar.set_postfix(
+                {
+                    "train": f"{train_loss:.4f}",
+                    "val": f"{val_loss:.4f}",
+                },
+            )
+
+        if best_model_state is not None:
+            model.load_state_dict(best_model_state)
+
         self.report = {
             "timestamp": datetime.now().isoformat(),
             "config": {
                 "max_epochs": 500,
                 "batch_size": batch_size,
-                "num_splits": num_splits,
+                "validation_ratio": val_ratio,
                 "early_stopping_patience": 5,
                 "early_stopping_delta": 1e-4,
                 "learning_rate": 1e-3,
@@ -599,14 +576,17 @@ class TimeSeriesTrainer:
                 "diffusion_steps": 1,
                 "graph_learning_enabled": False,
             },
-            "splits": split_reports,
-            "summary": {
-                "avg_best_epoch": int(
-                    np.mean([s["best_epoch"] for s in split_reports]),
-                ),
-                "avg_best_val_loss": float(
-                    np.mean([s["best_val_loss"] for s in split_reports]),
-                ),
+            "holdout": {
+                "num_train_samples": len(X_split),
+                "num_val_samples": len(X_val),
+                "best_epoch": early_stopping.best_epoch + 1,
+                "best_val_loss": float(early_stopping.best_loss),
+                "final_train_loss": float(train_losses[-1]),
+                "final_val_loss": float(val_losses[-1]),
+                "min_train_loss": float(min(train_losses)),
+                "min_val_loss": float(min(val_losses)),
+                "train_losses": [float(x) for x in train_losses],
+                "val_losses": [float(x) for x in val_losses],
             },
         }
 

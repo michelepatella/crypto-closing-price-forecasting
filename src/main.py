@@ -79,7 +79,6 @@ def main() -> None:
         y_train=data_prep_result["y_train"],
         A_train=data_prep_result["A_train"],
         batch_size=4,
-        num_splits=3,
     )
 
     with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
