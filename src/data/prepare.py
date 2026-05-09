@@ -267,8 +267,8 @@ def prepare_data(file_paths: list) -> dict:
         X = np.stack(X, axis=0)
         y = np.array(y)
 
-        # Replicate adjacency matrix for each sample
-        A = np.tile(adj_template, (num_samples, 1, 1))
+        # Use single adjacency matrix
+        A = adj_template
 
         # Expand targets to node dimension (one target per crypto across time window)
         y_expanded = np.zeros((y.shape[0], num_nodes), dtype=np.float32)
