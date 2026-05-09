@@ -42,9 +42,9 @@ def verify_data_quality(file_path: str) -> dict:
     # ===================================
     # SCHEMA CONSISTENCY
     # ===================================
-    report["are_columns_valid"] = list(df.columns) == {
+    report["are_columns_valid"] = list(df.columns) == list(
         col for col in DATASET_COLUMNS if col != CRYPTO_COLUMN
-    }
+    )
     report["missing_columns"] = list(
         set({col for col in DATASET_COLUMNS if col != CRYPTO_COLUMN}) - set(df.columns)
     )
