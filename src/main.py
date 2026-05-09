@@ -1,20 +1,42 @@
 import json
+import os
+import random
 from pathlib import Path
 
+import numpy as np
+import torch
+
+from src.config import SEED, TRAINING_DEVICE
 from src.const import (
     DATA_EXPLORATION_REPORT_PATH,
     DATA_FORMAT,
     DATA_PATH,
     DATA_PREPARATION_REPORT_PATH,
     DATA_QUALITY_VERIFICATION_REPORT_PATH,
+    MODELING_TRAINING_REPORT_PATH,
 )
-from src.data.exploration import explore_data
-from src.data.preparation import prepare_data
-from src.data.quality_verification import verify_data_quality
+from src.data.explore import explore_data
+from src.data.prepare import prepare_data
+from src.data.verify_quality import verify_data_quality
+from src.modeling.train import TimeSeriesTrainer
 
 
 def main() -> None:
     data_paths = list(DATA_PATH.glob(DATA_FORMAT))
+
+    ##################################################
+    # [PRE] REPRODUCIBILITY
+    ##################################################
+    random.seed(SEED)
+    np.random.seed(SEED)
+    torch.manual_seed(SEED)
+    torch.cuda.manual_seed(SEED)
+    torch.cuda.manual_seed_all(SEED)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    os.environ["PYTHONHASHSEED"] = str(SEED)
+    generator = torch.Generator()
+    generator.manual_seed(SEED)
 
     ##################################################
     # [PRE] DATA QUALITY VERIFICATION AND EXPLORATION
@@ -23,7 +45,9 @@ def main() -> None:
     data_quality_verif_full_report = {}
     for data_path in data_paths:
         data_quality_verif_report = verify_data_quality(str(data_path))
-        data_quality_verif_full_report[Path(data_path).stem] = data_quality_verif_report
+        data_quality_verif_full_report[Path(data_path).stem] = (
+            data_quality_verif_report
+        )
 
     with open(DATA_QUALITY_VERIFICATION_REPORT_PATH, "w") as f:
         json.dump(data_quality_verif_full_report, f, indent=4)
@@ -49,3 +73,14 @@ def main() -> None:
     ##################################################
     # [2] MODEL TRAINING
     ##################################################
+    trainer = TimeSeriesTrainer(device=TRAINING_DEVICE)
+    training_report = trainer.train(
+        X_train=data_prep_result["X_train"],
+        y_train=data_prep_result["y_train"],
+        A_train=data_prep_result["A_train"],
+        batch_size=4,
+        num_splits=3,
+    )
+
+    with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
+        json.dump(training_report, f, indent=4)
