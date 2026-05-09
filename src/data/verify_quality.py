@@ -45,8 +45,12 @@ def verify_data_quality(file_path: str) -> dict:
     report["are_columns_valid"] = list(df.columns) == {
         col for col in DATASET_COLUMNS if col != CRYPTO_COLUMN
     }
-    report["missing_columns"] = list(set(DATASET_COLUMNS) - set(df.columns))
-    report["extra_columns"] = list(set(df.columns) - set(DATASET_COLUMNS))
+    report["missing_columns"] = list(
+        set({col for col in DATASET_COLUMNS if col != CRYPTO_COLUMN}) - set(df.columns)
+    )
+    report["extra_columns"] = list(
+        set(df.columns) - set({col for col in DATASET_COLUMNS if col != CRYPTO_COLUMN})
+    )
 
     # ===================================
     # TIMESTAMP QUALITY
