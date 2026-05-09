@@ -30,7 +30,7 @@ from src.const import (
 )
 
 
-def prepare_data(file_paths: list):
+def prepare_data(file_paths: list) -> dict:
     """
     Perform full data preparation pipeline.
 
