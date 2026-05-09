@@ -74,7 +74,7 @@ def prepare_data(file_paths: list):
     # ===================================
     cleaned_dfs = []
     cleaning_stats = {}
-    
+
     for name, df in dataframes.items():
         df_before_cleaning = df.copy()
         df = df.sort_values(DATE_COLUMN)
@@ -252,12 +252,16 @@ def prepare_data(file_paths: list):
         # Extract windows with corresponding next-step targets
         for i in range(num_samples):
             # Create window for all nodes
-            X_window = np.zeros((num_features, num_nodes, WINDOW_SIZE), dtype=np.float32)
-            
+            X_window = np.zeros(
+                (num_features, num_nodes, WINDOW_SIZE), dtype=np.float32
+            )
+
             for crypto_idx, crypto in enumerate(cryptos):
                 for t in range(WINDOW_SIZE):
                     node_idx = crypto_idx * WINDOW_SIZE + t
-                    X_window[:, node_idx, :] = crypto_data[crypto][i:i + WINDOW_SIZE, :].T
+                    X_window[:, node_idx, :] = crypto_data[crypto][
+                        i : i + WINDOW_SIZE, :
+                    ].T
 
             X.append(X_window)
 
@@ -271,19 +275,19 @@ def prepare_data(file_paths: list):
 
         X = np.stack(X, axis=0)
         y = np.array(y)
-        
+
         # Replicate adjacency matrix for each sample
         A = np.tile(adj_template, (num_samples, 1, 1))
-        
+
         # Expand targets to node dimension (one target per crypto across time window)
         y_expanded = np.zeros((y.shape[0], num_nodes), dtype=np.float32)
         for crypto_idx in range(num_cryptos):
             node_start = crypto_idx * WINDOW_SIZE
             node_end = node_start + WINDOW_SIZE
-            y_expanded[:, node_start:node_end] = y[:, crypto_idx:crypto_idx+1]
-        
+            y_expanded[:, node_start:node_end] = y[:, crypto_idx : crypto_idx + 1]
+
         y = y_expanded
-        
+
         return X, y, A
 
     X_train, y_train, A_train = build_sliding_windows(train_df)
@@ -292,10 +296,12 @@ def prepare_data(file_paths: list):
     report["sliding_window_statistics"] = {
         "window_size": int(WINDOW_SIZE),
         "num_cryptos": int(len(train_df[CRYPTO_COLUMN].unique())),
-        "num_features": int(len([col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN])),
+        "num_features": int(
+            len([col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN])
+        ),
         "num_nodes": int(len(train_df[CRYPTO_COLUMN].unique()) * WINDOW_SIZE),
         "num_windows_train": int(X_train.shape[0]),
-        "num_windows_test": int(X_test.shape[0])
+        "num_windows_test": int(X_test.shape[0]),
     }
 
     return {
@@ -305,7 +311,7 @@ def prepare_data(file_paths: list):
         "X_test": X_test,
         "y_test": y_test,
         "A_test": A_test,
-        "report": report
+        "report": report,
     }
 
 
