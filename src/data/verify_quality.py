@@ -22,6 +22,7 @@ from src.const import (
     DATA_PATH,
     DATA_FORMAT,
     DATA_QUALITY_VERIFICATION_REPORT_PATH,
+    DATA_TIME_FREQUENCY,
 )
 
 
@@ -72,7 +73,9 @@ def verify_data_quality(file_path: str) -> dict:
     report["time_frequency"] = {
         str(k): int(v) for k, v in time_diffs.value_counts().items()
     }
-    report["num_irregular_time_steps"] = int((time_diffs != pd.Timedelta("1h")).sum())
+    report["num_irregular_time_steps"] = int(
+        (time_diffs != pd.Timedelta(DATA_TIME_FREQUENCY)).sum()
+    )
 
     # ===================================
     # DATE RANGE ANALYSIS
