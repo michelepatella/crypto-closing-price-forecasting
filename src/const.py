@@ -46,4 +46,4 @@ DATA_QUALITY_VERIFICATION_REPORT_PATH = Path(
 DATA_EXPLORATION_REPORT_PATH = Path("reports/data/exploration/report.json")
 DATA_PREPARATION_REPORT_PATH = Path("reports/data/preparation/report.json")
 MODELING_TRAINING_REPORT_PATH = Path("reports/modeling/training/report.json")
-MODEL_CHECKPOINT_DIR = Path("models/checkpoints")
+MODELS_CHECKPOINTS_DIR = Path("models/checkpoints")
