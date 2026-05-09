@@ -3,23 +3,14 @@
 Data exploration for cryptocurrency time series datasets.
 """
 
-import sys
-import os
-import json
 import pandas as pd
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from pathlib import Path
-from src.const import (
+from const import (
     NUMERIC_COLUMNS,
     DATE_COLUMN,
     HIGH_COLUMN,
     LOW_COLUMN,
     CLOSE_COLUMN,
-    DATA_PATH,
-    DATA_FORMAT,
-    DATA_EXPLORATION_REPORT_PATH,
 )
 
 
@@ -112,13 +103,3 @@ def explore_data(file_path: str) -> dict:
     }
 
     return report
-
-
-if __name__ == "__main__":
-    full_report = {}
-    for file_path in DATA_PATH.glob(DATA_FORMAT):
-        report = explore_data(str(file_path))
-        full_report[Path(file_path).stem] = report
-
-    with open(DATA_EXPLORATION_REPORT_PATH, "w") as f:
-        json.dump(full_report, f, indent=4)

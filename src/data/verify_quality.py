@@ -3,15 +3,9 @@
 Data quality verification for cryptocurrency time series datasets.
 """
 
-import sys
-import os
-import json
 import pandas as pd
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
-from pathlib import Path
-from src.const import (
+from const import (
     DATE_COLUMN,
     OPEN_COLUMN,
     HIGH_COLUMN,
@@ -19,9 +13,6 @@ from src.const import (
     CLOSE_COLUMN,
     VOLUME_COLUMN,
     DATASET_COLUMNS,
-    DATA_PATH,
-    DATA_FORMAT,
-    DATA_QUALITY_VERIFICATION_REPORT_PATH,
     DATA_TIME_FREQUENCY,
 )
 
@@ -124,13 +115,3 @@ def verify_data_quality(file_path: str) -> dict:
     report["num_outliers_iqr"] = outlier_report
 
     return report
-
-
-if __name__ == "__main__":
-    full_report = {}
-    for file_path in DATA_PATH.glob(DATA_FORMAT):
-        report = verify_data_quality(str(file_path))
-        full_report[Path(file_path).stem] = report
-
-    with open(DATA_QUALITY_VERIFICATION_REPORT_PATH, "w") as f:
-        json.dump(full_report, f, indent=4)

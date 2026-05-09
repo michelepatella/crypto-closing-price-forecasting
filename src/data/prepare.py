@@ -3,29 +3,21 @@
 Data preparation for cryptocurrency time series datasets.
 """
 
-import sys
-import os
-import json
 import numpy as np
 import pandas as pd
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
-
 from pathlib import Path
-from src.config import TRAIN_RATIO, WINDOW_SIZE
-from src.const import (
+from config import TRAIN_RATIO, WINDOW_SIZE
+from const import (
     NUMERIC_COLUMNS,
     DATE_COLUMN,
     CLOSE_COLUMN,
     ADJ_CLOSE_COLUMN,
     VOLUME_COLUMN,
-    DATA_PATH,
-    DATA_FORMAT,
     CRYPTO_COLUMN,
     HIGH_COLUMN,
     LOW_COLUMN,
     OPEN_COLUMN,
-    DATA_PREPARATION_REPORT_PATH,
 )
 
 
@@ -312,12 +304,3 @@ def prepare_data(file_paths: list) -> dict:
         "A_test": A_test,
         "report": report,
     }
-
-
-if __name__ == "__main__":
-    file_paths = list(DATA_PATH.glob(DATA_FORMAT))
-    result = prepare_data(file_paths)
-    report = result["report"]
-
-    with open(DATA_PREPARATION_REPORT_PATH, "w") as f:
-        json.dump(report, f, indent=4)
