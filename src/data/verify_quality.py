@@ -1,4 +1,4 @@
-"""src/data/quality_verification.py
+"""src/data/verify_quality.py
 
 Data quality verification for cryptocurrency time series datasets.
 """

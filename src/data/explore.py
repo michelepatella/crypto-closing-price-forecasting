@@ -1,4 +1,4 @@
-"""src/data/exploration.py
+"""src/data/explore.py
 
 Data exploration for cryptocurrency time series datasets.
 """

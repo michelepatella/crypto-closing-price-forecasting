@@ -1,5 +1,4 @@
-"""
-src/data/preparation.py
+"""src/data/prepare.py
 
 Data preparation for cryptocurrency time series datasets.
 """
