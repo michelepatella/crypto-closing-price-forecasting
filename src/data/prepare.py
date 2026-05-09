@@ -3,27 +3,27 @@
 Data preparation for cryptocurrency time series datasets.
 """
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
-from pathlib import Path
 from config import TRAIN_RATIO, WINDOW_SIZE
 from const import (
-    NUMERIC_COLUMNS,
-    DATE_COLUMN,
-    CLOSE_COLUMN,
     ADJ_CLOSE_COLUMN,
-    VOLUME_COLUMN,
+    CLOSE_COLUMN,
     CRYPTO_COLUMN,
+    DATE_COLUMN,
     HIGH_COLUMN,
     LOW_COLUMN,
+    NUMERIC_COLUMNS,
     OPEN_COLUMN,
+    VOLUME_COLUMN,
 )
 
 
 def prepare_data(file_paths: list) -> dict:
-    """
-    Perform full data preparation pipeline.
+    """Perform full data preparation pipeline.
 
     Args:
         file_paths (list): List of CSV file paths.
@@ -31,7 +31,6 @@ def prepare_data(file_paths: list) -> dict:
     Returns:
         dict: Prepared datasets (train/test) with report.
     """
-
     report = {}
     dataframes = {}
     missing_values_raw = {}
@@ -78,18 +77,28 @@ def prepare_data(file_paths: list) -> dict:
 
         # Ensure HIGH >= all prices and LOW <= all prices
         df[HIGH_COLUMN] = np.maximum.reduce(
-            [df[HIGH_COLUMN], df[OPEN_COLUMN], df[CLOSE_COLUMN], df[LOW_COLUMN]]
+            [
+                df[HIGH_COLUMN],
+                df[OPEN_COLUMN],
+                df[CLOSE_COLUMN],
+                df[LOW_COLUMN],
+            ],
         )
         df[LOW_COLUMN] = np.minimum.reduce(
-            [df[HIGH_COLUMN], df[OPEN_COLUMN], df[CLOSE_COLUMN], df[LOW_COLUMN]]
+            [
+                df[HIGH_COLUMN],
+                df[OPEN_COLUMN],
+                df[CLOSE_COLUMN],
+                df[LOW_COLUMN],
+            ],
         )
 
         # Add crypto identifier
         df[CRYPTO_COLUMN] = name
 
         cleaning_stats[name] = {
-            "num_rows_before": int(len(df_before_cleaning)),
-            "num_rows_after": int(len(df)),
+            "num_rows_before": len(df_before_cleaning),
+            "num_rows_after": len(df),
             "num_missing_values_after": {
                 col: int(df[col].isnull().sum()) for col in df.columns
             },
@@ -113,7 +122,9 @@ def prepare_data(file_paths: list) -> dict:
     split_stats = {}
 
     for crypto in full_df[CRYPTO_COLUMN].unique():
-        crypto_df = full_df[full_df[CRYPTO_COLUMN] == crypto].sort_values(DATE_COLUMN)
+        crypto_df = full_df[full_df[CRYPTO_COLUMN] == crypto].sort_values(
+            DATE_COLUMN,
+        )
 
         split_idx = int(len(crypto_df) * TRAIN_RATIO)
 
@@ -121,7 +132,7 @@ def prepare_data(file_paths: list) -> dict:
         test_parts.append(crypto_df.iloc[split_idx:])
 
         split_stats[crypto] = {
-            "num_rows": int(len(crypto_df)),
+            "num_rows": len(crypto_df),
             "num_train_rows": int(split_idx),
             "num_test_rows": int(len(crypto_df) - split_idx),
         }
@@ -135,8 +146,8 @@ def prepare_data(file_paths: list) -> dict:
     report["train_test_split_statistics"] = {
         "per_crypto": split_stats,
         "total": {
-            "num_train_rows": int(len(train_df)),
-            "num_test_rows": int(len(test_df)),
+            "num_train_rows": len(train_df),
+            "num_test_rows": len(test_df),
             "train_ratio": float(TRAIN_RATIO),
             "test_ratio": float(1.0 - TRAIN_RATIO),
         },
@@ -187,7 +198,9 @@ def prepare_data(file_paths: list) -> dict:
     # Z-SCORE NORMALIZATION
     # ===================================
     numeric_cols = [
-        col for col in full_df.columns if col not in [DATE_COLUMN, CRYPTO_COLUMN]
+        col
+        for col in full_df.columns
+        if col not in [DATE_COLUMN, CRYPTO_COLUMN]
     ]
     normalization_stats = {}
 
@@ -215,7 +228,9 @@ def prepare_data(file_paths: list) -> dict:
         y = []
         A = []
 
-        feature_cols = [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN]
+        feature_cols = [
+            col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN
+        ]
         num_features = len(feature_cols)
         cryptos = sorted(df[CRYPTO_COLUMN].unique())
         num_cryptos = len(cryptos)
@@ -224,7 +239,9 @@ def prepare_data(file_paths: list) -> dict:
         # Organize data by cryptocurrency
         crypto_data = {}
         for crypto in cryptos:
-            crypto_df = df[df[CRYPTO_COLUMN] == crypto].sort_values(DATE_COLUMN)
+            crypto_df = df[df[CRYPTO_COLUMN] == crypto].sort_values(
+                DATE_COLUMN,
+            )
             crypto_data[crypto] = crypto_df[feature_cols].values
 
         # Use minimum length to ensure balanced samples
@@ -244,14 +261,16 @@ def prepare_data(file_paths: list) -> dict:
         for i in range(num_samples):
             # Create window for all nodes
             X_window = np.zeros(
-                (num_features, num_nodes, WINDOW_SIZE), dtype=np.float32
+                (num_features, num_nodes, WINDOW_SIZE),
+                dtype=np.float32,
             )
 
             for crypto_idx, crypto in enumerate(cryptos):
                 for t in range(WINDOW_SIZE):
                     node_idx = crypto_idx * WINDOW_SIZE + t
                     X_window[:, node_idx, :] = crypto_data[crypto][
-                        i : i + WINDOW_SIZE, :
+                        i : i + WINDOW_SIZE,
+                        :,
                     ].T
 
             X.append(X_window)
@@ -275,7 +294,10 @@ def prepare_data(file_paths: list) -> dict:
         for crypto_idx in range(num_cryptos):
             node_start = crypto_idx * WINDOW_SIZE
             node_end = node_start + WINDOW_SIZE
-            y_expanded[:, node_start:node_end] = y[:, crypto_idx : crypto_idx + 1]
+            y_expanded[:, node_start:node_end] = y[
+                :,
+                crypto_idx : crypto_idx + 1,
+            ]
 
         y = y_expanded
 
@@ -286,9 +308,9 @@ def prepare_data(file_paths: list) -> dict:
 
     report["sliding_window_statistics"] = {
         "window_size": int(WINDOW_SIZE),
-        "num_cryptos": int(len(train_df[CRYPTO_COLUMN].unique())),
-        "num_features": int(
-            len([col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN])
+        "num_cryptos": len(train_df[CRYPTO_COLUMN].unique()),
+        "num_features": len(
+            [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN],
         ),
         "num_nodes": int(len(train_df[CRYPTO_COLUMN].unique()) * WINDOW_SIZE),
         "num_windows_train": int(X_train.shape[0]),

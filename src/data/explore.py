@@ -6,17 +6,16 @@ Data exploration for cryptocurrency time series datasets.
 import pandas as pd
 
 from const import (
-    NUMERIC_COLUMNS,
+    CLOSE_COLUMN,
     DATE_COLUMN,
     HIGH_COLUMN,
     LOW_COLUMN,
-    CLOSE_COLUMN,
+    NUMERIC_COLUMNS,
 )
 
 
 def explore_data(file_path: str) -> dict:
-    """
-    Perform data exploration and produce a comprehensive report.
+    """Perform data exploration and produce a comprehensive report.
 
     Args:
         file_path (str): Path to the CSV file.

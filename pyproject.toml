@@ -1,0 +1,41 @@
+# Building -------------------------------------------------------------------------------------------------------------
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# Project settings -----------------------------------------------------------------------------------------------------
+[project]
+name = "crypto-closing-price-forecasting"
+version = "0.1.0"
+description = "Cryptocurrency closing price prediction using T-MTGNN."
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+authors = [
+    {name = "Michele Patella"}
+]
+
+# Required dependencies ------------------------------------------------------------------------------------------------
+dependencies = ["pandas==3.0.2", "numpy==2.4.4", "torch==2.11.0", "scikit-learn==1.8.0", "tqdm==4.67.3", "git+https://github.com/michelepatella/T-MTGNN==0.1.0"]
+
+# Optional dependencies ------------------------------------------------------------------------------------------------
+[project.optional-dependencies]
+dev = ["ruff==0.15.12", "pre-commit==4.6.0"]
+
+# Other project settings -----------------------------------------------------------------------------------------------
+[project.urls]
+Repository = "https://github.com/michelepatella/crypto-closing-price-forecasting"
+
+# Tools settings -------------------------------------------------------------------------------------------------------
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = ["ALL"]
+extend-select = ["D"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
