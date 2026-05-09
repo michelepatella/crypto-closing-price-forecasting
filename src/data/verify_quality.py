@@ -6,6 +6,7 @@ Data quality verification for cryptocurrency time series datasets.
 import pandas as pd
 
 from const import (
+    CRYPTO_COLUMN,
     DATE_COLUMN,
     OPEN_COLUMN,
     HIGH_COLUMN,
@@ -41,7 +42,9 @@ def verify_data_quality(file_path: str) -> dict:
     # ===================================
     # SCHEMA CONSISTENCY
     # ===================================
-    report["are_columns_valid"] = list(df.columns) == DATASET_COLUMNS
+    report["are_columns_valid"] = list(df.columns) == {
+        col for col in DATASET_COLUMNS if col != CRYPTO_COLUMN
+    }
     report["missing_columns"] = list(set(DATASET_COLUMNS) - set(df.columns))
     report["extra_columns"] = list(set(df.columns) - set(DATASET_COLUMNS))
 
