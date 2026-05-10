@@ -215,7 +215,21 @@ def prepare_data(file_paths: list) -> dict:
     ]
     normalization_stats = {}
 
-    # Normalize using training set statistics to prevent data leakage
+    # Compute per-crypto normalization statistics
+    per_crypto_normalization = {}
+    cryptos = sorted(train_df[CRYPTO_COLUMN].unique())
+    for crypto in cryptos:
+        per_crypto_normalization[crypto] = {}
+        crypto_df = train_df[train_df[CRYPTO_COLUMN] == crypto]
+        for col in numeric_cols:
+            mean = crypto_df[col].mean()
+            std = crypto_df[col].std() if crypto_df[col].std() != 0 else 1.0
+            per_crypto_normalization[crypto][col] = {
+                "mean": float(mean),
+                "std": float(std),
+            }
+
+    # Normalize using training set statistics to prevent data leakage (global stats)
     for col in numeric_cols:
         mean = train_df[col].mean()
         std = train_df[col].std() if train_df[col].std() != 0 else 1.0
@@ -230,6 +244,8 @@ def prepare_data(file_paths: list) -> dict:
         }
 
     report["normalization_statistics"] = normalization_stats
+    report["per_crypto_normalization"] = per_crypto_normalization
+    report["cryptos_order"] = cryptos
 
     # ===================================
     # SLIDING WINDOW CONSTRUCTION

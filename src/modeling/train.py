@@ -20,7 +20,7 @@ from tmtgnn.models import TMTGNN
 from torch import nn
 from tqdm.auto import tqdm
 
-from const import TARGET_COLUMNS
+from const import CLOSE_COLUMN, TARGET_COLUMNS
 
 
 class SMAPELoss(nn.Module):
@@ -314,7 +314,48 @@ class Trainer:
             ),
         )
 
-        return {"mae": float(mae), "rmse": float(rmse), "mape": float(mape)}
+        return {
+            "mae": float(mae),
+            "rmse": float(rmse),
+            "mape": float(mape),
+        }
+
+    def _unnormalize(
+        self,
+        y_tensor: torch.Tensor,
+        prep_report: dict | None,
+    ) -> torch.Tensor:
+        """Inverse transform normalized targets/predictions using
+        per-crypto stats.
+
+        Args:
+            y_tensor (torch.Tensor):
+                Normalized target or prediction tensor of shape (B, num_cryptos).
+            prep_report (dict | None):
+                Data preparation report containing per-crypto normalization stats.
+
+        Returns:
+            torch.Tensor:
+                Un-normalized target or prediction tensor of shape (B, num_cryptos).
+        """
+        if prep_report is None:
+            return y_tensor
+
+        per_crypto = prep_report.get("per_crypto_normalization")
+        cryptos = prep_report.get("cryptos_order")
+        if per_crypto is None or cryptos is None:
+            return y_tensor
+
+        y_un = y_tensor.detach().cpu().clone()
+        for i, crypto in enumerate(cryptos):
+            stats = per_crypto.get(crypto, {}).get(CLOSE_COLUMN)
+            if stats is None:
+                continue
+            mean = stats["mean"]
+            std = stats["std"]
+            y_un[:, i] = y_un[:, i] * std + mean
+
+        return y_un
 
     def train_epoch(
         self,
@@ -322,6 +363,7 @@ class Trainer:
         train_loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
         optimizer: torch.optim.Optimizer,
+        prep_report: dict | None = None,
     ) -> tuple[float, dict]:
         """Train model for one epoch.
 
@@ -394,8 +436,10 @@ class Trainer:
             total_loss += loss.item()
             num_batches += 1
 
-            # Compute batch-level metrics
-            batch_metrics = self._compute_metrics(y_pred, y_batch)
+            # Compute batch-level metrics on un-normalized scale
+            y_pred_un = self._unnormalize(y_pred, prep_report)
+            y_batch_un = self._unnormalize(y_batch, prep_report)
+            batch_metrics = self._compute_metrics(y_pred_un, y_batch_un)
             progress_bar.set_postfix(
                 {
                     "loss": f"{loss.item():.6f}",
@@ -408,9 +452,15 @@ class Trainer:
         # Compute epoch-level metrics
         all_predictions_tensor = torch.cat(all_predictions, dim=0)
         all_targets_tensor = torch.cat(all_targets, dim=0)
-        epoch_metrics = self._compute_metrics(
+        # Epoch-level metrics
+        all_predictions_un = self._unnormalize(
             all_predictions_tensor,
-            all_targets_tensor,
+            prep_report,
+        )
+        all_targets_un = self._unnormalize(all_targets_tensor, prep_report)
+        epoch_metrics = self._compute_metrics(
+            all_predictions_un,
+            all_targets_un,
         )
 
         return total_loss / num_batches, epoch_metrics
@@ -420,6 +470,7 @@ class Trainer:
         model: TMTGNN,
         val_loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
+        prep_report: dict | None = None,
     ) -> tuple[float, dict]:
         """Validate model on validation set.
 
@@ -476,10 +527,13 @@ class Trainer:
         avg_loss = total_loss / num_batches
         all_predictions_tensor = torch.cat(all_predictions, dim=0)
         all_targets_tensor = torch.cat(all_targets, dim=0)
-        val_metrics = self._compute_metrics(
+        # Compute metrics on un-normalized values
+        all_predictions_un = self._unnormalize(
             all_predictions_tensor,
-            all_targets_tensor,
+            prep_report,
         )
+        all_targets_un = self._unnormalize(all_targets_tensor, prep_report)
+        val_metrics = self._compute_metrics(all_predictions_un, all_targets_un)
 
         return avg_loss, val_metrics
 
@@ -625,6 +679,7 @@ class Trainer:
         optimizer_config: dict,
         scheduler_config: dict,
         early_stopping_config: dict,
+        prep_report: dict | None = None,
     ) -> dict:
         """ "Train the model and return a comprehensive report.
 
@@ -721,10 +776,16 @@ class Trainer:
                 train_loader,
                 criterion,
                 optimizer,
+                prep_report,
             )
 
             # Validate on validation set
-            val_loss, val_metrics = self.validate(model, val_loader, criterion)
+            val_loss, val_metrics = self.validate(
+                model,
+                val_loader,
+                criterion,
+                prep_report,
+            )
 
             # Update metrics and check for early stopping
             train_losses.append(train_loss)
