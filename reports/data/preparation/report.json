@@ -377,99 +377,118 @@
             }
         }
     },
-    "train_test_split_statistics": {
+    "train_valid_test_split_statistics": {
         "per_crypto": {
             "BTC": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "BTS": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "DASH": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "DGB": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "DOGE": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "ETH": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "IOC": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "LTC": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "MAID": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "MONA": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "NAV": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "SYS": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "VTC": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "XCP": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "XLM": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "XMR": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             },
             "XRP": {
                 "num_rows": 26325,
                 "num_train_rows": 21060,
-                "num_test_rows": 5265
+                "num_valid_rows": 2632,
+                "num_test_rows": 2633
             }
         },
         "total": {
             "num_train_rows": 358020,
-            "num_test_rows": 89505,
+            "num_valid_rows": 44744,
+            "num_test_rows": 44761,
             "train_ratio": 0.8,
-            "test_ratio": 0.19999999999999996
+            "valid_ratio": 0.1,
+            "test_ratio": 0.09999999999999995
         }
     },
     "volume_transformation": {
@@ -518,6 +537,7 @@
         "num_features": 5,
         "num_nodes": 408,
         "num_windows_train": 21036,
-        "num_windows_test": 5241
+        "num_windows_valid": 2608,
+        "num_windows_test": 2609
     }
 }
