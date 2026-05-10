@@ -17,6 +17,11 @@ The size of the model input window, representing the number of past time
 steps used for prediction (> 0).
 """
 
+sequence_length = 24
+"""
+The temporal context length provided to the transformer for each timestamp (> 0).
+"""
+
 train_ratio = 0.8
 """
 The training split ratio (0.0-1.0).
@@ -31,7 +36,7 @@ The validation split ratio (0.0-1.0).
 # TRAINING
 # ===================================
 
-training_batch_size = 32
+training_batch_size = 4
 """
 The batch size for training (> 0).
 """
@@ -52,17 +57,17 @@ The number of training epochs (> 0).
 
 model_config = {
     "tmtgnn": {
-        "hidden_dim": 32,
+        "hidden_dim": 16,
         "num_layers": 2,
-        "skip_dim": 64,
-        "head_dim": 32,
+        "skip_dim": 32,
+        "head_dim": 16,
         "dropout": 0.1,
     },
     "transformer": {
-        "num_heads": 2,
+        "num_heads": 1,
         "num_layers": 1,
         "dropout": 0.1,
-        "max_sequence_length": 1,
+        "max_sequence_length": sequence_length,
         "mode": "temporal",
     },
     "graph": {
@@ -144,7 +149,7 @@ inference_device = "mps"
 The device to use for inference ("cpu", "cuda", "mps").
 """
 
-inference_batch_size = 32
+inference_batch_size = 4
 """
 The batch size for inference (> 0).
 """

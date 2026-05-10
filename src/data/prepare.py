@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from config import train_ratio, valid_ratio, window_size
+from config import sequence_length, train_ratio, valid_ratio, window_size
 from const import (
     ADJ_CLOSE_COLUMN,
     CLOSE_COLUMN,
@@ -283,16 +283,23 @@ def prepare_data(file_paths: list) -> dict:
                 node_t_plus_1 = crypto_idx * window_size + t + 1
                 adj_template[node_t, node_t_plus_1] = 1.0
 
-        num_samples = min_length - window_size
+        num_samples = min_length - window_size - sequence_length + 1
 
         # Extract windows with corresponding next-step targets
-        for i in range(num_samples):
-            X_window = np.zeros((num_features, num_nodes, 1), dtype=np.float32)
+        for i in range(sequence_length - 1, sequence_length - 1 + num_samples):
+            X_window = np.zeros(
+                (num_features, num_nodes, sequence_length),
+                dtype=np.float32,
+            )
 
             for crypto_idx, crypto in enumerate(cryptos):
                 for t in range(window_size):
                     node_idx = crypto_idx * window_size + t
-                    X_window[:, node_idx, 0] = crypto_data[crypto][i + t]
+                    time_idx = i + t
+                    start_idx = time_idx - sequence_length + 1
+                    X_window[:, node_idx, :] = crypto_data[crypto][
+                        start_idx : time_idx + 1
+                    ].T
 
             X.append(X_window)
 
@@ -318,6 +325,7 @@ def prepare_data(file_paths: list) -> dict:
 
     report["sliding_window_statistics"] = {
         "window_size": int(window_size),
+        "sequence_length": int(sequence_length),
         "num_cryptos": len(train_df[CRYPTO_COLUMN].unique()),
         "num_features": len(
             [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN],
