@@ -1,0 +1,104 @@
+{
+    "summary": {
+        "best_epoch": 1,
+        "best_val_loss": 4.587713173196359,
+        "best_val_metrics": {
+            "mae": 0.014156468212604523,
+            "rmse": 0.04955087602138519,
+            "mape": 91.77519226074219
+        },
+        "final_train_loss": 10.36930790893205,
+        "final_val_loss": 4.587713173196359,
+        "final_val_metrics": {
+            "mae": 0.014156468212604523,
+            "rmse": 0.04955087602138519,
+            "mape": 91.77519226074219
+        }
+    },
+    "history": {
+        "train_losses": [
+            10.36930790893205
+        ],
+        "val_losses": [
+            4.587713173196359
+        ],
+        "train_metrics": [
+            {
+                "mae": 0.07238785922527313,
+                "rmse": 0.3680475950241089,
+                "mape": 119.89036560058594
+            }
+        ],
+        "val_metrics": [
+            {
+                "mae": 0.014156468212604523,
+                "rmse": 0.04955087602138519,
+                "mape": 91.77519226074219
+            }
+        ],
+        "min_train_loss": 10.36930790893205,
+        "min_val_loss": 4.587713173196359
+    },
+    "config": {
+        "model": {
+            "tmtgnn": {
+                "hidden_dim": 16,
+                "num_layers": 2,
+                "skip_dim": 32,
+                "head_dim": 16,
+                "dropout": 0.1
+            },
+            "transformer": {
+                "num_heads": 1,
+                "num_layers": 1,
+                "dropout": 0.1,
+                "max_sequence_length": 1,
+                "mode": "temporal"
+            },
+            "graph": {
+                "learning_enabled": false,
+                "top_k": 10,
+                "ema_alpha": 0.99,
+                "sigmoid_alpha": 1.0,
+                "noise_scale": 0.01
+            },
+            "diffusion": {
+                "diffusion_steps": 1,
+                "residual_alpha": 0.5,
+                "projection_bias": true
+            },
+            "norm": {
+                "eps": 1e-05,
+                "elementwise_affine": true
+            }
+        },
+        "optimizer": {
+            "lr": 0.001,
+            "weight_decay": 1e-05,
+            "betas": [
+                0.9,
+                0.999
+            ]
+        },
+        "scheduler": {
+            "mode": "min",
+            "factor": 0.5,
+            "patience": 5,
+            "min_lr": 1e-06
+        },
+        "early_stopping": {
+            "patience": 5,
+            "delta": 0.0001
+        },
+        "batch_size": 4,
+        "epochs": 1
+    },
+    "metadata": {
+        "timestamp": "2026-05-10T17:55:24.629545",
+        "device": "mps",
+        "dataset": {
+            "num_train_samples": 21036,
+            "num_val_samples": 2608
+        }
+    }
+}

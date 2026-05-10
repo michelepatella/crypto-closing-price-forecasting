@@ -238,13 +238,49 @@ class Trainer:
 
         return model
 
+    def _compute_metrics(
+        self,
+        y_pred: torch.Tensor,
+        y_true: torch.Tensor,
+    ) -> dict:
+        """Compute evaluation metrics.
+
+        Args:
+            y_pred (torch.Tensor):
+                Predicted values.
+            y_true (torch.Tensor):
+                True values.
+
+        Returns:
+            dict:
+                Dictionary containing computed metrics.
+        """
+        # Flatten tensors for metric computation
+        y_pred_flat = y_pred.detach().cpu().numpy().flatten()
+        y_true_flat = y_true.detach().cpu().numpy().flatten()
+
+        # Mean Absolute Error
+        mae = np.mean(np.abs(y_pred_flat - y_true_flat))
+
+        # Root Mean Squared Error
+        rmse = np.sqrt(np.mean((y_pred_flat - y_true_flat) ** 2))
+
+        # Mean Absolute Percentage Error
+        mape = 100 * np.mean(
+            np.abs(
+                (y_true_flat - y_pred_flat) / (np.abs(y_true_flat) + 1e-10),
+            ),
+        )
+
+        return {"mae": float(mae), "rmse": float(rmse), "mape": float(mape)}
+
     def train_epoch(
         self,
         model: TMTGNN,
         train_loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
         optimizer: torch.optim.Optimizer,
-    ) -> float:
+    ) -> tuple[float, dict]:
         """Train model for one epoch.
 
         Args:
@@ -258,11 +294,13 @@ class Trainer:
                 Optimizer.
 
         Returns:
-            float:
-                Average training loss.
+            tuple[float, dict]:
+                Average training loss and metrics dictionary.
         """
         model.train()
         total_loss = 0.0
+        all_predictions = []
+        all_targets = []
         num_batches = 0
 
         progress_bar = tqdm(
@@ -306,20 +344,41 @@ class Trainer:
             # Update parameters
             optimizer.step()
 
+            # Collect predictions and targets for metrics
+            all_predictions.append(y_pred.detach())
+            all_targets.append(y_batch.detach())
+
             # Update metrics
             total_loss += loss.item()
             num_batches += 1
 
-            progress_bar.set_postfix({"loss": f"{loss.item():.6f}"})
+            # Compute batch-level metrics
+            batch_metrics = self._compute_metrics(y_pred, y_batch)
+            progress_bar.set_postfix(
+                {
+                    "loss": f"{loss.item():.6f}",
+                    "mae": f"{batch_metrics['mae']:.6f}",
+                    "rmse": f"{batch_metrics['rmse']:.6f}",
+                    "mape": f"{batch_metrics['mape']:.2f}%",
+                },
+            )
 
-        return total_loss / num_batches
+        # Compute epoch-level metrics
+        all_predictions_tensor = torch.cat(all_predictions, dim=0)
+        all_targets_tensor = torch.cat(all_targets, dim=0)
+        epoch_metrics = self._compute_metrics(
+            all_predictions_tensor,
+            all_targets_tensor,
+        )
+
+        return total_loss / num_batches, epoch_metrics
 
     def validate(
         self,
         model: TMTGNN,
         val_loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
-    ) -> float:
+    ) -> tuple[float, dict]:
         """Validate model on validation set.
 
         Args:
@@ -331,11 +390,13 @@ class Trainer:
                 Loss function.
 
         Returns:
-            float:
-                Average validation loss.
+            tuple[float, dict]:
+                Average validation loss and metrics dictionary.
         """
         model.eval()
         total_loss = 0.0
+        all_predictions = []
+        all_targets = []
         num_batches = 0
 
         with torch.no_grad():
@@ -361,14 +422,24 @@ class Trainer:
                 # Compute loss
                 loss = criterion(y_pred, y_batch)
 
+                # Collect predictions and targets for metrics
+                all_predictions.append(y_pred.detach())
+                all_targets.append(y_batch.detach())
+
                 # Update metrics
                 total_loss += loss.item()
                 num_batches += 1
 
-        # Compute average loss
+        # Compute average loss and metrics
         avg_loss = total_loss / num_batches
+        all_predictions_tensor = torch.cat(all_predictions, dim=0)
+        all_targets_tensor = torch.cat(all_targets, dim=0)
+        val_metrics = self._compute_metrics(
+            all_predictions_tensor,
+            all_targets_tensor,
+        )
 
-        return avg_loss
+        return avg_loss, val_metrics
 
     def create_data_loaders(
         self,
@@ -594,11 +665,13 @@ class Trainer:
         # Training loop with early stopping
         train_losses = []
         val_losses = []
+        train_metrics_history = []
+        val_metrics_history = []
         best_model_state = None
         epoch_bar = tqdm(range(training_epochs), desc="Training")
         for epoch in epoch_bar:
             # Train for one epoch
-            train_loss = self.train_epoch(
+            train_loss, train_metrics = self.train_epoch(
                 model,
                 train_loader,
                 criterion,
@@ -606,11 +679,13 @@ class Trainer:
             )
 
             # Validate on validation set
-            val_loss = self.validate(model, val_loader, criterion)
+            val_loss, val_metrics = self.validate(model, val_loader, criterion)
 
             # Update metrics and check for early stopping
             train_losses.append(train_loss)
             val_losses.append(val_loss)
+            train_metrics_history.append(train_metrics)
+            val_metrics_history.append(val_metrics)
 
             # Step the learning rate scheduler based on validation loss
             scheduler.step(val_loss)
@@ -627,7 +702,13 @@ class Trainer:
                 break
 
             epoch_bar.set_postfix(
-                {"train": f"{train_loss:.4f}", "val": f"{val_loss:.4f}"},
+                {
+                    "train_loss": f"{train_loss:.4f}",
+                    "val_loss": f"{val_loss:.4f}",
+                    "val_mae": f"{val_metrics['mae']:.6f}",
+                    "val_mape": f"{val_metrics['mape']:.2f}%",
+                    "val_rmse": f"{val_metrics['rmse']:.6f}",
+                },
             )
 
         # Load best model state before returning report
@@ -639,12 +720,18 @@ class Trainer:
             "summary": {
                 "best_epoch": early_stopping.best_epoch + 1,
                 "best_val_loss": float(early_stopping.best_loss),
+                "best_val_metrics": val_metrics_history[
+                    early_stopping.best_epoch
+                ],
                 "final_train_loss": float(train_losses[-1]),
                 "final_val_loss": float(val_losses[-1]),
+                "final_val_metrics": val_metrics_history[-1],
             },
             "history": {
                 "train_losses": [float(x) for x in train_losses],
                 "val_losses": [float(x) for x in val_losses],
+                "train_metrics": train_metrics_history,
+                "val_metrics": val_metrics_history,
                 "min_train_loss": float(min(train_losses)),
                 "min_val_loss": float(min(val_losses)),
             },
