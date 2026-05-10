@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from config import TRAIN_RATIO, VALID_RATIO, WINDOW_SIZE
+from config import train_ratio, valid_ratio, window_size
 from const import (
     ADJ_CLOSE_COLUMN,
     CLOSE_COLUMN,
@@ -129,8 +129,8 @@ def prepare_data(file_paths: list) -> dict:
 
         n = len(crypto_df)
 
-        train_end = int(n * TRAIN_RATIO)
-        valid_end = int(n * (TRAIN_RATIO + VALID_RATIO))
+        train_end = int(n * train_ratio)
+        valid_end = int(n * (train_ratio + valid_ratio))
 
         train_parts.append(crypto_df.iloc[:train_end])
         valid_parts.append(crypto_df.iloc[train_end:valid_end])
@@ -157,9 +157,9 @@ def prepare_data(file_paths: list) -> dict:
             "num_train_rows": len(train_df),
             "num_valid_rows": len(valid_df),
             "num_test_rows": len(test_df),
-            "train_ratio": float(TRAIN_RATIO),
-            "valid_ratio": float(VALID_RATIO),
-            "test_ratio": float(1.0 - TRAIN_RATIO - VALID_RATIO),
+            "train_ratio": float(train_ratio),
+            "valid_ratio": float(valid_ratio),
+            "test_ratio": float(1.0 - train_ratio - valid_ratio),
         },
     }
 
@@ -246,7 +246,7 @@ def prepare_data(file_paths: list) -> dict:
         num_features = len(feature_cols)
         cryptos = sorted(df[CRYPTO_COLUMN].unique())
         num_cryptos = len(cryptos)
-        num_nodes = num_cryptos * WINDOW_SIZE
+        num_nodes = num_cryptos * window_size
 
         # Organize data by cryptocurrency
         crypto_data = {}
@@ -262,24 +262,24 @@ def prepare_data(file_paths: list) -> dict:
         # Build adjacency matrix for temporal connections (t → t+1)
         adj_template = np.zeros((num_nodes, num_nodes), dtype=np.float32)
         for crypto_idx in range(num_cryptos):
-            for t in range(WINDOW_SIZE - 1):
-                node_t = crypto_idx * WINDOW_SIZE + t
-                node_t_plus_1 = crypto_idx * WINDOW_SIZE + t + 1
+            for t in range(window_size - 1):
+                node_t = crypto_idx * window_size + t
+                node_t_plus_1 = crypto_idx * window_size + t + 1
                 adj_template[node_t, node_t_plus_1] = 1.0
 
-        num_samples = min_length - WINDOW_SIZE
+        num_samples = min_length - window_size
 
         # Extract windows with corresponding next-step targets
         for i in range(num_samples):
             # Create window for all nodes
             X_window = np.zeros(
-                (num_features, num_nodes, WINDOW_SIZE),
+                (num_features, num_nodes, window_size),
                 dtype=np.float32,
             )
 
             for crypto_idx, crypto in enumerate(cryptos):
-                for t in range(WINDOW_SIZE):
-                    node_idx = crypto_idx * WINDOW_SIZE + t
+                for t in range(window_size):
+                    node_idx = crypto_idx * window_size + t
 
                     X_window[:, node_idx, t] = crypto_data[crypto][i + t]
 
@@ -289,7 +289,7 @@ def prepare_data(file_paths: list) -> dict:
             y_sample = []
             for crypto in cryptos:
                 close_idx = feature_cols.index(CLOSE_COLUMN)
-                target = crypto_data[crypto][i + WINDOW_SIZE, close_idx]
+                target = crypto_data[crypto][i + window_size, close_idx]
                 y_sample.append(target)
             y.append(y_sample)
 
@@ -306,12 +306,12 @@ def prepare_data(file_paths: list) -> dict:
     X_test, y_test, A_test = build_sliding_windows(test_df)
 
     report["sliding_window_statistics"] = {
-        "window_size": int(WINDOW_SIZE),
+        "window_size": int(window_size),
         "num_cryptos": len(train_df[CRYPTO_COLUMN].unique()),
         "num_features": len(
             [col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN],
         ),
-        "num_nodes": int(len(train_df[CRYPTO_COLUMN].unique()) * WINDOW_SIZE),
+        "num_nodes": int(len(train_df[CRYPTO_COLUMN].unique()) * window_size),
         "num_windows_train": int(X_train.shape[0]),
         "num_windows_valid": int(X_valid.shape[0]),
         "num_windows_test": int(X_test.shape[0]),
