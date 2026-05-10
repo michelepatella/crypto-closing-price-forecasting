@@ -23,6 +23,43 @@ from tqdm.auto import tqdm
 from const import TARGET_COLUMNS
 
 
+class SMAPELoss(nn.Module):
+    """Custom implementation of SMAPE loss function."""
+
+    def __init__(self) -> None:
+        """Initialize SMAPELoss.
+
+        Returns:
+            None
+        """
+        super().__init__()
+
+    def forward(
+        self,
+        y_pred: torch.Tensor,
+        y_true: torch.Tensor,
+    ) -> torch.Tensor:
+        """Compute SMAPE loss between predictions and true values.
+
+        Args:
+            y_pred (torch.Tensor):
+                Predicted values.
+            y_true (torch.Tensor):
+                True values.
+
+        Returns:
+            torch.Tensor:
+                Computed SMAPE loss.
+        """
+        numerator = torch.abs(y_pred - y_true)
+        denominator = (torch.abs(y_pred) + torch.abs(y_true)) / 2
+
+        # SMAPE formula
+        smape = numerator / (denominator + 1e-10)
+
+        return 100 * torch.mean(smape)
+
+
 class EarlyStopping:
     """Early stopping callback.
 
@@ -527,7 +564,7 @@ class Trainer:
             betas=optimizer_config["betas"],
         )
 
-        criterion = nn.MSELoss()
+        criterion = SMAPELoss()
 
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
