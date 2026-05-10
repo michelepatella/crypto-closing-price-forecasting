@@ -31,7 +31,7 @@ The validation split ratio (0.0-1.0).
 # TRAINING
 # ===================================
 
-training_batch_size = 4
+training_batch_size = 32
 """
 The batch size for training (> 0).
 """
@@ -117,4 +117,12 @@ early_stopping_config = {
     "delta": 1e-4,
 }
 """Early stopping configuration dictionary.
+"""
+
+# ===================================
+# LOSS
+# ===================================
+loss_alpha = 0.5
+"""
+The alpha parameter for the combined loss function (0.0-1.0).
 """

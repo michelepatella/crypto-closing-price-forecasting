@@ -60,6 +60,48 @@ class SMAPELoss(nn.Module):
         return 100 * torch.mean(smape)
 
 
+class HybridLoss(nn.Module):
+    """Combines SMAPE and MAE for balanced training."""
+
+    def __init__(self, alpha: float = 0.5) -> None:
+        """Initialize HybridLoss.
+
+        Args:
+            alpha (float):
+                Weighting factor for SMAPE (0.0-1.0).
+
+        Returns:
+            None
+        """
+        super().__init__()
+        self.alpha = alpha
+        self.smape = SMAPELoss()
+        self.mae = nn.L1Loss()
+
+    def forward(
+        self,
+        y_pred: torch.Tensor,
+        y_true: torch.Tensor,
+    ) -> torch.Tensor:
+        """Compute the hybrid loss.
+
+        Args:
+            y_pred (torch.Tensor):
+                Predicted values.
+            y_true (torch.Tensor):
+                True values.
+
+        Returns:
+            torch.Tensor:
+                Combined loss value.
+        """
+        smape_val = self.smape(y_pred, y_true)
+        mae_val = self.mae(y_pred, y_true)
+
+        # Hybrid combination
+        return (self.alpha * smape_val) + ((1 - self.alpha) * mae_val)
+
+
 class EarlyStopping:
     """Early stopping callback.
 
@@ -579,6 +621,7 @@ class Trainer:
         A_val: np.ndarray,
         batch_size: int,
         training_epochs: int,
+        loss_alpha: float,
         optimizer_config: dict,
         scheduler_config: dict,
         early_stopping_config: dict,
@@ -602,6 +645,8 @@ class Trainer:
                 Batch size for training.
             training_epochs (int):
                 Number of training epochs.
+            loss_alpha (float):
+                Alpha parameter for the combined loss function.
             optimizer_config (dict):
                 Configuration for the optimizer.
             scheduler_config (dict):
@@ -635,7 +680,7 @@ class Trainer:
             betas=optimizer_config["betas"],
         )
 
-        criterion = SMAPELoss()
+        criterion = HybridLoss(alpha=loss_alpha)
 
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,

@@ -13,6 +13,7 @@ import torch
 
 from config import (
     early_stopping_config,
+    loss_alpha,
     model_config,
     optimizer_config,
     scheduler_config,
@@ -106,6 +107,7 @@ def main() -> None:
         A_val=data_prep_result["A_valid"],
         batch_size=training_batch_size,
         training_epochs=training_epochs,
+        loss_alpha=loss_alpha,
         optimizer_config=optimizer_config,
         scheduler_config=scheduler_config,
         early_stopping_config=early_stopping_config,
