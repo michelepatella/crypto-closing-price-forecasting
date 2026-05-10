@@ -52,14 +52,14 @@ The number of training epochs (> 0).
 
 model_config = {
     "tmtgnn": {
-        "hidden_dim": 16,
+        "hidden_dim": 32,
         "num_layers": 2,
-        "skip_dim": 32,
+        "skip_dim": 64,
         "head_dim": 16,
         "dropout": 0.1,
     },
     "transformer": {
-        "num_heads": 1,
+        "num_heads": 2,
         "num_layers": 1,
         "dropout": 0.1,
         "max_sequence_length": 1,
@@ -91,7 +91,7 @@ Model configuration dictionary.
 # ===================================
 optimizer_config = {
     "lr": 1e-3,
-    "weight_decay": 1e-5,
+    "weight_decay": 1e-4,
     "betas": (0.9, 0.999),
 }
 """Optimizer configuration dictionary.
@@ -103,7 +103,7 @@ optimizer_config = {
 scheduler_config = {
     "mode": "min",
     "factor": 0.5,
-    "patience": 5,
+    "patience": 10,
     "min_lr": 1e-6,
 }
 """Scheduler configuration dictionary.
@@ -113,7 +113,7 @@ scheduler_config = {
 # EARLY STOPPING
 # ===================================
 early_stopping_config = {
-    "patience": 5,
+    "patience": 15,
     "delta": 1e-4,
 }
 """Early stopping configuration dictionary.
@@ -122,7 +122,7 @@ early_stopping_config = {
 # ===================================
 # LOSS
 # ===================================
-loss_alpha = 0.5
+loss_alpha = 0.4
 """
 The alpha parameter for the combined loss function (0.0-1.0).
 """
