@@ -94,33 +94,32 @@ def main() -> None:
     with open(DATA_PREPARATION_REPORT_PATH, "w") as f:
         json.dump(data_prep_report, f, indent=4)
 
-    if False:
-        ##################################################
-        # [3] MODEL TRAINING
-        ##################################################
-        trainer = Trainer(
-            model_config=model_config,
-            model_path=Path(BEST_MODEL_PATH),
-            device=training_device,
-        )
-        training_report = trainer.train(
-            X_train=data_prep_result["X_train"],
-            y_train=data_prep_result["y_train"],
-            A_train=data_prep_result["A_train"],
-            X_val=data_prep_result["X_valid"],
-            y_val=data_prep_result["y_valid"],
-            A_val=data_prep_result["A_valid"],
-            batch_size=training_batch_size,
-            training_epochs=training_epochs,
-            loss_alpha=loss_alpha,
-            optimizer_config=optimizer_config,
-            scheduler_config=scheduler_config,
-            early_stopping_config=early_stopping_config,
-            prep_report=data_prep_report,
-        )
+    ##################################################
+    # [3] MODEL TRAINING
+    ##################################################
+    trainer = Trainer(
+        model_config=model_config,
+        model_path=Path(BEST_MODEL_PATH),
+        device=training_device,
+    )
+    training_report = trainer.train(
+        X_train=data_prep_result["X_train"],
+        y_train=data_prep_result["y_train"],
+        A_train=data_prep_result["A_train"],
+        X_val=data_prep_result["X_valid"],
+        y_val=data_prep_result["y_valid"],
+        A_val=data_prep_result["A_valid"],
+        batch_size=training_batch_size,
+        training_epochs=training_epochs,
+        loss_alpha=loss_alpha,
+        optimizer_config=optimizer_config,
+        scheduler_config=scheduler_config,
+        early_stopping_config=early_stopping_config,
+        prep_report=data_prep_report,
+    )
 
-        with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
-            json.dump(training_report, f, indent=4)
+    with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
+        json.dump(training_report, f, indent=4)
 
     ##################################################
     # [4] MODEL EVALUATION
