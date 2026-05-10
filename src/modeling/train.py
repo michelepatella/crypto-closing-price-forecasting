@@ -61,14 +61,14 @@ class SMAPELoss(nn.Module):
 
 
 class HybridLoss(nn.Module):
-    """Combines SMAPE and MAE for balanced training."""
+    """Combine SMAPE and MAE in a hybrid loss for balanced training."""
 
-    def __init__(self, alpha: float = 0.5) -> None:
+    def __init__(self, alpha: float) -> None:
         """Initialize HybridLoss.
 
         Args:
             alpha (float):
-                Weighting factor for SMAPE (0.0-1.0).
+                Weighting factor.
 
         Returns:
             None
@@ -167,7 +167,7 @@ class EarlyStopping:
 
 
 class Trainer:
-    """Training pipeline with Early Stopping.
+    """Training pipeline with early stopping and custom hybrid loss.
 
     Attributes:
         device (torch.device):
@@ -204,7 +204,7 @@ class Trainer:
         self.model_path = model_path
         self.report = {}
 
-    def create_model(
+    def _create_model(
         self,
         num_nodes: int,
         in_channels: int,
@@ -284,41 +284,67 @@ class Trainer:
         self,
         y_pred: torch.Tensor,
         y_true: torch.Tensor,
+        cryptos: list | None = None,
     ) -> dict:
-        """Compute evaluation metrics.
+        """Compute evaluation metrics per-crypto and overall.
 
         Args:
             y_pred (torch.Tensor):
-                Predicted values.
+                Predicted values of shape (N, num_cryptos).
             y_true (torch.Tensor):
-                True values.
+                True values of shape (N, num_cryptos).
+            cryptos (list | None):
+                Optional list of cryptocurrency names corresponding to columns.
 
         Returns:
             dict:
-                Dictionary containing computed metrics.
+                Dictionary containing overall metrics and per-crypto metrics.
         """
-        # Flatten tensors for metric computation
-        y_pred_flat = y_pred.detach().cpu().numpy().flatten()
-        y_true_flat = y_true.detach().cpu().numpy().flatten()
+        # Convert to numpy arrays
+        y_pred_arr = y_pred.detach().cpu().numpy()
+        y_true_arr = y_true.detach().cpu().numpy()
 
-        # Mean Absolute Error
-        mae = np.mean(np.abs(y_pred_flat - y_true_flat))
+        # Ensure 2D (N, num_cryptos)
+        if y_pred_arr.ndim == 1:
+            y_pred_arr = y_pred_arr.reshape(-1, 1)
+        if y_true_arr.ndim == 1:
+            y_true_arr = y_true_arr.reshape(-1, 1)
 
-        # Root Mean Squared Error
-        rmse = np.sqrt(np.mean((y_pred_flat - y_true_flat) ** 2))
+        _, c = y_true_arr.shape
 
-        # Mean Absolute Percentage Error
-        mape = 100 * np.mean(
-            np.abs(
-                (y_true_flat - y_pred_flat) / (np.abs(y_true_flat) + 1e-10),
+        per_crypto = {}
+        for i in range(c):
+            pred_i = y_pred_arr[:, i]
+            true_i = y_true_arr[:, i]
+
+            mae_i = np.mean(np.abs(pred_i - true_i))
+            rmse_i = np.sqrt(np.mean((pred_i - true_i) ** 2))
+            mape_i = 100 * np.mean(
+                np.abs((true_i - pred_i) / (np.abs(true_i) + 1e-10)),
+            )
+
+            key = cryptos[i] if cryptos and i < len(cryptos) else f"crypto_{i}"
+            per_crypto[key] = {
+                "mae": float(mae_i),
+                "rmse": float(rmse_i),
+                "mape": float(mape_i),
+            }
+
+        # Overall metrics (flattened)
+        pred_flat = y_pred_arr.flatten()
+        true_flat = y_true_arr.flatten()
+        mae = float(np.mean(np.abs(pred_flat - true_flat)))
+        rmse = float(np.sqrt(np.mean((pred_flat - true_flat) ** 2)))
+        mape = float(
+            100
+            * np.mean(
+                np.abs((true_flat - pred_flat) / (np.abs(true_flat) + 1e-10)),
             ),
         )
 
-        return {
-            "mae": float(mae),
-            "rmse": float(rmse),
-            "mape": float(mape),
-        }
+        overall = {"mae": mae, "rmse": rmse, "mape": mape}
+
+        return {"overall": overall, "per_crypto": per_crypto}
 
     def _unnormalize(
         self,
@@ -357,13 +383,14 @@ class Trainer:
 
         return y_un
 
-    def train_epoch(
+    def _train_epoch(
         self,
         model: TMTGNN,
         train_loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
         optimizer: torch.optim.Optimizer,
-        prep_report: dict | None = None,
+        max_norm: float,
+        prep_report: dict | None,
     ) -> tuple[float, dict]:
         """Train model for one epoch.
 
@@ -376,6 +403,10 @@ class Trainer:
                 Loss function.
             optimizer (torch.optim.Optimizer):
                 Optimizer.
+            max_norm (float):
+                Maximum norm for gradient clipping.
+            prep_report (dict | None):
+                Data preparation report for un-normalization.
 
         Returns:
             tuple[float, dict]:
@@ -423,7 +454,10 @@ class Trainer:
             loss.backward()
 
             # Gradient clipping
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            torch.nn.utils.clip_grad_norm_(
+                model.parameters(),
+                max_norm=max_norm,
+            )
 
             # Update parameters
             optimizer.step()
@@ -436,41 +470,32 @@ class Trainer:
             total_loss += loss.item()
             num_batches += 1
 
-            # Compute batch-level metrics on un-normalized scale
-            y_pred_un = self._unnormalize(y_pred, prep_report)
-            y_batch_un = self._unnormalize(y_batch, prep_report)
-            batch_metrics = self._compute_metrics(y_pred_un, y_batch_un)
-            progress_bar.set_postfix(
-                {
-                    "loss": f"{loss.item():.6f}",
-                    "mae": f"{batch_metrics['mae']:.6f}",
-                    "rmse": f"{batch_metrics['rmse']:.6f}",
-                    "mape": f"{batch_metrics['mape']:.2f}%",
-                },
-            )
+            # Only show loss in batch tqdm
+            progress_bar.set_postfix({"loss": f"{loss.item():.6f}"})
 
         # Compute epoch-level metrics
         all_predictions_tensor = torch.cat(all_predictions, dim=0)
         all_targets_tensor = torch.cat(all_targets, dim=0)
-        # Epoch-level metrics
         all_predictions_un = self._unnormalize(
             all_predictions_tensor,
             prep_report,
         )
         all_targets_un = self._unnormalize(all_targets_tensor, prep_report)
+        cryptos = prep_report.get("cryptos_order") if prep_report else None
         epoch_metrics = self._compute_metrics(
             all_predictions_un,
             all_targets_un,
+            cryptos=cryptos,
         )
 
         return total_loss / num_batches, epoch_metrics
 
-    def validate(
+    def _validate(
         self,
         model: TMTGNN,
         val_loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
-        prep_report: dict | None = None,
+        prep_report: dict | None,
     ) -> tuple[float, dict]:
         """Validate model on validation set.
 
@@ -481,6 +506,8 @@ class Trainer:
                 Validation data loader.
             criterion (nn.Module):
                 Loss function.
+            prep_report (dict | None):
+                Data preparation report for un-normalization.
 
         Returns:
             tuple[float, dict]:
@@ -527,17 +554,21 @@ class Trainer:
         avg_loss = total_loss / num_batches
         all_predictions_tensor = torch.cat(all_predictions, dim=0)
         all_targets_tensor = torch.cat(all_targets, dim=0)
-        # Compute metrics on un-normalized values
         all_predictions_un = self._unnormalize(
             all_predictions_tensor,
             prep_report,
         )
         all_targets_un = self._unnormalize(all_targets_tensor, prep_report)
-        val_metrics = self._compute_metrics(all_predictions_un, all_targets_un)
+        cryptos = prep_report.get("cryptos_order") if prep_report else None
+        val_metrics = self._compute_metrics(
+            all_predictions_un,
+            all_targets_un,
+            cryptos=cryptos,
+        )
 
         return avg_loss, val_metrics
 
-    def create_data_loaders(
+    def _create_data_loaders(
         self,
         X_train: np.ndarray,
         y_train: np.ndarray,
@@ -546,7 +577,7 @@ class Trainer:
         y_val: np.ndarray,
         A_val: np.ndarray,
         batch_size: int,
-    ) -> tuple:
+    ) -> tuple[torch.utils.data.DataLoader, torch.utils.data.DataLoader]:
         """Create train and validation data loaders.
 
         Args:
@@ -566,7 +597,7 @@ class Trainer:
                 Batch size.
 
         Returns:
-            tuple:
+            tuple[torch.utils.data.DataLoader, torch.utils.data.DataLoader]:
                 A tuple containing the training and validation data loaders.
         """
 
@@ -614,7 +645,10 @@ class Trainer:
                 """
                 return len(self.X)
 
-            def __getitem__(self, idx) -> tuple:
+            def __getitem__(
+                self,
+                idx: int,
+            ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
                 """Retrieve a sample from the dataset.
 
                 Args:
@@ -622,22 +656,24 @@ class Trainer:
                         Index of the sample to retrieve.
 
                 Returns:
-                    tuple:
+                    tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
                         A tuple containing the feature tensor, target tensor,
                         and adjacency matrix for the given index.
                 """
                 return self.X[idx], self.y[idx], self.A
 
-        def collate_batch(batch: list[tuple]) -> tuple:
+        def _collate_batch(
+            batch: list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]],
+        ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
             """Stack features and targets while keeping a single adjacency matrix.
 
             Args:
-                batch (list[tuple]):
+                batch (list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]):
                     A list of tuples, where each tuple contains a feature tensor,
                     target tensor, and adjacency matrix.
 
             Returns:
-                tuple:
+                tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
                     A tuple containing the stacked feature tensor, stacked target tensor,
                     and a single adjacency matrix.
             """
@@ -653,14 +689,14 @@ class Trainer:
             train_dataset,
             batch_size=batch_size,
             pin_memory=True,
-            collate_fn=collate_batch,
+            collate_fn=_collate_batch,
         )
 
         val_loader = torch.utils.data.DataLoader(
             val_dataset,
             batch_size=batch_size,
             pin_memory=True,
-            collate_fn=collate_batch,
+            collate_fn=_collate_batch,
         )
 
         return train_loader, val_loader
@@ -679,7 +715,7 @@ class Trainer:
         optimizer_config: dict,
         scheduler_config: dict,
         early_stopping_config: dict,
-        prep_report: dict | None = None,
+        prep_report: dict | None,
     ) -> dict:
         """ "Train the model and return a comprehensive report.
 
@@ -708,6 +744,8 @@ class Trainer:
                 Configuration for the learning rate scheduler.
             early_stopping_config (dict):
                 Configuration for early stopping.
+            prep_report (dict | None):
+                Data preparation report for un-normalization.
 
         Returns:
             dict:
@@ -720,7 +758,7 @@ class Trainer:
         out_channels = len(TARGET_COLUMNS)
 
         # Create model
-        model = self.create_model(
+        model = self._create_model(
             num_nodes,
             in_channels,
             seq_length,
@@ -746,7 +784,7 @@ class Trainer:
         )
 
         # Create data loaders
-        train_loader, val_loader = self.create_data_loaders(
+        train_loader, val_loader = self._create_data_loaders(
             X_train,
             y_train,
             A_train,
@@ -771,16 +809,17 @@ class Trainer:
         epoch_bar = tqdm(range(training_epochs), desc="Training")
         for epoch in epoch_bar:
             # Train for one epoch
-            train_loss, train_metrics = self.train_epoch(
+            train_loss, train_metrics = self._train_epoch(
                 model,
                 train_loader,
                 criterion,
                 optimizer,
+                optimizer_config["max_norm"],
                 prep_report,
             )
 
             # Validate on validation set
-            val_loss, val_metrics = self.validate(
+            val_loss, val_metrics = self._validate(
                 model,
                 val_loader,
                 criterion,
@@ -811,9 +850,6 @@ class Trainer:
                 {
                     "train_loss": f"{train_loss:.4f}",
                     "val_loss": f"{val_loss:.4f}",
-                    "val_mae": f"{val_metrics['mae']:.6f}",
-                    "val_mape": f"{val_metrics['mape']:.2f}%",
-                    "val_rmse": f"{val_metrics['rmse']:.6f}",
                 },
             )
 
@@ -829,9 +865,6 @@ class Trainer:
                 "best_val_metrics": val_metrics_history[
                     early_stopping.best_epoch
                 ],
-                "final_train_loss": float(train_losses[-1]),
-                "final_val_loss": float(val_losses[-1]),
-                "final_val_metrics": val_metrics_history[-1],
             },
             "history": {
                 "train_losses": [float(x) for x in train_losses],
