@@ -20,8 +20,6 @@ from tmtgnn.models import TMTGNN
 from torch import nn
 from tqdm.auto import tqdm
 
-from const import BEST_MODEL_PATH
-
 
 class EarlyStopping:
     """Early stopping callback with model checkpoint management.
@@ -90,29 +88,33 @@ class EarlyStopping:
         return False
 
 
-class TimeSeriesTrainer:
-    """Training pipeline with Time Series Split and Early Stopping.
-
-    This class orchestrates the complete training pipeline including:
-    - Data loading and preprocessing
-    - Time Series Split cross-validation
-    - Training loop with validation
-    - Early stopping and checkpoint management
-    - Metrics tracking and reporting
+class Trainer:
+    """Training pipeline with Early Stopping.
 
     Attributes:
         device (torch.device):
             Computation device.
+        model_config (dict):
+            Configuration for the model.
         model_dir (Path):
-            Directory for saving model checkpoints.
+            Directory for saving the best model.
         report (dict):
             Comprehensive training report.
     """
 
-    def __init__(self, device: str) -> None:
-        """Initialize TimeSeriesTrainer.
+    def __init__(
+        self,
+        model_config: dict,
+        model_dir: Path,
+        device: str,
+    ) -> None:
+        """Initialize Trainer.
 
         Args:
+            model_config (dict):
+                Configuration for the model.
+            model_dir (Path):
+                Directory for saving the best model.
             device (str):
                 Device to use.
 
@@ -120,7 +122,8 @@ class TimeSeriesTrainer:
             None
         """
         self.device = torch.device(device)
-        self.model_dir = Path(BEST_MODEL_PATH)
+        self.model_config = model_config
+        self.model_dir = model_dir
         self.model_dir.mkdir(parents=True, exist_ok=True)
         self.report = {}
 
@@ -149,39 +152,40 @@ class TimeSeriesTrainer:
         """
         # Configure and initialize T-MTGNN
         tmtgnn_config = TMTGNNConfig(
-            hidden_dim=16,
-            num_layers=2,
-            skip_dim=32,
-            head_dim=16,
-            dropout=0.1,
-            num_forecast_steps=1,
+            hidden_dim=self.model_config["tmtgnn"]["hidden_dim"],
+            num_layers=self.model_config["tmtgnn"]["num_layers"],
+            skip_dim=self.model_config["tmtgnn"]["skip_dim"],
+            head_dim=self.model_config["tmtgnn"]["head_dim"],
+            dropout=self.model_config["tmtgnn"]["dropout"],
         )
 
         transformer_config = TransformerConfig(
-            num_heads=1,
-            num_layers=1,
-            dropout=0.1,
-            max_sequence_length=seq_length,
-            mode="temporal",
+            num_heads=self.model_config["transformer"]["num_heads"],
+            num_layers=self.model_config["transformer"]["num_layers"],
+            dropout=self.model_config["transformer"]["dropout"],
+            max_sequence_length=self.model_config["transformer"][
+                "max_sequence_length"
+            ],
+            mode=self.model_config["transformer"]["mode"],
         )
 
         graph_config = GraphConfig(
-            learning_enabled=False,
-            top_k=10,
-            ema_alpha=0.99,
-            sigmoid_alpha=1.0,
-            noise_scale=0.01,
+            learning_enabled=self.model_config["graph"]["learning_enabled"],
+            top_k=self.model_config["graph"]["top_k"],
+            ema_alpha=self.model_config["graph"]["ema_alpha"],
+            sigmoid_alpha=self.model_config["graph"]["sigmoid_alpha"],
+            noise_scale=self.model_config["graph"]["noise_scale"],
         )
 
         diffusion_config = DiffusionConfig(
-            diffusion_steps=1,
-            residual_alpha=0.5,
-            projection_bias=True,
+            diffusion_steps=self.model_config["diffusion"]["diffusion_steps"],
+            residual_alpha=self.model_config["diffusion"]["residual_alpha"],
+            projection_bias=self.model_config["diffusion"]["projection_bias"],
         )
 
         norm_config = NormConfig(
-            eps=1e-5,
-            elementwise_affine=True,
+            eps=self.model_config["norm"]["eps"],
+            elementwise_affine=self.model_config["norm"]["elementwise_affine"],
         )
 
         model = TMTGNN(
@@ -341,11 +345,7 @@ class TimeSeriesTrainer:
         """
 
         class TimeSeriesDataset(torch.utils.data.Dataset):
-            """Custom dataset for time series data with adjacency matrix support.
-
-            This class creates a PyTorch Dataset that loads time series data along
-            with the corresponding adjacency matrix. It supports indexing to retrieve
-            batches of data for training and validation.
+            """Custom dataset for time series data.
 
             Attributes:
                 X (torch.Tensor):
@@ -403,7 +403,18 @@ class TimeSeriesTrainer:
                 return self.X[idx], self.y[idx], self.A
 
         def collate_batch(batch: list[tuple]) -> tuple:
-            """Stack features and targets while keeping a single adjacency matrix."""
+            """Stack features and targets while keeping a single adjacency matrix.
+
+            Args:
+                batch (list[tuple]):
+                    A list of tuples, where each tuple contains a feature tensor,
+                    target tensor, and adjacency matrix.
+
+            Returns:
+                tuple:
+                    A tuple containing the stacked feature tensor, stacked target tensor,
+                    and a single adjacency matrix.
+            """
             X_batch, y_batch, A_batch = zip(*batch)
             return torch.stack(X_batch), torch.stack(y_batch), A_batch[0]
 
@@ -433,10 +444,16 @@ class TimeSeriesTrainer:
         X_train: np.ndarray,
         y_train: np.ndarray,
         A_train: np.ndarray,
+        X_val: np.ndarray,
+        y_val: np.ndarray,
+        A_val: np.ndarray,
         batch_size: int,
-        val_ratio: float = 0.2,
+        training_epochs: int,
+        optimizer_config: dict,
+        scheduler_config: dict,
+        early_stopping_config: dict,
     ) -> dict:
-        """Execute complete training pipeline with a single hold-out split.
+        """ "Train the model and return a comprehensive report.
 
         Args:
             X_train (np.ndarray):
@@ -445,30 +462,34 @@ class TimeSeriesTrainer:
                 Training target tensor.
             A_train (np.ndarray):
                 Training adjacency matrix.
+            X_val (np.ndarray):
+                Validation feature tensor.
+            y_val (np.ndarray):
+                Validation target tensor.
+            A_val (np.ndarray):
+                Validation adjacency matrix.
             batch_size (int):
                 Batch size for training.
-            val_ratio (float):
-                Fraction of the training set reserved for validation.
+            training_epochs (int):
+                Number of training epochs.
+            optimizer_config (dict):
+                Configuration for the optimizer.
+            scheduler_config (dict):
+                Configuration for the learning rate scheduler.
+            early_stopping_config (dict):
+                Configuration for early stopping.
+
+        Returns:
+            dict:
+                A comprehensive training report.
         """
-        if not 0.0 < val_ratio < 1.0:
-            raise ValueError("val_ratio must be between 0 and 1")
-
-        split_idx = int(len(X_train) * (1.0 - val_ratio))
-        if split_idx <= 0 or split_idx >= len(X_train):
-            raise ValueError(
-                "val_ratio produces an empty train or validation split",
-            )
-
-        X_split = X_train[:split_idx]
-        y_split = y_train[:split_idx]
-        X_val = X_train[split_idx:]
-        y_val = y_train[split_idx:]
-
+        # Extract dimensions from training data
         num_nodes = X_train.shape[2]
         in_channels = X_train.shape[1]
         seq_length = X_train.shape[3]
-        out_channels = 1
+        out_channels = y_train.shape[1] if y_train.ndim > 1 else 1
 
+        # Create model
         model = self.create_model(
             num_nodes,
             in_channels,
@@ -476,117 +497,110 @@ class TimeSeriesTrainer:
             out_channels,
         )
 
+        # Configure optimizer, loss function, and learning rate scheduler
         optimizer = torch.optim.AdamW(
             model.parameters(),
-            lr=1e-3,
-            weight_decay=1e-4,
-            betas=(0.9, 0.999),
-            eps=1e-8,
-        )
-        criterion = nn.MSELoss()
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer,
-            mode="min",
-            factor=0.5,
-            patience=5,
-            min_lr=1e-6,
+            lr=optimizer_config["lr"],
+            weight_decay=optimizer_config["weight_decay"],
+            betas=optimizer_config["betas"],
         )
 
+        criterion = nn.MSELoss()
+
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer,
+            mode=scheduler_config["mode"],
+            factor=scheduler_config["factor"],
+            patience=scheduler_config["patience"],
+            min_lr=scheduler_config["min_lr"],
+        )
+
+        # Create data loaders
         train_loader, val_loader = self.create_data_loaders(
-            X_split,
-            y_split,
+            X_train,
+            y_train,
             A_train,
             X_val,
             y_val,
-            A_train,
+            A_val,
             batch_size,
         )
 
-        early_stopping = EarlyStopping(patience=5, delta=1e-4)
+        # Initialize early stopping
+        early_stopping = EarlyStopping(
+            patience=early_stopping_config["patience"],
+            delta=early_stopping_config["delta"],
+        )
 
+        # Training loop with early stopping
         train_losses = []
         val_losses = []
         best_model_state = None
-
-        epoch_bar = tqdm(range(500), desc="Training")
-
+        epoch_bar = tqdm(range(training_epochs), desc="Training")
         for epoch in epoch_bar:
+            # Train for one epoch
             train_loss = self.train_epoch(
                 model,
                 train_loader,
                 criterion,
                 optimizer,
             )
-            train_losses.append(train_loss)
 
+            # Validate on validation set
             val_loss = self.validate(model, val_loader, criterion)
+
+            # Update metrics and check for early stopping
+            train_losses.append(train_loss)
             val_losses.append(val_loss)
 
+            # Step the learning rate scheduler based on validation loss
             scheduler.step(val_loss)
 
-            if val_loss <= early_stopping.best_loss - early_stopping.delta:
+            # Check for improvement and save best model state
+            if val_loss < early_stopping.best_loss - early_stopping.delta:
                 best_model_state = copy.deepcopy(model.state_dict())
-                torch.save(
-                    {
-                        "model_state_dict": best_model_state,
-                        "val_loss": val_loss,
-                        "epoch": epoch,
-                    },
-                    BEST_MODEL_PATH,
-                )
 
+            # Check for early stopping
             if early_stopping(val_loss, epoch):
-                print(f"\nEarly stopping triggered at epoch {epoch + 1}")
-                print(
-                    f"Best validation loss: {early_stopping.best_loss:.6f} at epoch {early_stopping.best_epoch + 1}",
-                )
                 break
 
             epoch_bar.set_postfix(
-                {
-                    "train": f"{train_loss:.4f}",
-                    "val": f"{val_loss:.4f}",
-                },
+                {"train": f"{train_loss:.4f}", "val": f"{val_loss:.4f}"},
             )
 
+        # Load best model state before returning report
         if best_model_state is not None:
             model.load_state_dict(best_model_state)
 
+        # Prepare comprehensive training report
         self.report = {
-            "timestamp": datetime.now().isoformat(),
-            "config": {
-                "max_epochs": 500,
-                "batch_size": batch_size,
-                "validation_ratio": val_ratio,
-                "early_stopping_patience": 5,
-                "early_stopping_delta": 1e-4,
-                "learning_rate": 1e-3,
-                "weight_decay": 1e-4,
-                "optimizer": "AdamW",
-                "device": str(self.device),
-            },
-            "model_config": {
-                "hidden_dim": 16,
-                "num_layers": 2,
-                "skip_dim": 32,
-                "head_dim": 16,
-                "dropout": 0.1,
-                "transformer_heads": 1,
-                "transformer_layers": 1,
-                "diffusion_steps": 1,
-                "graph_learning_enabled": False,
-            },
-            "holdout": {
-                "num_train_samples": len(X_split),
-                "num_val_samples": len(X_val),
+            "summary": {
                 "best_epoch": early_stopping.best_epoch + 1,
                 "best_val_loss": float(early_stopping.best_loss),
                 "final_train_loss": float(train_losses[-1]),
                 "final_val_loss": float(val_losses[-1]),
-                "min_train_loss": float(min(train_losses)),
-                "min_val_loss": float(min(val_losses)),
+            },
+            "history": {
                 "train_losses": [float(x) for x in train_losses],
                 "val_losses": [float(x) for x in val_losses],
+                "min_train_loss": float(min(train_losses)),
+                "min_val_loss": float(min(val_losses)),
+            },
+            "config": {
+                "model": self.model_config,
+                "optimizer": optimizer_config,
+                "scheduler": scheduler_config,
+                "early_stopping": early_stopping_config,
+                "batch_size": batch_size,
+                "epochs": training_epochs,
+            },
+            "metadata": {
+                "timestamp": datetime.now().isoformat(),
+                "device": str(self.device),
+                "dataset": {
+                    "num_train_samples": len(X_train),
+                    "num_val_samples": len(X_val),
+                },
             },
         }
 

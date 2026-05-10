@@ -11,8 +11,18 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from src.config import SEED, TRAINING_DEVICE
+from src.config import (
+    early_stopping_config,
+    model_config,
+    optimizer_config,
+    scheduler_config,
+    seed,
+    training_batch_size,
+    training_device,
+    training_epochs,
+)
 from src.const import (
+    BEST_MODEL_PATH,
     DATA_EXPLORATION_REPORT_PATH,
     DATA_FORMAT,
     DATA_PATH,
@@ -23,17 +33,11 @@ from src.const import (
 from src.data.explore import explore_data
 from src.data.prepare import prepare_data
 from src.data.verify_quality import verify_data_quality
-from src.modeling.train import TimeSeriesTrainer
+from src.modeling.train import Trainer
 
 
 def main() -> None:
     """Main execution function.
-
-    This function orchestrates the entire workflow, including:
-    1. Data quality verification and exploration
-    2. Data preparation
-    3. Model training
-    4. Model evaluation
 
     Returns:
         None
@@ -43,16 +47,16 @@ def main() -> None:
     ##################################################
     # [PRE] REPRODUCIBILITY
     ##################################################
-    random.seed(SEED)
-    np.random.seed(SEED)
-    torch.manual_seed(SEED)
-    torch.cuda.manual_seed(SEED)
-    torch.cuda.manual_seed_all(SEED)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-    os.environ["PYTHONHASHSEED"] = str(SEED)
+    os.environ["PYTHONHASHSEED"] = str(seed)
     generator = torch.Generator()
-    generator.manual_seed(SEED)
+    generator.manual_seed(seed)
 
     ##################################################
     # [1] DATA QUALITY VERIFICATION AND EXPLORATION
@@ -89,12 +93,23 @@ def main() -> None:
     ##################################################
     # [3] MODEL TRAINING
     ##################################################
-    trainer = TimeSeriesTrainer(device=TRAINING_DEVICE)
+    trainer = Trainer(
+        model_config=model_config,
+        model_dir=Path(BEST_MODEL_PATH),
+        device=training_device,
+    )
     training_report = trainer.train(
         X_train=data_prep_result["X_train"],
         y_train=data_prep_result["y_train"],
         A_train=data_prep_result["A_train"],
-        batch_size=4,
+        X_val=data_prep_result["X_valid"],
+        y_val=data_prep_result["y_valid"],
+        A_val=data_prep_result["A_valid"],
+        batch_size=training_batch_size,
+        training_epochs=training_epochs,
+        optimizer_config=optimizer_config,
+        scheduler_config=scheduler_config,
+        early_stopping_config=early_stopping_config,
     )
 
     with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
