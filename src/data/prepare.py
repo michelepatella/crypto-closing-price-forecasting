@@ -277,11 +277,11 @@ def prepare_data(file_paths: list) -> dict:
                 dtype=np.float32,
             )
 
-        for crypto_idx, crypto in enumerate(cryptos):
-            for t in range(WINDOW_SIZE):
-                node_idx = crypto_idx * WINDOW_SIZE + t
+            for crypto_idx, crypto in enumerate(cryptos):
+                for t in range(WINDOW_SIZE):
+                    node_idx = crypto_idx * WINDOW_SIZE + t
 
-                X_window[:, node_idx, t] = crypto_data[crypto][i + t]
+                    X_window[:, node_idx, t] = crypto_data[crypto][i + t]
 
             X.append(X_window)
 
@@ -298,18 +298,6 @@ def prepare_data(file_paths: list) -> dict:
 
         # Use single adjacency matrix
         A = adj_template
-
-        # Expand targets to node dimension (one target per crypto across time window)
-        y_expanded = np.zeros((y.shape[0], num_nodes), dtype=np.float32)
-        for crypto_idx in range(num_cryptos):
-            node_start = crypto_idx * WINDOW_SIZE
-            node_end = node_start + WINDOW_SIZE
-            y_expanded[:, node_start:node_end] = y[
-                :,
-                crypto_idx : crypto_idx + 1,
-            ]
-
-        y = y_expanded
 
         return X, y, A
 
