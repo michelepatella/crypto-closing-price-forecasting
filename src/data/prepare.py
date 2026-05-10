@@ -180,7 +180,7 @@ def prepare_data(file_paths: list) -> dict:
         }
 
     # Apply log transformation to reduce volume skewness
-    def apply_transform(df):
+    def _apply_transform(df):
         df = df.copy()
 
         for col in volume_cols:
@@ -188,9 +188,9 @@ def prepare_data(file_paths: list) -> dict:
 
         return df
 
-    train_df = apply_transform(train_df)
-    valid_df = apply_transform(valid_df)
-    test_df = apply_transform(test_df)
+    train_df = _apply_transform(train_df)
+    valid_df = _apply_transform(valid_df)
+    test_df = _apply_transform(test_df)
 
     for col in volume_cols:
         volume_stats_after[col] = {
@@ -251,7 +251,7 @@ def prepare_data(file_paths: list) -> dict:
     # SLIDING WINDOW CONSTRUCTION
     # ===================================
     # Create graph-structured windows for temporal and cross-crypto relationships
-    def build_sliding_windows(df):
+    def _build_sliding_windows(df):
         X = []
         y = []
         A = []
@@ -312,9 +312,9 @@ def prepare_data(file_paths: list) -> dict:
 
         return X, y, A
 
-    X_train, y_train, A_train = build_sliding_windows(train_df)
-    X_valid, y_valid, A_valid = build_sliding_windows(valid_df)
-    X_test, y_test, A_test = build_sliding_windows(test_df)
+    X_train, y_train, A_train = _build_sliding_windows(train_df)
+    X_valid, y_valid, A_valid = _build_sliding_windows(valid_df)
+    X_test, y_test, A_test = _build_sliding_windows(test_df)
 
     report["sliding_window_statistics"] = {
         "window_size": int(window_size),
