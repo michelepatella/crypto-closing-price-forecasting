@@ -20,12 +20,11 @@ from tmtgnn.models import TMTGNN
 from torch import nn
 from tqdm.auto import tqdm
 
+from const import TARGET_COLUMNS
+
 
 class EarlyStopping:
-    """Early stopping callback with model checkpoint management.
-
-    This class monitors validation loss and stops training if no improvement is observed
-    for a specified number of epochs (patience). Saves best model checkpoint.
+    """Early stopping callback.
 
     Attributes:
         patience (int):
@@ -96,8 +95,8 @@ class Trainer:
             Computation device.
         model_config (dict):
             Configuration for the model.
-        model_dir (Path):
-            Directory for saving the best model.
+        model_path (Path):
+            Path for saving the best model.
         report (dict):
             Comprehensive training report.
     """
@@ -105,7 +104,7 @@ class Trainer:
     def __init__(
         self,
         model_config: dict,
-        model_dir: Path,
+        model_path: Path,
         device: str,
     ) -> None:
         """Initialize Trainer.
@@ -113,8 +112,8 @@ class Trainer:
         Args:
             model_config (dict):
                 Configuration for the model.
-            model_dir (Path):
-                Directory for saving the best model.
+            model_path (Path):
+                Path for saving the best model.
             device (str):
                 Device to use.
 
@@ -123,8 +122,7 @@ class Trainer:
         """
         self.device = torch.device(device)
         self.model_config = model_config
-        self.model_dir = model_dir
-        self.model_dir.mkdir(parents=True, exist_ok=True)
+        self.model_path = model_path
         self.report = {}
 
     def create_model(
@@ -248,6 +246,18 @@ class Trainer:
 
             # Forward pass
             y_pred = model(X_batch, adj=A_batch)
+
+            # Reshape output: (B, num_nodes) -> (B, num_cryptos, window_size)
+            num_cryptos = y_batch.shape[1]
+            num_nodes = y_pred.shape[1]
+            window_size = num_nodes // num_cryptos
+
+            y_pred = y_pred.view(y_pred.shape[0], num_cryptos, window_size)
+
+            # Get prediction for the last time step
+            y_pred = y_pred[:, :, -1]
+
+            # Compute loss
             loss = criterion(y_pred, y_batch)
 
             # Backward pass
@@ -300,6 +310,18 @@ class Trainer:
 
                 # Forward pass
                 y_pred = model(X_batch, adj=A_batch)
+
+                # Reshape output: (B, num_nodes) -> (B, num_cryptos, window_size)
+                num_cryptos = y_batch.shape[1]
+                num_nodes = y_pred.shape[1]
+                window_size = num_nodes // num_cryptos
+
+                y_pred = y_pred.view(y_pred.shape[0], num_cryptos, window_size)
+
+                # Get prediction for the last time step
+                y_pred = y_pred[:, :, -1]
+
+                # Compute loss
                 loss = criterion(y_pred, y_batch)
 
                 # Update metrics
@@ -487,7 +509,7 @@ class Trainer:
         num_nodes = X_train.shape[2]
         in_channels = X_train.shape[1]
         seq_length = X_train.shape[3]
-        out_channels = y_train.shape[1] if y_train.ndim > 1 else 1
+        out_channels = len(TARGET_COLUMNS)
 
         # Create model
         model = self.create_model(
@@ -557,10 +579,13 @@ class Trainer:
             scheduler.step(val_loss)
 
             # Check for improvement and save best model state
-            if val_loss < early_stopping.best_loss - early_stopping.delta:
+            improved = (
+                val_loss < early_stopping.best_loss - early_stopping.delta
+            )
+
+            if improved:
                 best_model_state = copy.deepcopy(model.state_dict())
 
-            # Check for early stopping
             if early_stopping(val_loss, epoch):
                 break
 
@@ -603,5 +628,15 @@ class Trainer:
                 },
             },
         }
+
+        # Save best model checkpoint along with training report
+        torch.save(
+            {
+                "model_state_dict": best_model_state,
+                "config": self.model_config,
+                "report": self.report,
+            },
+            self.model_path,
+        )
 
         return self.report

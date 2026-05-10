@@ -11,7 +11,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from src.config import (
+from config import (
     early_stopping_config,
     model_config,
     optimizer_config,
@@ -21,7 +21,7 @@ from src.config import (
     training_device,
     training_epochs,
 )
-from src.const import (
+from const import (
     BEST_MODEL_PATH,
     DATA_EXPLORATION_REPORT_PATH,
     DATA_FORMAT,
@@ -30,10 +30,10 @@ from src.const import (
     DATA_QUALITY_VERIFICATION_REPORT_PATH,
     MODELING_TRAINING_REPORT_PATH,
 )
-from src.data.explore import explore_data
-from src.data.prepare import prepare_data
-from src.data.verify_quality import verify_data_quality
-from src.modeling.train import Trainer
+from data.explore import explore_data
+from data.prepare import prepare_data
+from data.verify_quality import verify_data_quality
+from modeling.train import Trainer
 
 
 def main() -> None:
@@ -50,13 +50,12 @@ def main() -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     os.environ["PYTHONHASHSEED"] = str(seed)
-    generator = torch.Generator()
-    generator.manual_seed(seed)
 
     ##################################################
     # [1] DATA QUALITY VERIFICATION AND EXPLORATION
@@ -95,7 +94,7 @@ def main() -> None:
     ##################################################
     trainer = Trainer(
         model_config=model_config,
-        model_dir=Path(BEST_MODEL_PATH),
+        model_path=Path(BEST_MODEL_PATH),
         device=training_device,
     )
     training_report = trainer.train(
@@ -114,3 +113,7 @@ def main() -> None:
 
     with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
         json.dump(training_report, f, indent=4)
+
+
+if __name__ == "__main__":
+    main()

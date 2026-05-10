@@ -271,17 +271,12 @@ def prepare_data(file_paths: list) -> dict:
 
         # Extract windows with corresponding next-step targets
         for i in range(num_samples):
-            # Create window for all nodes
-            X_window = np.zeros(
-                (num_features, num_nodes, window_size),
-                dtype=np.float32,
-            )
+            X_window = np.zeros((num_features, num_nodes, 1), dtype=np.float32)
 
             for crypto_idx, crypto in enumerate(cryptos):
                 for t in range(window_size):
                     node_idx = crypto_idx * window_size + t
-
-                    X_window[:, node_idx, t] = crypto_data[crypto][i + t]
+                    X_window[:, node_idx, 0] = crypto_data[crypto][i + t]
 
             X.append(X_window)
 

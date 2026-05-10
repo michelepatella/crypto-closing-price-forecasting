@@ -62,7 +62,7 @@ model_config = {
         "num_heads": 1,
         "num_layers": 1,
         "dropout": 0.1,
-        "max_sequence_length": window_size,
+        "max_sequence_length": 1,
         "mode": "temporal",
     },
     "graph": {
