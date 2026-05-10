@@ -89,41 +89,62 @@ Model configuration dictionary.
 # ===================================
 # OPTIMIZER
 # ===================================
+
 optimizer_config = {
     "lr": 1e-3,
     "weight_decay": 1e-4,
     "betas": (0.9, 0.999),
     "max_norm": 1.0,
 }
-"""Optimizer configuration dictionary.
+"""
+Optimizer configuration dictionary.
 """
 
 # ===================================
 # SCHEDULER
 # ===================================
+
 scheduler_config = {
     "mode": "min",
     "factor": 0.5,
     "patience": 10,
     "min_lr": 1e-6,
 }
-"""Scheduler configuration dictionary.
+"""
+Scheduler configuration dictionary.
 """
 
 # ===================================
 # EARLY STOPPING
 # ===================================
+
 early_stopping_config = {
     "patience": 15,
     "delta": 1e-4,
 }
-"""Early stopping configuration dictionary.
+"""
+Early stopping configuration dictionary.
 """
 
 # ===================================
 # LOSS
 # ===================================
+
 loss_alpha = 0.4
 """
 The alpha parameter for the combined loss function (0.0-1.0).
+"""
+
+# ===================================
+# INFERENCE
+# ===================================
+
+inference_device = "mps"
+"""
+The device to use for inference ("cpu", "cuda", "mps").
+"""
+
+inference_batch_size = 32
+"""
+The batch size for inference (> 0).
 """

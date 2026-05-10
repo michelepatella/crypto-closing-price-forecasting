@@ -13,6 +13,8 @@ import torch
 
 from config import (
     early_stopping_config,
+    inference_batch_size,
+    inference_device,
     loss_alpha,
     model_config,
     optimizer_config,
@@ -29,11 +31,13 @@ from const import (
     DATA_PATH,
     DATA_PREPARATION_REPORT_PATH,
     DATA_QUALITY_VERIFICATION_REPORT_PATH,
+    MODELING_EVALUATION_REPORT_PATH,
     MODELING_TRAINING_REPORT_PATH,
 )
 from data.explore import explore_data
 from data.prepare import prepare_data
 from data.verify_quality import verify_data_quality
+from modeling.evaluate import Evaluator
 from modeling.train import Trainer
 
 
@@ -90,32 +94,51 @@ def main() -> None:
     with open(DATA_PREPARATION_REPORT_PATH, "w") as f:
         json.dump(data_prep_report, f, indent=4)
 
+    if False:
+        ##################################################
+        # [3] MODEL TRAINING
+        ##################################################
+        trainer = Trainer(
+            model_config=model_config,
+            model_path=Path(BEST_MODEL_PATH),
+            device=training_device,
+        )
+        training_report = trainer.train(
+            X_train=data_prep_result["X_train"],
+            y_train=data_prep_result["y_train"],
+            A_train=data_prep_result["A_train"],
+            X_val=data_prep_result["X_valid"],
+            y_val=data_prep_result["y_valid"],
+            A_val=data_prep_result["A_valid"],
+            batch_size=training_batch_size,
+            training_epochs=training_epochs,
+            loss_alpha=loss_alpha,
+            optimizer_config=optimizer_config,
+            scheduler_config=scheduler_config,
+            early_stopping_config=early_stopping_config,
+            prep_report=data_prep_report,
+        )
+
+        with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
+            json.dump(training_report, f, indent=4)
+
     ##################################################
-    # [3] MODEL TRAINING
+    # [4] MODEL EVALUATION
     ##################################################
-    trainer = Trainer(
-        model_config=model_config,
+    evaluator = Evaluator(
         model_path=Path(BEST_MODEL_PATH),
-        device=training_device,
+        device=inference_device,
     )
-    training_report = trainer.train(
-        X_train=data_prep_result["X_train"],
-        y_train=data_prep_result["y_train"],
-        A_train=data_prep_result["A_train"],
-        X_val=data_prep_result["X_valid"],
-        y_val=data_prep_result["y_valid"],
-        A_val=data_prep_result["A_valid"],
-        batch_size=training_batch_size,
-        training_epochs=training_epochs,
-        loss_alpha=loss_alpha,
-        optimizer_config=optimizer_config,
-        scheduler_config=scheduler_config,
-        early_stopping_config=early_stopping_config,
+    evaluation_report = evaluator.evaluate(
+        X_test=data_prep_result["X_test"],
+        y_test=data_prep_result["y_test"],
+        A_test=data_prep_result["A_test"],
+        batch_size=inference_batch_size,
         prep_report=data_prep_report,
     )
 
-    with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
-        json.dump(training_report, f, indent=4)
+    with open(MODELING_EVALUATION_REPORT_PATH, "w") as f:
+        json.dump(evaluation_report, f, indent=4)
 
 
 if __name__ == "__main__":

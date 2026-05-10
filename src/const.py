@@ -48,4 +48,7 @@ DATA_QUALITY_VERIFICATION_REPORT_PATH = Path(
 DATA_EXPLORATION_REPORT_PATH = Path("reports/data/exploration/report.json")
 DATA_PREPARATION_REPORT_PATH = Path("reports/data/preparation/report.json")
 MODELING_TRAINING_REPORT_PATH = Path("reports/modeling/training/report.json")
+MODELING_EVALUATION_REPORT_PATH = Path(
+    "reports/modeling/evaluation/report.json",
+)
 BEST_MODEL_PATH = Path("models/best_model.pt")
