@@ -55,7 +55,7 @@ model_config = {
         "hidden_dim": 32,
         "num_layers": 2,
         "skip_dim": 64,
-        "head_dim": 16,
+        "head_dim": 32,
         "dropout": 0.1,
     },
     "transformer": {
@@ -93,6 +93,7 @@ optimizer_config = {
     "lr": 1e-3,
     "weight_decay": 1e-4,
     "betas": (0.9, 0.999),
+    "max_norm": 1.0,
 }
 """Optimizer configuration dictionary.
 """
