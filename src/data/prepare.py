@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from config import TRAIN_RATIO, WINDOW_SIZE
+from config import TRAIN_RATIO, VALID_RATIO, WINDOW_SIZE
 from const import (
     ADJ_CLOSE_COLUMN,
     CLOSE_COLUMN,
@@ -115,9 +115,10 @@ def prepare_data(file_paths: list) -> dict:
     full_df = full_df.sort_values([CRYPTO_COLUMN, DATE_COLUMN])
 
     # ===================================
-    # TRAIN-TEST SPLITTING
+    # TRAIN-VALID-TEST SPLITTING
     # ===================================
     train_parts = []
+    valid_parts = []
     test_parts = []
     split_stats = {}
 
@@ -126,30 +127,39 @@ def prepare_data(file_paths: list) -> dict:
             DATE_COLUMN,
         )
 
-        split_idx = int(len(crypto_df) * TRAIN_RATIO)
+        n = len(crypto_df)
 
-        train_parts.append(crypto_df.iloc[:split_idx])
-        test_parts.append(crypto_df.iloc[split_idx:])
+        train_end = int(n * TRAIN_RATIO)
+        valid_end = int(n * (TRAIN_RATIO + VALID_RATIO))
+
+        train_parts.append(crypto_df.iloc[:train_end])
+        valid_parts.append(crypto_df.iloc[train_end:valid_end])
+        test_parts.append(crypto_df.iloc[valid_end:])
 
         split_stats[crypto] = {
-            "num_rows": len(crypto_df),
-            "num_train_rows": int(split_idx),
-            "num_test_rows": int(len(crypto_df) - split_idx),
+            "num_rows": n,
+            "num_train_rows": int(train_end),
+            "num_valid_rows": int(valid_end - train_end),
+            "num_test_rows": int(n - valid_end),
         }
 
     train_df = pd.concat(train_parts, axis=0)
+    valid_df = pd.concat(valid_parts, axis=0)
     test_df = pd.concat(test_parts, axis=0)
 
     train_df = train_df.sort_values([CRYPTO_COLUMN, DATE_COLUMN])
+    valid_df = valid_df.sort_values([CRYPTO_COLUMN, DATE_COLUMN])
     test_df = test_df.sort_values([CRYPTO_COLUMN, DATE_COLUMN])
 
-    report["train_test_split_statistics"] = {
+    report["train_valid_test_split_statistics"] = {
         "per_crypto": split_stats,
         "total": {
             "num_train_rows": len(train_df),
+            "num_valid_rows": len(valid_df),
             "num_test_rows": len(test_df),
             "train_ratio": float(TRAIN_RATIO),
-            "test_ratio": float(1.0 - TRAIN_RATIO),
+            "valid_ratio": float(VALID_RATIO),
+            "test_ratio": float(1.0 - TRAIN_RATIO - VALID_RATIO),
         },
     }
 
@@ -179,6 +189,7 @@ def prepare_data(file_paths: list) -> dict:
         return df
 
     train_df = apply_transform(train_df)
+    valid_df = apply_transform(valid_df)
     test_df = apply_transform(test_df)
 
     for col in volume_cols:
@@ -210,6 +221,7 @@ def prepare_data(file_paths: list) -> dict:
         std = train_df[col].std() if train_df[col].std() != 0 else 1.0
 
         train_df[col] = (train_df[col] - mean) / std
+        valid_df[col] = (valid_df[col] - mean) / std
         test_df[col] = (test_df[col] - mean) / std
 
         normalization_stats[col] = {
@@ -304,6 +316,7 @@ def prepare_data(file_paths: list) -> dict:
         return X, y, A
 
     X_train, y_train, A_train = build_sliding_windows(train_df)
+    X_valid, y_valid, A_valid = build_sliding_windows(valid_df)
     X_test, y_test, A_test = build_sliding_windows(test_df)
 
     report["sliding_window_statistics"] = {
@@ -314,6 +327,7 @@ def prepare_data(file_paths: list) -> dict:
         ),
         "num_nodes": int(len(train_df[CRYPTO_COLUMN].unique()) * WINDOW_SIZE),
         "num_windows_train": int(X_train.shape[0]),
+        "num_windows_valid": int(X_valid.shape[0]),
         "num_windows_test": int(X_test.shape[0]),
     }
 
@@ -321,6 +335,9 @@ def prepare_data(file_paths: list) -> dict:
         "X_train": X_train,
         "y_train": y_train,
         "A_train": A_train,
+        "X_valid": X_valid,
+        "y_valid": y_valid,
+        "A_valid": A_valid,
         "X_test": X_test,
         "y_test": y_test,
         "A_test": A_test,
