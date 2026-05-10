@@ -1,3 +1,8 @@
+"""src/main.py
+
+Main execution script.
+"""
+
 import json
 import os
 import random
@@ -22,6 +27,17 @@ from src.modeling.train import TimeSeriesTrainer
 
 
 def main() -> None:
+    """Main execution function.
+
+    This function orchestrates the entire workflow, including:
+    1. Data quality verification and exploration
+    2. Data preparation
+    3. Model training
+    4. Model evaluation
+
+    Returns:
+        None
+    """
     data_paths = list(DATA_PATH.glob(DATA_FORMAT))
 
     ##################################################
@@ -39,7 +55,7 @@ def main() -> None:
     generator.manual_seed(SEED)
 
     ##################################################
-    # [PRE] DATA QUALITY VERIFICATION AND EXPLORATION
+    # [1] DATA QUALITY VERIFICATION AND EXPLORATION
     ##################################################
     # Data quality verification
     data_quality_verif_full_report = {}
@@ -62,7 +78,7 @@ def main() -> None:
         json.dump(data_expl_full_report, f, indent=4)
 
     ##################################################
-    # [1] DATA PREPARATION
+    # [2] DATA PREPARATION
     ##################################################
     data_prep_result = prepare_data(data_paths)
     data_prep_report = data_prep_result["report"]
@@ -71,7 +87,7 @@ def main() -> None:
         json.dump(data_prep_report, f, indent=4)
 
     ##################################################
-    # [2] MODEL TRAINING
+    # [3] MODEL TRAINING
     ##################################################
     trainer = TimeSeriesTrainer(device=TRAINING_DEVICE)
     training_report = trainer.train(

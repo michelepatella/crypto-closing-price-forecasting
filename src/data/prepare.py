@@ -277,13 +277,11 @@ def prepare_data(file_paths: list) -> dict:
                 dtype=np.float32,
             )
 
-            for crypto_idx, crypto in enumerate(cryptos):
-                for t in range(WINDOW_SIZE):
-                    node_idx = crypto_idx * WINDOW_SIZE + t
-                    X_window[:, node_idx, :] = crypto_data[crypto][
-                        i : i + WINDOW_SIZE,
-                        :,
-                    ].T
+        for crypto_idx, crypto in enumerate(cryptos):
+            for t in range(WINDOW_SIZE):
+                node_idx = crypto_idx * WINDOW_SIZE + t
+
+                X_window[:, node_idx, t] = crypto_data[crypto][i + t]
 
             X.append(X_window)
 
