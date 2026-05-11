@@ -928,12 +928,12 @@
     ],
     "sliding_window_statistics": {
         "window_size": 24,
-        "sequence_length": 24,
+        "sequence_length": 6,
         "num_cryptos": 17,
         "num_features": 5,
         "num_nodes": 408,
-        "num_windows_train": 21013,
-        "num_windows_valid": 2585,
-        "num_windows_test": 2586
+        "num_windows_train": 21031,
+        "num_windows_valid": 2603,
+        "num_windows_test": 2604
     }
 }
