@@ -36,7 +36,7 @@ The validation split ratio (0.0-1.0).
 # TRAINING
 # ===================================
 
-training_batch_size = 4
+training_batch_size = 2
 """
 The batch size for training (> 0).
 """
@@ -124,7 +124,7 @@ Scheduler configuration dictionary.
 # ===================================
 
 early_stopping_config = {
-    "patience": 15,
+    "patience": 10,
     "delta": 1e-4,
 }
 """
@@ -149,7 +149,7 @@ inference_device = "mps"
 The device to use for inference ("cpu", "cuda", "mps").
 """
 
-inference_batch_size = 4
+inference_batch_size = 2
 """
 The batch size for inference (> 0).
 """
