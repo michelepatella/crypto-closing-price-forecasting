@@ -17,7 +17,7 @@ The size of the model input window, representing the number of past time
 steps used for prediction (> 0).
 """
 
-sequence_length = 24
+sequence_length = 6
 """
 The temporal context length provided to the transformer for each timestamp (> 0).
 """
