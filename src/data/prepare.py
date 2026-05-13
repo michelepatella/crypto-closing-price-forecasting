@@ -213,9 +213,8 @@ def prepare_data(file_paths: list) -> dict:
         for col in full_df.columns
         if col not in [DATE_COLUMN, CRYPTO_COLUMN]
     ]
-    normalization_stats = {}
 
-    # Compute per-crypto normalization statistics
+    # Compute per-crypto normalization statistics from training set
     per_crypto_normalization = {}
     cryptos = sorted(train_df[CRYPTO_COLUMN].unique())
     for crypto in cryptos:
@@ -229,21 +228,29 @@ def prepare_data(file_paths: list) -> dict:
                 "std": float(std),
             }
 
-    # Normalize using training set statistics to prevent data leakage (global stats)
-    for col in numeric_cols:
-        mean = train_df[col].mean()
-        std = train_df[col].std() if train_df[col].std() != 0 else 1.0
+    # Normalize each cryptocurrency using its own statistics to prevent data leakage
+    for crypto in cryptos:
+        for col in numeric_cols:
+            mean = per_crypto_normalization[crypto][col]["mean"]
+            std = per_crypto_normalization[crypto][col]["std"]
 
-        train_df[col] = (train_df[col] - mean) / std
-        valid_df[col] = (valid_df[col] - mean) / std
-        test_df[col] = (test_df[col] - mean) / std
+            # Apply normalization to train, valid, and test sets
+            train_mask = train_df[CRYPTO_COLUMN] == crypto
+            train_df.loc[train_mask, col] = (
+                train_df.loc[train_mask, col] - mean
+            ) / std
 
-        normalization_stats[col] = {
-            "mean": float(mean),
-            "std": float(std),
-        }
+            valid_mask = valid_df[CRYPTO_COLUMN] == crypto
+            valid_df.loc[valid_mask, col] = (
+                valid_df.loc[valid_mask, col] - mean
+            ) / std
 
-    report["normalization_statistics"] = normalization_stats
+            test_mask = test_df[CRYPTO_COLUMN] == crypto
+            test_df.loc[test_mask, col] = (
+                test_df.loc[test_mask, col] - mean
+            ) / std
+
+    report["normalization_statistics"] = per_crypto_normalization
     report["per_crypto_normalization"] = per_crypto_normalization
     report["cryptos_order"] = cryptos
 
