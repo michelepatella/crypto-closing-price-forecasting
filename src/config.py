@@ -132,15 +132,6 @@ Early stopping configuration dictionary.
 """
 
 # ===================================
-# LOSS
-# ===================================
-
-loss_alpha = 0.4
-"""
-The alpha parameter for the combined loss function (0.0-1.0).
-"""
-
-# ===================================
 # INFERENCE
 # ===================================
 

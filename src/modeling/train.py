@@ -632,7 +632,6 @@ class Trainer:
         A_val: np.ndarray,
         batch_size: int,
         training_epochs: int,
-        loss_alpha: float,
         optimizer_config: dict,
         scheduler_config: dict,
         early_stopping_config: dict,
@@ -657,8 +656,6 @@ class Trainer:
                 Batch size for training.
             training_epochs (int):
                 Number of training epochs.
-            loss_alpha (float):
-                Alpha parameter for the combined loss function.
             optimizer_config (dict):
                 Configuration for the optimizer.
             scheduler_config (dict):
@@ -694,7 +691,7 @@ class Trainer:
             betas=optimizer_config["betas"],
         )
 
-        criterion = nn.HuberLoss(delta=1.0)
+        criterion = nn.HuberLoss()
 
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
