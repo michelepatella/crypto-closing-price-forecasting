@@ -282,7 +282,7 @@ def prepare_data(file_paths: list) -> dict:
         # Use minimum length to ensure balanced samples
         min_length = min(len(crypto_data[c]) for c in cryptos)
 
-        # Build adjacency matrix for temporal connections (t → t+1)
+        # Build adjacency matrix for temporal connections (t -> t+1)
         adj_template = np.zeros((num_nodes, num_nodes), dtype=np.float32)
         for crypto_idx in range(num_cryptos):
             for t in range(window_size - 1):
