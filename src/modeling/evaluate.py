@@ -256,8 +256,14 @@ class Evaluator:
                 # Get predictions
                 y_pred = model(X_batch, adj=A_tensor)
 
-                if y_batch.dim() == 3:
-                    y_batch = y_batch.squeeze(-1)
+                # Reshaping
+                num_cryptos = y_batch.shape[1]
+                num_nodes = y_pred.shape[1]
+                window_size = num_nodes // num_cryptos
+                y_pred = y_pred.view(y_pred.shape[0], num_cryptos, window_size)
+
+                # Target the last time step prediction
+                y_pred = y_pred[:, :, -1]
 
                 all_predictions.append(y_pred.cpu())
                 all_targets.append(y_batch.cpu())
