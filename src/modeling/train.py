@@ -23,85 +23,6 @@ from tqdm.auto import tqdm
 from const import CLOSE_COLUMN, TARGET_COLUMNS
 
 
-class SMAPELoss(nn.Module):
-    """Custom implementation of SMAPE loss function."""
-
-    def __init__(self) -> None:
-        """Initialize SMAPELoss.
-
-        Returns:
-            None
-        """
-        super().__init__()
-
-    def forward(
-        self,
-        y_pred: torch.Tensor,
-        y_true: torch.Tensor,
-    ) -> torch.Tensor:
-        """Compute SMAPE loss between predictions and true values.
-
-        Args:
-            y_pred (torch.Tensor):
-                Predicted values.
-            y_true (torch.Tensor):
-                True values.
-
-        Returns:
-            torch.Tensor:
-                Computed SMAPE loss.
-        """
-        numerator = torch.abs(y_pred - y_true)
-        denominator = (torch.abs(y_pred) + torch.abs(y_true)) / 2
-
-        # SMAPE formula
-        smape = numerator / (denominator + 1e-10)
-
-        return torch.mean(smape)
-
-
-class HybridLoss(nn.Module):
-    """Combine SMAPE and MAE in a hybrid loss for balanced training."""
-
-    def __init__(self, alpha: float) -> None:
-        """Initialize HybridLoss.
-
-        Args:
-            alpha (float):
-                Weighting factor.
-
-        Returns:
-            None
-        """
-        super().__init__()
-        self.alpha = alpha
-        self.smape = SMAPELoss()
-        self.mae = nn.L1Loss()
-
-    def forward(
-        self,
-        y_pred: torch.Tensor,
-        y_true: torch.Tensor,
-    ) -> torch.Tensor:
-        """Compute the hybrid loss.
-
-        Args:
-            y_pred (torch.Tensor):
-                Predicted values.
-            y_true (torch.Tensor):
-                True values.
-
-        Returns:
-            torch.Tensor:
-                Combined loss value.
-        """
-        smape_val = self.smape(y_pred, y_true)
-        mae_val = self.mae(y_pred, y_true)
-
-        # Hybrid combination
-        return (self.alpha * smape_val) + ((1 - self.alpha) * mae_val)
-
-
 class EarlyStopping:
     """Early stopping callback.
 
@@ -167,7 +88,7 @@ class EarlyStopping:
 
 
 class Trainer:
-    """Training pipeline with early stopping and custom hybrid loss.
+    """Training pipeline with early stopping.
 
     Attributes:
         device (torch.device):
@@ -773,7 +694,7 @@ class Trainer:
             betas=optimizer_config["betas"],
         )
 
-        criterion = HybridLoss(alpha=loss_alpha)
+        criterion = nn.HuberLoss(delta=1.0)
 
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
