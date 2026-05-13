@@ -57,7 +57,7 @@ class SMAPELoss(nn.Module):
         # SMAPE formula
         smape = numerator / (denominator + 1e-10)
 
-        return 100 * torch.mean(smape)
+        return torch.mean(smape)
 
 
 class HybridLoss(nn.Module):
@@ -437,15 +437,8 @@ class Trainer:
             # Forward pass
             y_pred = model(X_batch, adj=A_batch)
 
-            # Reshape output: (B, num_nodes) -> (B, num_cryptos, window_size)
-            num_cryptos = y_batch.shape[1]
-            num_nodes = y_pred.shape[1]
-            window_size = num_nodes // num_cryptos
-
-            y_pred = y_pred.view(y_pred.shape[0], num_cryptos, window_size)
-
-            # Get prediction for the last time step
-            y_pred = y_pred[:, :, -1]
+            if y_batch.dim() == 3:
+                y_batch = y_batch.squeeze(-1)
 
             # Compute loss
             loss = criterion(y_pred, y_batch)
@@ -529,15 +522,8 @@ class Trainer:
                 # Forward pass
                 y_pred = model(X_batch, adj=A_batch)
 
-                # Reshape output: (B, num_nodes) -> (B, num_cryptos, window_size)
-                num_cryptos = y_batch.shape[1]
-                num_nodes = y_pred.shape[1]
-                window_size = num_nodes // num_cryptos
-
-                y_pred = y_pred.view(y_pred.shape[0], num_cryptos, window_size)
-
-                # Get prediction for the last time step
-                y_pred = y_pred[:, :, -1]
+                if y_batch.dim() == 3:
+                    y_batch = y_batch.squeeze(-1)
 
                 # Compute loss
                 loss = criterion(y_pred, y_batch)
