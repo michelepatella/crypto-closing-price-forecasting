@@ -721,7 +721,6 @@ class Trainer:
         # Training loop with early stopping
         train_losses = []
         val_losses = []
-        train_metrics_history = []
         val_metrics_history = []
         best_model_state = None
         epoch_bar = tqdm(range(training_epochs), desc="Training")
@@ -747,7 +746,6 @@ class Trainer:
             # Update metrics and check for early stopping
             train_losses.append(train_loss)
             val_losses.append(val_loss)
-            train_metrics_history.append(train_metrics)
             val_metrics_history.append(val_metrics)
 
             # Step the learning rate scheduler based on validation loss
@@ -787,8 +785,6 @@ class Trainer:
             "history": {
                 "train_losses": [float(x) for x in train_losses],
                 "val_losses": [float(x) for x in val_losses],
-                "train_metrics": train_metrics_history,
-                "val_metrics": val_metrics_history,
                 "min_train_loss": float(min(train_losses)),
                 "min_val_loss": float(min(val_losses)),
             },
