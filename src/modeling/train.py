@@ -20,7 +20,7 @@ from tmtgnn.models import TMTGNN
 from torch import nn
 from tqdm.auto import tqdm
 
-from const import CLOSE_COLUMN, TARGET_COLUMNS
+from const import TARGET_COLUMNS
 
 
 class EarlyStopping:
@@ -201,109 +201,6 @@ class Trainer:
 
         return model
 
-    def _compute_metrics(
-        self,
-        y_pred: torch.Tensor,
-        y_true: torch.Tensor,
-        cryptos: list | None = None,
-    ) -> dict:
-        """Compute evaluation metrics per-crypto and overall.
-
-        Args:
-            y_pred (torch.Tensor):
-                Predicted values of shape (N, num_cryptos).
-            y_true (torch.Tensor):
-                True values of shape (N, num_cryptos).
-            cryptos (list | None):
-                Optional list of cryptocurrency names corresponding to columns.
-
-        Returns:
-            dict:
-                Dictionary containing overall metrics and per-crypto metrics.
-        """
-        # Convert to numpy arrays
-        y_pred_arr = y_pred.detach().cpu().numpy()
-        y_true_arr = y_true.detach().cpu().numpy()
-
-        # Ensure 2D (N, num_cryptos)
-        if y_pred_arr.ndim == 1:
-            y_pred_arr = y_pred_arr.reshape(-1, 1)
-        if y_true_arr.ndim == 1:
-            y_true_arr = y_true_arr.reshape(-1, 1)
-
-        _, c = y_true_arr.shape
-
-        per_crypto = {}
-        for i in range(c):
-            pred_i = y_pred_arr[:, i]
-            true_i = y_true_arr[:, i]
-
-            mae_i = np.mean(np.abs(pred_i - true_i))
-            rmse_i = np.sqrt(np.mean((pred_i - true_i) ** 2))
-            mape_i = 100 * np.mean(
-                np.abs((true_i - pred_i) / (np.abs(true_i) + 1e-10)),
-            )
-
-            key = cryptos[i] if cryptos and i < len(cryptos) else f"crypto_{i}"
-            per_crypto[key] = {
-                "mae": float(mae_i),
-                "rmse": float(rmse_i),
-                "mape": float(mape_i),
-            }
-
-        # Overall metrics (flattened)
-        pred_flat = y_pred_arr.flatten()
-        true_flat = y_true_arr.flatten()
-        mae = float(np.mean(np.abs(pred_flat - true_flat)))
-        rmse = float(np.sqrt(np.mean((pred_flat - true_flat) ** 2)))
-        mape = float(
-            100
-            * np.mean(
-                np.abs((true_flat - pred_flat) / (np.abs(true_flat) + 1e-10)),
-            ),
-        )
-
-        overall = {"mae": mae, "rmse": rmse, "mape": mape}
-
-        return {"overall": overall, "per_crypto": per_crypto}
-
-    def _unnormalize(
-        self,
-        y_tensor: torch.Tensor,
-        prep_report: dict | None,
-    ) -> torch.Tensor:
-        """Inverse transform normalized targets/predictions using
-        per-crypto stats.
-
-        Args:
-            y_tensor (torch.Tensor):
-                Normalized target or prediction tensor of shape (B, num_cryptos).
-            prep_report (dict | None):
-                Data preparation report containing per-crypto normalization stats.
-
-        Returns:
-            torch.Tensor:
-                Un-normalized target or prediction tensor of shape (B, num_cryptos).
-        """
-        if prep_report is None:
-            return y_tensor
-
-        per_crypto = prep_report.get("per_crypto_normalization")
-        cryptos = prep_report.get("cryptos_order")
-        if per_crypto is None or cryptos is None:
-            return y_tensor
-
-        y_un = y_tensor.detach().cpu().clone()
-        for i, crypto in enumerate(cryptos):
-            stats = per_crypto.get(crypto, {}).get(CLOSE_COLUMN)
-            if stats is None:
-                continue
-            mean = stats["mean"]
-            std = stats["std"]
-            y_un[:, i] = y_un[:, i] * std + mean
-
-        return y_un
-
     def _train_epoch(
         self,
         model: TMTGNN,
@@ -311,8 +208,7 @@ class Trainer:
         criterion: nn.Module,
         optimizer: torch.optim.Optimizer,
         max_norm: float,
-        prep_report: dict | None,
-    ) -> tuple[float, dict]:
+    ) -> float:
         """Train model for one epoch.
 
         Args:
@@ -326,17 +222,13 @@ class Trainer:
                 Optimizer.
             max_norm (float):
                 Maximum norm for gradient clipping.
-            prep_report (dict | None):
-                Data preparation report for un-normalization.
 
         Returns:
-            tuple[float, dict]:
-                Average training loss and metrics dictionary.
+            float:
+                Average training loss.
         """
         model.train()
         total_loss = 0.0
-        all_predictions = []
-        all_targets = []
         num_batches = 0
 
         progress_bar = tqdm(
@@ -383,41 +275,21 @@ class Trainer:
             # Update parameters
             optimizer.step()
 
-            # Collect predictions and targets for metrics
-            all_predictions.append(y_pred.detach())
-            all_targets.append(y_batch.detach())
-
-            # Update metrics
+            # Update loss
             total_loss += loss.item()
             num_batches += 1
 
-            # Only show loss in batch tqdm
+            # Show loss in batch tqdm
             progress_bar.set_postfix({"loss": f"{loss.item():.6f}"})
 
-        # Compute epoch-level metrics
-        all_predictions_tensor = torch.cat(all_predictions, dim=0)
-        all_targets_tensor = torch.cat(all_targets, dim=0)
-        all_predictions_un = self._unnormalize(
-            all_predictions_tensor,
-            prep_report,
-        )
-        all_targets_un = self._unnormalize(all_targets_tensor, prep_report)
-        cryptos = prep_report.get("cryptos_order") if prep_report else None
-        epoch_metrics = self._compute_metrics(
-            all_predictions_un,
-            all_targets_un,
-            cryptos=cryptos,
-        )
-
-        return total_loss / num_batches, epoch_metrics
+        return total_loss / num_batches
 
     def _validate(
         self,
         model: TMTGNN,
         val_loader: torch.utils.data.DataLoader,
         criterion: nn.Module,
-        prep_report: dict | None,
-    ) -> tuple[float, dict]:
+    ) -> float:
         """Validate model on validation set.
 
         Args:
@@ -427,17 +299,13 @@ class Trainer:
                 Validation data loader.
             criterion (nn.Module):
                 Loss function.
-            prep_report (dict | None):
-                Data preparation report for un-normalization.
 
         Returns:
-            tuple[float, dict]:
-                Average validation loss and metrics dictionary.
+            float:
+                Average validation loss.
         """
         model.eval()
         total_loss = 0.0
-        all_predictions = []
-        all_targets = []
         num_batches = 0
 
         with torch.no_grad():
@@ -463,31 +331,11 @@ class Trainer:
                 # Compute loss
                 loss = criterion(y_pred, y_batch)
 
-                # Collect predictions and targets for metrics
-                all_predictions.append(y_pred.detach())
-                all_targets.append(y_batch.detach())
-
-                # Update metrics
+                # Update loss
                 total_loss += loss.item()
                 num_batches += 1
 
-        # Compute average loss and metrics
-        avg_loss = total_loss / num_batches
-        all_predictions_tensor = torch.cat(all_predictions, dim=0)
-        all_targets_tensor = torch.cat(all_targets, dim=0)
-        all_predictions_un = self._unnormalize(
-            all_predictions_tensor,
-            prep_report,
-        )
-        all_targets_un = self._unnormalize(all_targets_tensor, prep_report)
-        cryptos = prep_report.get("cryptos_order") if prep_report else None
-        val_metrics = self._compute_metrics(
-            all_predictions_un,
-            all_targets_un,
-            cryptos=cryptos,
-        )
-
-        return avg_loss, val_metrics
+        return total_loss / num_batches
 
     def _create_data_loaders(
         self,
@@ -635,7 +483,6 @@ class Trainer:
         optimizer_config: dict,
         scheduler_config: dict,
         early_stopping_config: dict,
-        prep_report: dict | None,
     ) -> dict:
         """ "Train the model and return a comprehensive report.
 
@@ -662,8 +509,6 @@ class Trainer:
                 Configuration for the learning rate scheduler.
             early_stopping_config (dict):
                 Configuration for early stopping.
-            prep_report (dict | None):
-                Data preparation report for un-normalization.
 
         Returns:
             dict:
@@ -721,32 +566,28 @@ class Trainer:
         # Training loop with early stopping
         train_losses = []
         val_losses = []
-        val_metrics_history = []
         best_model_state = None
         epoch_bar = tqdm(range(training_epochs), desc="Training")
         for epoch in epoch_bar:
             # Train for one epoch
-            train_loss, train_metrics = self._train_epoch(
+            train_loss = self._train_epoch(
                 model,
                 train_loader,
                 criterion,
                 optimizer,
                 optimizer_config["max_norm"],
-                prep_report,
             )
 
             # Validate on validation set
-            val_loss, val_metrics = self._validate(
+            val_loss = self._validate(
                 model,
                 val_loader,
                 criterion,
-                prep_report,
             )
 
-            # Update metrics and check for early stopping
+            # Update losses and check for early stopping
             train_losses.append(train_loss)
             val_losses.append(val_loss)
-            val_metrics_history.append(val_metrics)
 
             # Step the learning rate scheduler based on validation loss
             scheduler.step(val_loss)
@@ -778,9 +619,6 @@ class Trainer:
             "summary": {
                 "best_epoch": early_stopping.best_epoch + 1,
                 "best_val_loss": float(early_stopping.best_loss),
-                "best_val_metrics": val_metrics_history[
-                    early_stopping.best_epoch
-                ],
             },
             "history": {
                 "train_losses": [float(x) for x in train_losses],
