@@ -133,19 +133,52 @@ class Evaluator:
 
         return y_un
 
+    def _compute_directional_accuracy(
+        self,
+        y_pred: np.ndarray,
+        y_true: np.ndarray,
+    ) -> float:
+        """Compute directional accuracy between predictions and true values.
+
+        This function measures the percentage of correct direction predictions
+        (up/down) between consecutive time steps.
+
+        Args:
+            y_pred (np.ndarray):
+                Predicted values of shape (batch_size,).
+            y_true (np.ndarray):
+                True values of shape (batch_size,).
+
+        Returns:
+            float:
+                Directional accuracy as percentage (0-100).
+        """
+        if len(y_pred) < 2 or len(y_true) < 2:
+            return 0.0
+
+        # Calculate direction changes (up=1, down=-1, flat=0)
+        pred_direction = np.sign(np.diff(y_pred))
+        true_direction = np.sign(np.diff(y_true))
+
+        # Count correct directions
+        correct = np.sum(pred_direction == true_direction)
+        total = len(pred_direction)
+
+        return 100.0 * correct / total if total > 0 else 0.0
+
     def _compute_metrics(
         self,
         y_pred: torch.Tensor,
         y_true: torch.Tensor,
         cryptos: list | None,
     ) -> dict:
-        """Compute MAE, RMSE, and MAPE metrics per-crypto.
+        """Compute MAE, RMSE, MAPE, and Directional Accuracy metrics per-crypto.
 
         Args:
             y_pred (torch.Tensor):
-                Predicted values.
+                Predicted values (denormalized).
             y_true (torch.Tensor):
-                True values.
+                True values (denormalized).
             cryptos (list | None):
                 List of crypto names.
 
@@ -173,12 +206,14 @@ class Evaluator:
             mape_i = 100 * np.mean(
                 np.abs((true_i - pred_i) / (np.abs(true_i) + 1e-10)),
             )
+            da_i = self._compute_directional_accuracy(pred_i, true_i)
 
             key = cryptos[i] if cryptos and i < len(cryptos) else f"crypto_{i}"
             per_crypto[key] = {
                 "mae": float(mae_i),
                 "rmse": float(rmse_i),
                 "mape": float(mape_i),
+                "directional_accuracy": float(da_i),
             }
 
         return per_crypto
