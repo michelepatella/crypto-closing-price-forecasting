@@ -139,7 +139,7 @@ class Evaluator:
         y_true: torch.Tensor,
         cryptos: list | None,
     ) -> dict:
-        """Compute MAE, RMSE, and MAPE metrics.
+        """Compute MAE, RMSE, and MAPE metrics per-crypto.
 
         Args:
             y_pred (torch.Tensor):
@@ -151,7 +151,7 @@ class Evaluator:
 
         Returns:
             dict:
-                Computed metrics overall and per-crypto.
+                Computed metrics per-crypto.
         """
         y_pred_arr = y_pred.cpu().numpy()
         y_true_arr = y_true.cpu().numpy()
@@ -181,21 +181,7 @@ class Evaluator:
                 "mape": float(mape_i),
             }
 
-        pred_flat = y_pred_arr.flatten()
-        true_flat = y_true_arr.flatten()
-        mae = float(np.mean(np.abs(pred_flat - true_flat)))
-        rmse = float(np.sqrt(np.mean((pred_flat - true_flat) ** 2)))
-        mape = float(
-            100
-            * np.mean(
-                np.abs((true_flat - pred_flat) / (np.abs(true_flat) + 1e-10)),
-            ),
-        )
-
-        return {
-            "overall": {"mae": mae, "rmse": rmse, "mape": mape},
-            "per_crypto": per_crypto,
-        }
+        return per_crypto
 
     def evaluate(
         self,
