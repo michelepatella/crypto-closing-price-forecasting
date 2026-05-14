@@ -46,7 +46,7 @@ training_device = "mps"
 The device to use for training ("cpu", "cuda", "mps").
 """
 
-training_epochs = 500
+training_epochs = 50
 """
 The number of training epochs (> 0).
 """
@@ -125,7 +125,7 @@ Scheduler configuration dictionary.
 
 early_stopping_config = {
     "patience": 10,
-    "delta": 1e-4,
+    "delta": 1e-7,
 }
 """
 Early stopping configuration dictionary.
