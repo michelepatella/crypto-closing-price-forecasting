@@ -3,12 +3,12 @@
 Data preparation for cryptocurrency time series datasets.
 """
 
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from config import (
     max_lag,
@@ -24,7 +24,10 @@ from const import (
     CRYPTO_COLUMN,
     DATA_PREP_WORKERS,
     DATE_COLUMN,
+    HIGH_COLUMN,
+    LOW_COLUMN,
     NUMERIC_COLUMNS,
+    OPEN_COLUMN,
     VOLUME_COLUMN,
 )
 
@@ -386,19 +389,27 @@ def prepare_data(file_paths: list) -> dict:
             for i in sample_indices
         ]
 
-        # Parallelize using ProcessPoolExecutor
-        results = []
+        # Parallelize using ProcessPoolExecutor with real-time progress
+        results_dict = {}
         with ProcessPoolExecutor(max_workers=DATA_PREP_WORKERS) as executor:
-            futures = [
-                executor.submit(_build_window_worker, params)
-                for params in worker_params_list
-            ]
+            # Submit all tasks and map futures to sample index
+            futures = {
+                executor.submit(_build_window_worker, params): i
+                for i, params in enumerate(worker_params_list)
+            }
+
+            # Use as_completed to show real-time progress
             for future in tqdm(
-                futures,
+                as_completed(futures),
                 desc="Building sliding windows and adjacency matrices...",
-                total=num_samples,
+                total=len(futures),
+                unit="window",
             ):
-                results.append(future.result())
+                sample_idx = futures[future]
+                results_dict[sample_idx] = future.result()
+
+        # Reconstruct results in original order
+        results = [results_dict[i] for i in range(len(worker_params_list))]
 
         # Unpack results
         X_list = [r[0] for r in results]
