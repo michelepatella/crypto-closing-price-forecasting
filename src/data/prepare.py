@@ -92,10 +92,18 @@ def _build_window_worker(params: dict) -> tuple:
     # Build adjacency matrix A
     window_start_idx = i
     window_end_idx = i + window_size
-    crypto_data_window = {
-        crypto: crypto_data[crypto][window_start_idx:window_end_idx]
-        for crypto in cryptos
-    }
+    crypto_data_window = {}
+    for crypto in cryptos:
+        if window_start_idx > 0:
+            prev_idx = window_start_idx - 1
+            crypto_data_window[crypto] = crypto_data[crypto][
+                prev_idx:window_end_idx
+            ]
+        else:
+            crypto_data_window[crypto] = crypto_data[crypto][
+                window_start_idx:window_end_idx
+            ]
+
     A_i = build_adjacency_matrix(
         crypto_data_window,
         cryptos,

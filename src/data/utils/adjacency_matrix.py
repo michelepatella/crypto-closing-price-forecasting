@@ -164,8 +164,30 @@ def build_adjacency_matrix(
 
     for crypto in cryptos:
         prices = crypto_data[crypto][:, close_col_idx]
-        returns = np.log(prices[1:] / prices[:-1])
-        returns = np.concatenate([[0.0], returns])
+        n = len(prices)
+
+        # If caller provided the previous close (n == window_size + 1)
+        # compute exact log-returns aligned to the window nodes
+        if n >= 2:
+            pair_returns = np.log(prices[1:] / prices[:-1])
+
+            # If pair_returns length equals expected window length (caller included prev price),
+            # use it directly; otherwise prepend 0.0 for the first timestamp
+            if pair_returns.shape[0] >= (n - 1) and pair_returns.shape[0] != (
+                n - 1
+            ):
+                returns = pair_returns
+            # Typical cases:
+            # - Caller passed (window_size + 1) prices -> pair_returns length == window_size
+            # - Caller passed window_size prices -> pair_returns length == window_size - 1
+            elif pair_returns.shape[0] == n - 1:
+                returns = np.concatenate([[0.0], pair_returns])
+            else:
+                returns = pair_returns
+        else:
+            # Fallback
+            returns = np.zeros(n, dtype=np.float32)
+
         log_returns[crypto] = returns
 
     # Compute lagged cross-correlations
