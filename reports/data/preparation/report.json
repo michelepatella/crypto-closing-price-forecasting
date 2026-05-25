@@ -1289,5 +1289,11 @@
         "num_windows_train": 21031,
         "num_windows_valid": 2603,
         "num_windows_test": 2604
+    },
+    "adjacency_matrix": {
+        "lagged_cross_correlation": {
+            "max_lag": 3,
+            "top_k": 1
+        }
     }
 }
