@@ -4,40 +4,7 @@ Adjacency matrix construction using lagged cross-correlations.
 """
 
 import numpy as np
-import pandas as pd
 from scipy.stats import pearsonr
-
-from const import CLOSE_COLUMN, CRYPTO_COLUMN, DATE_COLUMN
-
-
-def _compute_log_returns(df: pd.DataFrame) -> dict[str, np.ndarray]:
-    """Compute log returns for each cryptocurrency.
-
-    Note: The first timestamp has no previous price, so its log return is set
-    to 0.0 (representing a neutral starting point with no movement).
-
-    Args:
-        df (pd.DataFrame): Input dataframe.
-
-    Returns:
-        dict[str, np.ndarray]: Log returns per crypto.
-    """
-    log_returns = {}
-    cryptos = sorted(df[CRYPTO_COLUMN].unique())
-
-    for crypto in cryptos:
-        crypto_df = df[df[CRYPTO_COLUMN] == crypto].sort_values(DATE_COLUMN)
-        prices = crypto_df[CLOSE_COLUMN].values
-
-        # Compute log returns for all timestamps except the first
-        returns = np.log(prices[1:] / prices[:-1])
-
-        # Prepend 0.0 for the first timestamp (no previous price)
-        returns = np.concatenate([[0.0], returns])
-
-        log_returns[crypto] = returns
-
-    return log_returns
 
 
 def _compute_lagged_cross_correlations(
@@ -129,28 +96,26 @@ def _select_top_k_correlations(
 
 
 def build_adjacency_matrix(
-    df: pd.DataFrame,
+    crypto_data: dict[str, np.ndarray],
+    cryptos: list[str],
     window_size: int,
     max_lag: int,
     top_k: int,
+    close_col_idx: int,
 ) -> np.ndarray:
     """Build adjacency matrix with temporal and cross-crypto edges.
 
-    Combines:
-    1. Temporal edges within each cryptocurrency (t -> t+1)
-    2. Cross-crypto edges from lagged cross-correlations
-    Both edge types are included and the final matrix is normalized.
-
     Args:
-        df (pd.DataFrame): Input dataframe.
+        crypto_data (dict[str, np.ndarray]): Pre-extracted data for each crypto.
+        cryptos (list[str]): Sorted list of cryptocurrency names.
         window_size (int): Size of the sliding window.
         max_lag (int): Maximum lag horizon for cross-correlations.
         top_k (int): Number of top correlations to keep per pair.
+        close_col_idx (int): Column index for close price.
 
     Returns:
-        np.ndarray: Normalized combined adjacency matrix of shape.
+        np.ndarray: Normalized combined adjacency matrix.
     """
-    cryptos = sorted(df[CRYPTO_COLUMN].unique())
     num_cryptos = len(cryptos)
     num_nodes = num_cryptos * window_size
 
@@ -168,8 +133,14 @@ def build_adjacency_matrix(
     # ===================================
     # 2. CROSS-CRYPTO EDGES
     # ===================================
-    # Compute log returns
-    log_returns = _compute_log_returns(df)
+    # Compute log returns directly from arrays
+    log_returns = {}
+
+    for crypto in cryptos:
+        prices = crypto_data[crypto][:, close_col_idx]
+        returns = np.log(prices[1:] / prices[:-1])
+        returns = np.concatenate([[0.0], returns])
+        log_returns[crypto] = returns
 
     # Compute lagged cross-correlations
     cross_correlations = _compute_lagged_cross_correlations(

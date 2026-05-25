@@ -28,7 +28,9 @@ from const import (
     VOLUME_COLUMN,
 )
 
-from .utils.adjacency_matrix import build_adjacency_matrix
+from .utils.adjacency_matrix import (
+    build_adjacency_matrix,
+)
 
 
 def prepare_data(file_paths: list) -> dict:
@@ -280,15 +282,13 @@ def prepare_data(file_paths: list) -> dict:
         num_cryptos = len(cryptos)
         num_nodes = num_cryptos * window_size
 
-        # Organize data by cryptocurrency and store dates
+        # Organize data by cryptocurrency
         crypto_data = {}
-        crypto_dates = {}
         for crypto in cryptos:
             crypto_df = df[df[CRYPTO_COLUMN] == crypto].sort_values(
                 DATE_COLUMN,
             )
             crypto_data[crypto] = crypto_df[feature_cols].values
-            crypto_dates[crypto] = crypto_df[DATE_COLUMN].values
 
         # Use minimum length to ensure balanced samples
         min_length = min(len(crypto_data[c]) for c in cryptos)
@@ -325,24 +325,21 @@ def prepare_data(file_paths: list) -> dict:
             window_start_idx = i - sequence_length + 1
             window_end_idx = i + window_size + 1
 
-            # Extract date range for this window using first crypto
-            first_crypto = cryptos[0]
-            dates_in_window = crypto_dates[first_crypto][
-                window_start_idx:window_end_idx
-            ]
+            # Extract data subset for this window
+            crypto_data_window = {
+                crypto: crypto_data[crypto][window_start_idx:window_end_idx]
+                for crypto in cryptos
+            }
 
-            # Filter dataframe to only this window's date range
-            df_window = df[
-                (df[DATE_COLUMN].isin(dates_in_window))
-                & (df[CRYPTO_COLUMN].isin(cryptos))
-            ]
-
-            # Build adjacency matrix for this window
+            # Build adjacency matrix
+            close_idx = feature_cols.index(CLOSE_COLUMN)
             A_i = build_adjacency_matrix(
-                df_window,
+                crypto_data_window,
+                cryptos,
                 window_size,
                 max_lag=max_lag,
                 top_k=top_k,
+                close_col_idx=close_idx,
             )
             A_list.append(A_i)
 
