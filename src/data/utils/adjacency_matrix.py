@@ -4,7 +4,6 @@ Adjacency matrix construction using lagged cross-correlations.
 """
 
 import numpy as np
-from scipy.stats import pearsonr
 
 
 def _compute_lagged_cross_correlations(
@@ -26,7 +25,48 @@ def _compute_lagged_cross_correlations(
     cross_correlations = {}
     cryptos = sorted(log_returns.keys())
 
-    # Compute lagged cross-correlations for all pairs
+    # Convert dict to matrix
+    min_len = min(len(log_returns[c]) for c in cryptos)
+    returns_matrix = np.array(
+        [log_returns[c][:min_len] for c in cryptos],
+        dtype=np.float32,
+    )
+
+    if min_len <= max_lag:
+        # Not enough data for lagged correlations
+        for i, crypto_i in enumerate(cryptos):
+            for j, crypto_j in enumerate(cryptos):
+                if i != j:
+                    cross_correlations[(crypto_i, crypto_j)] = []
+        return cross_correlations
+
+    # Initialize correlation storage
+    lag_correlations = {}
+
+    for h in range(1, max_lag + 1):
+        # Extract lagged and shifted windows
+        lagged = returns_matrix[:, :-h]
+        shifted = returns_matrix[:, h:]
+
+        # Normalize to zero mean and unit variance
+        lagged_mean = np.mean(lagged, axis=1, keepdims=True)
+        lagged_std = np.std(lagged, axis=1, keepdims=True)
+        lagged_std[lagged_std == 0] = 1.0
+
+        shifted_mean = np.mean(shifted, axis=1, keepdims=True)
+        shifted_std = np.std(shifted, axis=1, keepdims=True)
+        shifted_std[shifted_std == 0] = 1.0
+
+        lagged_norm = (lagged - lagged_mean) / lagged_std
+        shifted_norm = (shifted - shifted_mean) / shifted_std
+
+        # Compute correlation matrix
+        T = lagged.shape[1]
+        corr_matrix = np.dot(lagged_norm, shifted_norm.T) / T
+
+        lag_correlations[h] = corr_matrix
+
+    # Convert correlation matrices back to dict format
     for i, crypto_i in enumerate(cryptos):
         for j, crypto_j in enumerate(cryptos):
             if i == j:
@@ -35,28 +75,14 @@ def _compute_lagged_cross_correlations(
             key = (crypto_i, crypto_j)
             correlations = []
 
-            r_i = log_returns[crypto_i]
-            r_j = log_returns[crypto_j]
-
-            # Ensure minimum length
-            min_len = min(len(r_i), len(r_j))
-            if min_len <= max_lag:
-                cross_correlations[key] = correlations
-                continue
-
-            # Compute correlation for each lag
             for h in range(1, max_lag + 1):
-                r_i_lagged = r_i[:-h]
-                r_j_shifted = r_j[h:]
+                corr_value = lag_correlations[h][i, j]
 
-                # Ensure same length
-                min_len_h = min(len(r_i_lagged), len(r_j_shifted))
-                r_i_lagged = r_i_lagged[:min_len_h]
-                r_j_shifted = r_j_shifted[:min_len_h]
-
-                if len(r_i_lagged) > 1:
-                    corr, _ = pearsonr(r_i_lagged, r_j_shifted)
-                    correlations.append({"lag": h, "corr": abs(corr)})
+                # Handle NaN values
+                if not np.isnan(corr_value):
+                    correlations.append(
+                        {"lag": h, "corr": abs(float(corr_value))},
+                    )
 
             cross_correlations[key] = correlations
 
