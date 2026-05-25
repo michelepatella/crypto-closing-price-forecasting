@@ -3,6 +3,7 @@
 Data preparation for cryptocurrency time series datasets.
 """
 
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -21,6 +22,7 @@ from const import (
     ADJ_CLOSE_COLUMN,
     CLOSE_COLUMN,
     CRYPTO_COLUMN,
+    DATA_PREP_WORKERS,
     DATE_COLUMN,
     HIGH_COLUMN,
     LOW_COLUMN,
@@ -271,10 +273,6 @@ def prepare_data(file_paths: list) -> dict:
     # ===================================
     # Create graph-structured windows for temporal and cross-crypto relationships
     def _build_sliding_windows(df):
-        X = []
-        y = []
-        A_list = []
-
         feature_cols = [
             col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN
         ]
@@ -293,20 +291,18 @@ def prepare_data(file_paths: list) -> dict:
 
         # Use minimum length to ensure balanced samples
         min_length = min(len(crypto_data[c]) for c in cryptos)
-
         num_samples = min_length - window_size - sequence_length + 1
+        close_idx = feature_cols.index(CLOSE_COLUMN)
 
-        # Extract windows with corresponding next-step targets
-        for i in tqdm(
-            range(sequence_length - 1, sequence_length - 1 + num_samples),
-            desc="Building sliding windows and adjacency matrices...",
-            total=num_samples,
-        ):
+        # Worker function to build single window (X, y, A)
+        def _build_window_item(i):
+            """Build X, y, A for sample i."""
             X_window = np.zeros(
                 (num_features, num_nodes, sequence_length),
                 dtype=np.float32,
             )
 
+            # Build feature window X
             for crypto_idx, crypto in enumerate(cryptos):
                 for t in range(window_size):
                     node_idx = crypto_idx * window_size + t
@@ -316,28 +312,24 @@ def prepare_data(file_paths: list) -> dict:
                         start_idx : time_idx + 1
                     ].T
 
-            X.append(X_window)
+            # Build target y
+            y_sample = np.array(
+                [
+                    crypto_data[crypto][i + window_size, close_idx]
+                    for crypto in cryptos
+                ],
+                dtype=np.float32,
+            )
 
-            # Target: next closing price for each cryptocurrency
-            y_sample = []
-            for crypto in cryptos:
-                close_idx = feature_cols.index(CLOSE_COLUMN)
-                target = crypto_data[crypto][i + window_size, close_idx]
-                y_sample.append(target)
-            y.append(y_sample)
-
-            # Build dynamic adjacency matrix for this sliding window
+            # Build adjacency matrix A
             window_start_idx = i - sequence_length + 1
             window_end_idx = i + window_size + 1
 
-            # Extract data subset for this window
             crypto_data_window = {
                 crypto: crypto_data[crypto][window_start_idx:window_end_idx]
                 for crypto in cryptos
             }
 
-            # Build adjacency matrix
-            close_idx = feature_cols.index(CLOSE_COLUMN)
             A_i = build_adjacency_matrix(
                 crypto_data_window,
                 cryptos,
@@ -346,10 +338,34 @@ def prepare_data(file_paths: list) -> dict:
                 top_k=top_k,
                 close_col_idx=close_idx,
             )
-            A_list.append(A_i)
 
-        X = np.stack(X, axis=0)
-        y = np.array(y)
+            return X_window, y_sample, A_i
+
+        # Parallelize using ProcessPoolExecutor
+        sample_indices = range(
+            sequence_length - 1,
+            sequence_length - 1 + num_samples,
+        )
+
+        results = []
+        with ProcessPoolExecutor(max_workers=DATA_PREP_WORKERS) as executor:
+            futures = [
+                executor.submit(_build_window_item, i) for i in sample_indices
+            ]
+            for future in tqdm(
+                futures,
+                desc="Building sliding windows & adjacency matrices",
+                total=num_samples,
+            ):
+                results.append(future.result())
+
+        # Unpack results
+        X_list = [r[0] for r in results]
+        y_list = [r[1] for r in results]
+        A_list = [r[2] for r in results]
+
+        X = np.stack(X_list, axis=0)
+        y = np.stack(y_list, axis=0)
         A = np.stack(A_list, axis=0)
 
         return X, y, A

@@ -38,6 +38,8 @@ DATA_FORMAT = "*.csv"
 
 DATA_TIME_FREQUENCY = "1h"
 
+DATA_PREP_WORKERS = 5
+
 # ===================================
 # PATHS
 # ===================================
