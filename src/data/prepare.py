@@ -8,7 +8,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from config import sequence_length, train_ratio, valid_ratio, window_size
+from config import (
+    max_lag,
+    sequence_length,
+    top_k,
+    train_ratio,
+    valid_ratio,
+    window_size,
+)
 from const import (
     ADJ_CLOSE_COLUMN,
     CLOSE_COLUMN,
@@ -20,6 +27,7 @@ from const import (
     OPEN_COLUMN,
     VOLUME_COLUMN,
 )
+from src.data.utils.adjacency_matrix import build_adjacency_matrix
 
 
 def prepare_data(file_paths: list) -> dict:
@@ -261,7 +269,6 @@ def prepare_data(file_paths: list) -> dict:
     def _build_sliding_windows(df):
         X = []
         y = []
-        A = []
 
         feature_cols = [
             col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN
@@ -281,14 +288,6 @@ def prepare_data(file_paths: list) -> dict:
 
         # Use minimum length to ensure balanced samples
         min_length = min(len(crypto_data[c]) for c in cryptos)
-
-        # Build adjacency matrix for temporal connections (t -> t+1)
-        adj_template = np.zeros((num_nodes, num_nodes), dtype=np.float32)
-        for crypto_idx in range(num_cryptos):
-            for t in range(window_size - 1):
-                node_t = crypto_idx * window_size + t
-                node_t_plus_1 = crypto_idx * window_size + t + 1
-                adj_template[node_t, node_t_plus_1] = 1.0
 
         num_samples = min_length - window_size - sequence_length + 1
 
@@ -321,8 +320,13 @@ def prepare_data(file_paths: list) -> dict:
         X = np.stack(X, axis=0)
         y = np.array(y)
 
-        # Use single adjacency matrix
-        A = adj_template
+        # Build adjacency matrix using lagged cross-correlations
+        A = build_adjacency_matrix(
+            df,
+            window_size,
+            max_lag=max_lag,
+            top_k=top_k,
+        )
 
         return X, y, A
 
@@ -341,6 +345,13 @@ def prepare_data(file_paths: list) -> dict:
         "num_windows_train": int(X_train.shape[0]),
         "num_windows_valid": int(X_valid.shape[0]),
         "num_windows_test": int(X_test.shape[0]),
+    }
+
+    report["adjacency_matrix"] = {
+        "lagged_cross_correlation": {
+            "max_lag": int(max_lag),
+            "top_k": int(top_k),
+        },
     }
 
     return {
