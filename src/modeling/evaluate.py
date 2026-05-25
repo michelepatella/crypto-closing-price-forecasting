@@ -247,11 +247,11 @@ class Evaluator:
         # Data preparation
         X_tensor = torch.from_numpy(X_test).float()
         y_tensor = torch.from_numpy(y_test).float()
-        A_tensor = (
-            torch.from_numpy(A_test if A_test.ndim == 2 else A_test[0])
-            .float()
-            .to(self.device)
-        )
+
+        if A_test.ndim == 2:
+            # Single matrix: broadcast to all samples
+            A_test = np.expand_dims(A_test, 0)
+            A_test = np.repeat(A_test, len(X_tensor), axis=0)
 
         # Model initialization
         model = self._load_model(
@@ -274,8 +274,13 @@ class Evaluator:
                 X_batch = X_tensor[i:end].to(self.device)
                 y_batch = y_tensor[i:end].to(self.device)
 
+                # Extract adjacency matrices for this batch
+                A_batch = (
+                    torch.from_numpy(A_test[i:end]).float().to(self.device)
+                )
+
                 # Get predictions
-                y_pred = model(X_batch, adj=A_tensor)
+                y_pred = model(X_batch, adj=A_batch)
 
                 # Reshaping
                 num_cryptos = y_batch.shape[1]

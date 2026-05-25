@@ -379,7 +379,7 @@ class Trainer:
                 y (torch.Tensor):
                     Target tensor.
                 A (torch.Tensor):
-                    Adjacency matrix.
+                    Adjacency matrices (either single matrix or per-sample).
             """
 
             def __init__(
@@ -396,14 +396,24 @@ class Trainer:
                     y (np.ndarray):
                         Target tensor.
                     A (np.ndarray):
-                        Adjacency matrix.
+                        Adjacency matrices. Can be:
+                        - 2D: (num_nodes, num_nodes) - single matrix for all samples
+                        - 3D: (num_samples, num_nodes, num_nodes) - per-sample matrices
 
                 Returns:
                     None
                 """
                 self.X = torch.from_numpy(X).float()
                 self.y = torch.from_numpy(y).float()
-                self.A = torch.from_numpy(A if A.ndim == 2 else A[0]).float()
+
+                # Handle both single matrix and per-sample matrices
+                if A.ndim == 2:
+                    # Single matrix: expand to per-sample format
+                    self.A = torch.from_numpy(np.expand_dims(A, 0)).float()
+                    self.A = self.A.expand(len(X), -1, -1).contiguous()
+                elif A.ndim == 3:
+                    # Per-sample matrices: use as-is
+                    self.A = torch.from_numpy(A).float()
 
             def __len__(self) -> int:
                 """Return the number of samples in the dataset.
@@ -429,12 +439,12 @@ class Trainer:
                         A tuple containing the feature tensor, target tensor,
                         and adjacency matrix for the given index.
                 """
-                return self.X[idx], self.y[idx], self.A
+                return self.X[idx], self.y[idx], self.A[idx]
 
         def _collate_batch(
             batch: list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]],
         ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-            """Stack features and targets while keeping a single adjacency matrix.
+            """Stack features, targets, and per-sample adjacency matrices.
 
             Args:
                 batch (list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]):
@@ -443,11 +453,17 @@ class Trainer:
 
             Returns:
                 tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-                    A tuple containing the stacked feature tensor, stacked target tensor,
-                    and a single adjacency matrix.
+                    A tuple containing:
+                    - Stacked feature tensor
+                    - Stacked target tensor
+                    - Stacked adjacency matrices
             """
             X_batch, y_batch, A_batch = zip(*batch)
-            return torch.stack(X_batch), torch.stack(y_batch), A_batch[0]
+            return (
+                torch.stack(X_batch),
+                torch.stack(y_batch),
+                torch.stack(A_batch),
+            )
 
         # Create datasets for training and validation
         train_dataset = TimeSeriesDataset(X_train, y_train, A_train)

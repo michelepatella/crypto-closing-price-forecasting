@@ -27,7 +27,8 @@ from const import (
     OPEN_COLUMN,
     VOLUME_COLUMN,
 )
-from src.data.utils.adjacency_matrix import build_adjacency_matrix
+
+from .utils.adjacency_matrix import build_adjacency_matrix
 
 
 def prepare_data(file_paths: list) -> dict:
@@ -269,6 +270,7 @@ def prepare_data(file_paths: list) -> dict:
     def _build_sliding_windows(df):
         X = []
         y = []
+        A_list = []
 
         feature_cols = [
             col for col in NUMERIC_COLUMNS if col != ADJ_CLOSE_COLUMN
@@ -278,13 +280,15 @@ def prepare_data(file_paths: list) -> dict:
         num_cryptos = len(cryptos)
         num_nodes = num_cryptos * window_size
 
-        # Organize data by cryptocurrency
+        # Organize data by cryptocurrency and store dates
         crypto_data = {}
+        crypto_dates = {}
         for crypto in cryptos:
             crypto_df = df[df[CRYPTO_COLUMN] == crypto].sort_values(
                 DATE_COLUMN,
             )
             crypto_data[crypto] = crypto_df[feature_cols].values
+            crypto_dates[crypto] = crypto_df[DATE_COLUMN].values
 
         # Use minimum length to ensure balanced samples
         min_length = min(len(crypto_data[c]) for c in cryptos)
@@ -317,16 +321,34 @@ def prepare_data(file_paths: list) -> dict:
                 y_sample.append(target)
             y.append(y_sample)
 
+            # Build dynamic adjacency matrix for this sliding window
+            window_start_idx = i - sequence_length + 1
+            window_end_idx = i + window_size + 1
+
+            # Extract date range for this window using first crypto
+            first_crypto = cryptos[0]
+            dates_in_window = crypto_dates[first_crypto][
+                window_start_idx:window_end_idx
+            ]
+
+            # Filter dataframe to only this window's date range
+            df_window = df[
+                (df[DATE_COLUMN].isin(dates_in_window))
+                & (df[CRYPTO_COLUMN].isin(cryptos))
+            ]
+
+            # Build adjacency matrix for this window
+            A_i = build_adjacency_matrix(
+                df_window,
+                window_size,
+                max_lag=max_lag,
+                top_k=top_k,
+            )
+            A_list.append(A_i)
+
         X = np.stack(X, axis=0)
         y = np.array(y)
-
-        # Build adjacency matrix using lagged cross-correlations
-        A = build_adjacency_matrix(
-            df,
-            window_size,
-            max_lag=max_lag,
-            top_k=top_k,
-        )
+        A = np.stack(A_list, axis=0)
 
         return X, y, A
 
