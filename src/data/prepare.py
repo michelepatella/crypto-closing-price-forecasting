@@ -7,6 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 from config import (
     max_lag,
@@ -296,7 +297,11 @@ def prepare_data(file_paths: list) -> dict:
         num_samples = min_length - window_size - sequence_length + 1
 
         # Extract windows with corresponding next-step targets
-        for i in range(sequence_length - 1, sequence_length - 1 + num_samples):
+        for i in tqdm(
+            range(sequence_length - 1, sequence_length - 1 + num_samples),
+            desc="Building sliding windows and adjacency matrices...",
+            total=num_samples,
+        ):
             X_window = np.zeros(
                 (num_features, num_nodes, sequence_length),
                 dtype=np.float32,
