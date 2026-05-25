@@ -116,7 +116,6 @@ def main() -> None:
         optimizer_config=optimizer_config,
         scheduler_config=scheduler_config,
         early_stopping_config=early_stopping_config,
-        prep_report=data_prep_report,
     )
 
     with open(MODELING_TRAINING_REPORT_PATH, "w") as f:
