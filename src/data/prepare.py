@@ -24,16 +24,85 @@ from const import (
     CRYPTO_COLUMN,
     DATA_PREP_WORKERS,
     DATE_COLUMN,
-    HIGH_COLUMN,
-    LOW_COLUMN,
     NUMERIC_COLUMNS,
-    OPEN_COLUMN,
     VOLUME_COLUMN,
 )
 
 from .utils.adjacency_matrix import (
     build_adjacency_matrix,
 )
+
+
+def _build_window_worker(params: dict) -> tuple:
+    """Build X, y, A for a single sliding window sample.
+
+    Args:
+        params (dict): Dictionary with keys:
+            - 'i': sample index
+            - 'crypto_data': dict of numpy arrays per crypto
+            - 'cryptos': sorted list of crypto names
+            - 'num_features': number of features
+            - 'num_nodes': total graph nodes
+            - 'sequence_length': temporal sequence length
+            - 'window_size': spatial window size
+            - 'close_idx': column index for close price
+            - 'max_lag': max lag for correlations
+            - 'top_k': top-k correlations to keep
+
+    Returns:
+        tuple: (X_window, y_sample, A_i)
+    """
+    i = params["i"]
+    crypto_data = params["crypto_data"]
+    cryptos = params["cryptos"]
+    num_features = params["num_features"]
+    num_nodes = params["num_nodes"]
+    sequence_length = params["sequence_length"]
+    window_size = params["window_size"]
+    close_idx = params["close_idx"]
+    max_lag = params["max_lag"]
+    top_k = params["top_k"]
+
+    # Build feature window X
+    X_window = np.zeros(
+        (num_features, num_nodes, sequence_length),
+        dtype=np.float32,
+    )
+    for crypto_idx, crypto in enumerate(cryptos):
+        for t in range(window_size):
+            node_idx = crypto_idx * window_size + t
+            time_idx = i + t
+            start_idx = time_idx - sequence_length + 1
+            X_window[:, node_idx, :] = crypto_data[crypto][
+                start_idx : time_idx + 1
+            ].T
+
+    # Build target y
+    y_sample = np.array(
+        [
+            crypto_data[crypto][i + window_size, close_idx]
+            for crypto in cryptos
+        ],
+        dtype=np.float32,
+    )
+
+    # Build adjacency matrix A
+    window_start_idx = i - sequence_length + 1
+    window_end_idx = i + window_size + 1
+    crypto_data_window = {
+        crypto: crypto_data[crypto][window_start_idx:window_end_idx]
+        for crypto in cryptos
+    }
+    A_i = build_adjacency_matrix(
+        crypto_data_window,
+        cryptos,
+        window_size,
+        max_lag=max_lag,
+        top_k=top_k,
+        close_col_idx=close_idx,
+    )
+
+    return X_window, y_sample, A_i
 
 
 def prepare_data(file_paths: list) -> dict:
@@ -294,67 +363,39 @@ def prepare_data(file_paths: list) -> dict:
         num_samples = min_length - window_size - sequence_length + 1
         close_idx = feature_cols.index(CLOSE_COLUMN)
 
-        # Worker function to build single window (X, y, A)
-        def _build_window_item(i):
-            """Build X, y, A for sample i."""
-            X_window = np.zeros(
-                (num_features, num_nodes, sequence_length),
-                dtype=np.float32,
-            )
-
-            # Build feature window X
-            for crypto_idx, crypto in enumerate(cryptos):
-                for t in range(window_size):
-                    node_idx = crypto_idx * window_size + t
-                    time_idx = i + t
-                    start_idx = time_idx - sequence_length + 1
-                    X_window[:, node_idx, :] = crypto_data[crypto][
-                        start_idx : time_idx + 1
-                    ].T
-
-            # Build target y
-            y_sample = np.array(
-                [
-                    crypto_data[crypto][i + window_size, close_idx]
-                    for crypto in cryptos
-                ],
-                dtype=np.float32,
-            )
-
-            # Build adjacency matrix A
-            window_start_idx = i - sequence_length + 1
-            window_end_idx = i + window_size + 1
-
-            crypto_data_window = {
-                crypto: crypto_data[crypto][window_start_idx:window_end_idx]
-                for crypto in cryptos
-            }
-
-            A_i = build_adjacency_matrix(
-                crypto_data_window,
-                cryptos,
-                window_size,
-                max_lag=max_lag,
-                top_k=top_k,
-                close_col_idx=close_idx,
-            )
-
-            return X_window, y_sample, A_i
-
-        # Parallelize using ProcessPoolExecutor
+        # Prepare sample indices and parameters for each worker
         sample_indices = range(
             sequence_length - 1,
             sequence_length - 1 + num_samples,
         )
 
+        # Build parameter list for each sample
+        worker_params_list = [
+            {
+                "i": i,
+                "crypto_data": crypto_data,
+                "cryptos": cryptos,
+                "num_features": num_features,
+                "num_nodes": num_nodes,
+                "sequence_length": sequence_length,
+                "window_size": window_size,
+                "close_idx": close_idx,
+                "max_lag": max_lag,
+                "top_k": top_k,
+            }
+            for i in sample_indices
+        ]
+
+        # Parallelize using ProcessPoolExecutor
         results = []
         with ProcessPoolExecutor(max_workers=DATA_PREP_WORKERS) as executor:
             futures = [
-                executor.submit(_build_window_item, i) for i in sample_indices
+                executor.submit(_build_window_worker, params)
+                for params in worker_params_list
             ]
             for future in tqdm(
                 futures,
-                desc="Building sliding windows & adjacency matrices",
+                desc="Building sliding windows and adjacency matrices...",
                 total=num_samples,
             ):
                 results.append(future.result())
