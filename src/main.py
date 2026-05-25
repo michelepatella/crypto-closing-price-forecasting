@@ -6,6 +6,7 @@ Main execution script.
 import json
 import os
 import random
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -38,6 +39,8 @@ from data.prepare import prepare_data
 from data.verify_quality import verify_data_quality
 from modeling.evaluate import Evaluator
 from modeling.train import Trainer
+
+warnings.filterwarnings("ignore")
 
 
 def main() -> None:
