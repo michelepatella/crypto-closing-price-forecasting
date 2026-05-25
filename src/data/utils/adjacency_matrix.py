@@ -92,6 +92,7 @@ def _compute_lagged_cross_correlations(
 def _select_top_k_correlations(
     cross_correlations: dict[tuple, list[dict]],
     top_k: int,
+    correlation_threshold: float,
 ) -> dict[tuple, list[dict]]:
     """Select top-k strongest correlations per cryptocurrency pair.
 
@@ -99,6 +100,7 @@ def _select_top_k_correlations(
         cross_correlations (dict[tuple, list[dict]]): Cross-correlations
             indexed by (crypto_i, crypto_j).
         top_k (int): Number of top correlations to keep.
+        correlation_threshold (float): Minimum absolute correlation to keep.
 
     Returns:
         dict[tuple, list[dict]]: Top-k correlations per pair.
@@ -106,13 +108,19 @@ def _select_top_k_correlations(
     top_k_correlations = {}
 
     for pair, correlations in cross_correlations.items():
-        if not correlations:
+        filtered_correlations = [
+            corr_info
+            for corr_info in correlations
+            if corr_info["corr"] >= correlation_threshold
+        ]
+
+        if not filtered_correlations:
             top_k_correlations[pair] = []
             continue
 
         # Sort by correlation strength (descending)
         sorted_corrs = sorted(
-            correlations,
+            filtered_correlations,
             key=lambda x: x["corr"],
             reverse=True,
         )
@@ -127,6 +135,7 @@ def build_adjacency_matrix(
     window_size: int,
     max_lag: int,
     top_k: int,
+    correlation_threshold: float,
     close_col_idx: int,
 ) -> np.ndarray:
     """Build adjacency matrix with temporal and cross-crypto edges.
@@ -137,6 +146,7 @@ def build_adjacency_matrix(
         window_size (int): Size of the sliding window.
         max_lag (int): Maximum lag horizon for cross-correlations.
         top_k (int): Number of top correlations to keep per pair.
+        correlation_threshold (float): Minimum absolute correlation to keep.
         close_col_idx (int): Column index for close price.
 
     Returns:
@@ -200,6 +210,7 @@ def build_adjacency_matrix(
     top_k_correlations = _select_top_k_correlations(
         cross_correlations,
         top_k=top_k,
+        correlation_threshold=correlation_threshold,
     )
 
     # Create mapping from crypto name to index

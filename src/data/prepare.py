@@ -11,6 +11,7 @@ import pandas as pd
 from tqdm.auto import tqdm
 
 from config import (
+    correlation_threshold,
     max_lag,
     sequence_length,
     top_k,
@@ -51,6 +52,7 @@ def _build_window_worker(params: dict) -> tuple:
             - 'close_idx': column index for close price
             - 'max_lag': max lag for correlations
             - 'top_k': top-k correlations to keep
+            - 'correlation_threshold': minimum absolute correlation to keep
 
     Returns:
         tuple: (X_window, y_sample, A_i)
@@ -65,6 +67,7 @@ def _build_window_worker(params: dict) -> tuple:
     close_idx = params["close_idx"]
     max_lag = params["max_lag"]
     top_k = params["top_k"]
+    correlation_threshold = params["correlation_threshold"]
 
     # Build feature window X
     X_window = np.zeros(
@@ -110,6 +113,7 @@ def _build_window_worker(params: dict) -> tuple:
         window_size,
         max_lag=max_lag,
         top_k=top_k,
+        correlation_threshold=correlation_threshold,
         close_col_idx=close_idx,
     )
 
@@ -393,6 +397,7 @@ def prepare_data(file_paths: list) -> dict:
                 "close_idx": close_idx,
                 "max_lag": max_lag,
                 "top_k": top_k,
+                "correlation_threshold": correlation_threshold,
             }
             for i in sample_indices
         ]
