@@ -29,12 +29,14 @@ from const import (
     LOW_COLUMN,
     NUMERIC_COLUMNS,
     OPEN_COLUMN,
+    TECHNICAL_INDICATOR_COLUMNS,
     VOLUME_COLUMN,
 )
 
 from .utils.adjacency_matrix import (
     build_adjacency_matrix,
 )
+from .utils.features import calculate_technical_indicators
 
 
 def _build_window_worker(params: dict) -> tuple:
@@ -156,6 +158,30 @@ def prepare_data(file_paths: list) -> dict:
         dataframes[Path(file_path).stem] = df
 
     report["num_missing_values_before"] = missing_values_raw
+
+    # ===================================
+    # FEATURE ENGINEERING
+    # ===================================
+    feature_engineering_stats = {}
+
+    for name, df in dataframes.items():
+        df_before_features = df.copy()
+
+        # Calculate technical indicators
+        df = calculate_technical_indicators(df)
+
+        # Drop rows with NaN values in technical indicator columns
+        df = df.dropna(subset=TECHNICAL_INDICATOR_COLUMNS)
+
+        feature_engineering_stats[name] = {
+            "num_rows_before_feature_engineering": len(df_before_features),
+            "num_rows_after_feature_engineering": len(df),
+            "num_rows_dropped": len(df_before_features) - len(df),
+        }
+
+        dataframes[name] = df
+
+    report["feature_engineering_statistics"] = feature_engineering_stats
 
     # ===================================
     # DATA CLEANING
