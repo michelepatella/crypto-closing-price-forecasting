@@ -32,12 +32,12 @@ valid_ratio = 0.1
 The validation split ratio (0.0-1.0).
 """
 
-max_lag = 3
+max_lag = 12
 """
 Maximum lag horizon for lagged cross-correlation analysis (> 0 and <= window_size).
 """
 
-top_k = 1
+top_k = 3
 """
 Number of top correlations to keep per cryptocurrency pair (> 0 and <= max_lag).
 """
