@@ -39,6 +39,17 @@ MACD_SLOW = 26
 MACD_SIGNAL = 9
 ATR_PERIOD = 14
 
+# Raw numeric columns (before feature engineering)
+RAW_NUMERIC_COLUMNS = [
+    OPEN_COLUMN,
+    HIGH_COLUMN,
+    LOW_COLUMN,
+    CLOSE_COLUMN,
+    ADJ_CLOSE_COLUMN,
+    VOLUME_COLUMN,
+]
+
+# Final numeric columns (after feature engineering)
 NUMERIC_COLUMNS = [
     OPEN_COLUMN,
     HIGH_COLUMN,

@@ -10,7 +10,7 @@ from const import (
     DATE_COLUMN,
     HIGH_COLUMN,
     LOW_COLUMN,
-    NUMERIC_COLUMNS,
+    RAW_NUMERIC_COLUMNS,
 )
 
 
@@ -32,7 +32,7 @@ def explore_data(file_path: str) -> dict:
     # BASIC STATISTICS
     # ===================================
     stats_report = {}
-    for col in NUMERIC_COLUMNS:
+    for col in RAW_NUMERIC_COLUMNS:
         stats_report[col] = {
             "min": float(df[col].min()),
             "max": float(df[col].max()),
@@ -48,7 +48,7 @@ def explore_data(file_path: str) -> dict:
     # DISTRIBUTION SHAPE
     # ===================================
     dist_report = {}
-    for col in NUMERIC_COLUMNS:
+    for col in RAW_NUMERIC_COLUMNS:
         dist_report[col] = {
             "skewness": float(df[col].skew()),
             "kurtosis": float(df[col].kurt()),
@@ -60,7 +60,7 @@ def explore_data(file_path: str) -> dict:
     # QUANTILES
     # ===================================
     quantile_report = {}
-    for col in NUMERIC_COLUMNS:
+    for col in RAW_NUMERIC_COLUMNS:
         quantile_report[col] = {
             "q1": float(df[col].quantile(0.25)),
             "q2_median": float(df[col].quantile(0.50)),
@@ -72,7 +72,7 @@ def explore_data(file_path: str) -> dict:
     # ===================================
     # CORRELATION ANALYSIS
     # ===================================
-    correlation_matrix = df[NUMERIC_COLUMNS].corr()
+    correlation_matrix = df[RAW_NUMERIC_COLUMNS].corr()
 
     report["correlation_matrix"] = correlation_matrix.to_dict()
 
