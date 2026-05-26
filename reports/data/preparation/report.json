@@ -154,10 +154,97 @@
             "Volume": 436
         }
     },
+    "feature_engineering_statistics": {
+        "BTC": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 24952,
+            "num_rows_dropped": 1376
+        },
+        "XRP": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25054,
+            "num_rows_dropped": 1274
+        },
+        "MAID": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25069,
+            "num_rows_dropped": 1259
+        },
+        "BTS": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25068,
+            "num_rows_dropped": 1260
+        },
+        "IOC": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25078,
+            "num_rows_dropped": 1250
+        },
+        "DGB": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25068,
+            "num_rows_dropped": 1260
+        },
+        "XMR": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25060,
+            "num_rows_dropped": 1268
+        },
+        "MONA": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25077,
+            "num_rows_dropped": 1251
+        },
+        "XLM": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25048,
+            "num_rows_dropped": 1280
+        },
+        "VTC": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25071,
+            "num_rows_dropped": 1257
+        },
+        "XCP": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25072,
+            "num_rows_dropped": 1256
+        },
+        "ETH": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 24979,
+            "num_rows_dropped": 1349
+        },
+        "SYS": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25073,
+            "num_rows_dropped": 1255
+        },
+        "DASH": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25059,
+            "num_rows_dropped": 1269
+        },
+        "LTC": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25059,
+            "num_rows_dropped": 1269
+        },
+        "DOGE": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25065,
+            "num_rows_dropped": 1263
+        },
+        "NAV": {
+            "num_rows_before_feature_engineering": 26328,
+            "num_rows_after_feature_engineering": 25048,
+            "num_rows_dropped": 1280
+        }
+    },
     "data_cleaning_statistics": {
         "BTC": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 24952,
+            "num_rows_after": 24951,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -165,12 +252,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "XRP": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25054,
+            "num_rows_after": 25053,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -178,12 +270,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "MAID": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25069,
+            "num_rows_after": 25068,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -191,12 +288,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "BTS": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25068,
+            "num_rows_after": 25067,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -204,12 +306,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "IOC": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25078,
+            "num_rows_after": 25077,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -217,12 +324,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "DGB": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25068,
+            "num_rows_after": 25067,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -230,12 +342,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "XMR": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25060,
+            "num_rows_after": 25059,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -243,12 +360,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "MONA": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25077,
+            "num_rows_after": 25076,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -256,12 +378,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "XLM": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25048,
+            "num_rows_after": 25047,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -269,12 +396,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "VTC": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25071,
+            "num_rows_after": 25070,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -282,12 +414,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "XCP": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25072,
+            "num_rows_after": 25071,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -295,12 +432,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "ETH": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 24979,
+            "num_rows_after": 24978,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -308,12 +450,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "SYS": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25073,
+            "num_rows_after": 25072,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -321,12 +468,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "DASH": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25059,
+            "num_rows_after": 25058,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -334,12 +486,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "LTC": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25059,
+            "num_rows_after": 25058,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -347,12 +504,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "DOGE": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25065,
+            "num_rows_after": 25064,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -360,12 +522,17 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         },
         "NAV": {
-            "num_rows_before": 26328,
-            "num_rows_after": 26325,
+            "num_rows_before": 25048,
+            "num_rows_after": 25047,
             "num_missing_values_after": {
                 "Date": 0,
                 "Open": 0,
@@ -373,6 +540,11 @@
                 "Low": 0,
                 "Close": 0,
                 "Volume": 0,
+                "RSI": 0,
+                "MACD_Hist": 0,
+                "ATR_Norm": 0,
+                "LogReturns": 0,
+                "ROC": 0,
                 "Crypto": 0
             }
         }
@@ -380,112 +552,112 @@
     "train_valid_test_split_statistics": {
         "per_crypto": {
             "BTC": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 24951,
+                "num_train_rows": 19960,
+                "num_valid_rows": 2495,
+                "num_test_rows": 2496
             },
             "BTS": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25067,
+                "num_train_rows": 20053,
+                "num_valid_rows": 2507,
+                "num_test_rows": 2507
             },
             "DASH": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25058,
+                "num_train_rows": 20046,
+                "num_valid_rows": 2506,
+                "num_test_rows": 2506
             },
             "DGB": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25067,
+                "num_train_rows": 20053,
+                "num_valid_rows": 2507,
+                "num_test_rows": 2507
             },
             "DOGE": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25064,
+                "num_train_rows": 20051,
+                "num_valid_rows": 2506,
+                "num_test_rows": 2507
             },
             "ETH": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 24978,
+                "num_train_rows": 19982,
+                "num_valid_rows": 2498,
+                "num_test_rows": 2498
             },
             "IOC": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25077,
+                "num_train_rows": 20061,
+                "num_valid_rows": 2508,
+                "num_test_rows": 2508
             },
             "LTC": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25058,
+                "num_train_rows": 20046,
+                "num_valid_rows": 2506,
+                "num_test_rows": 2506
             },
             "MAID": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25068,
+                "num_train_rows": 20054,
+                "num_valid_rows": 2507,
+                "num_test_rows": 2507
             },
             "MONA": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25076,
+                "num_train_rows": 20060,
+                "num_valid_rows": 2508,
+                "num_test_rows": 2508
             },
             "NAV": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25047,
+                "num_train_rows": 20037,
+                "num_valid_rows": 2505,
+                "num_test_rows": 2505
             },
             "SYS": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25072,
+                "num_train_rows": 20057,
+                "num_valid_rows": 2507,
+                "num_test_rows": 2508
             },
             "VTC": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25070,
+                "num_train_rows": 20056,
+                "num_valid_rows": 2507,
+                "num_test_rows": 2507
             },
             "XCP": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25071,
+                "num_train_rows": 20056,
+                "num_valid_rows": 2507,
+                "num_test_rows": 2508
             },
             "XLM": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25047,
+                "num_train_rows": 20037,
+                "num_valid_rows": 2505,
+                "num_test_rows": 2505
             },
             "XMR": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25059,
+                "num_train_rows": 20047,
+                "num_valid_rows": 2506,
+                "num_test_rows": 2506
             },
             "XRP": {
-                "num_rows": 26325,
-                "num_train_rows": 21060,
-                "num_valid_rows": 2632,
-                "num_test_rows": 2633
+                "num_rows": 25053,
+                "num_train_rows": 20042,
+                "num_valid_rows": 2505,
+                "num_test_rows": 2506
             }
         },
         "total": {
-            "num_train_rows": 358020,
-            "num_valid_rows": 44744,
-            "num_test_rows": 44761,
+            "num_train_rows": 340698,
+            "num_valid_rows": 42590,
+            "num_test_rows": 42595,
             "train_ratio": 0.8,
             "valid_ratio": 0.1,
             "test_ratio": 0.09999999999999995
@@ -496,768 +668,1448 @@
             "Volume": {
                 "min_train": 0.0,
                 "max_train": 1410152668051456.0,
-                "mean_train": 4898612252.240705,
-                "std_train": 2386667980314.6216
+                "mean_train": 5145251028.256779,
+                "std_train": 2446588013613.542
             }
         },
         "after_log1p": {
             "Volume": {
                 "min_train": 0.0,
                 "max_train": 34.88247436865322,
-                "mean_train": 6.304102066798818,
-                "std_train": 7.252669539818318
+                "mean_train": 6.287666043878627,
+                "std_train": 7.247060582073244
             }
         }
     },
     "normalization_statistics": {
         "BTC": {
             "Open": {
-                "mean": 31443.88025451834,
-                "std": 18143.900139358015
+                "mean": 31528.48242972762,
+                "std": 17966.371884670127
             },
             "High": {
-                "mean": 31581.86868169627,
-                "std": 18227.882775431706
+                "mean": 31666.102601149563,
+                "std": 18048.66037669791
             },
             "Low": {
-                "mean": 31300.600030071262,
-                "std": 18055.564072528083
+                "mean": 31385.389149686092,
+                "std": 17879.748719216128
             },
             "Close": {
-                "mean": 31444.376122861395,
-                "std": 18143.339892511718
+                "mean": 31528.966343355656,
+                "std": 17965.860172846285
             },
             "Volume": {
-                "mean": 9.9609404392526,
-                "std": 9.821214598934064
+                "mean": 9.956156053163392,
+                "std": 9.825617706473642
+            },
+            "RSI": {
+                "mean": 51.28885682484379,
+                "std": 13.325691363556016
+            },
+            "MACD_Hist": {
+                "mean": 0.15727212473448673,
+                "std": 98.09478397025437
+            },
+            "ATR_Norm": {
+                "mean": 0.008379043944091629,
+                "std": 0.00508383313435934
+            },
+            "LogReturns": {
+                "mean": 5.234805557593748e-05,
+                "std": 0.00786457589182347
+            },
+            "ROC": {
+                "mean": 0.050584055047254994,
+                "std": 2.1031288693647108
             }
         },
         "BTS": {
             "Open": {
-                "mean": 0.03707191362571947,
-                "std": 0.024628990457800936
+                "mean": 0.03623220051424164,
+                "std": 0.024231307666368412
             },
             "High": {
-                "mean": 0.03742158950858366,
-                "std": 0.024991396956222267
+                "mean": 0.03657044419552592,
+                "std": 0.024580822100602563
             },
             "Low": {
-                "mean": 0.036715052866422,
-                "std": 0.02425112994468539
+                "mean": 0.035886771821944045,
+                "std": 0.023864608359822445
             },
             "Close": {
-                "mean": 0.03707051776099242,
-                "std": 0.024629404891789473
+                "mean": 0.03623198292815913,
+                "std": 0.024233667910784584
             },
             "Volume": {
-                "mean": 5.721604650959578,
-                "std": 6.0566075832104165
+                "mean": 5.707587320808338,
+                "std": 6.051776036383283
+            },
+            "RSI": {
+                "mean": 49.99844982204763,
+                "std": 12.150248101870899
+            },
+            "MACD_Hist": {
+                "mean": 6.142882372747549e-07,
+                "std": 0.00028827794837476726
+            },
+            "ATR_Norm": {
+                "mean": 0.016245890147792673,
+                "std": 0.010502632080976008
+            },
+            "LogReturns": {
+                "mean": -2.5991963080960588e-05,
+                "std": 0.01585981715045219
+            },
+            "ROC": {
+                "mean": 0.0752360800756724,
+                "std": 4.136220741509659
             }
         },
         "DASH": {
             "Open": {
-                "mean": 131.49986615882867,
-                "std": 69.66356072641995
+                "mean": 129.56749152813703,
+                "std": 68.98153224742329
             },
             "High": {
-                "mean": 132.4699949711929,
-                "std": 70.53185601283126
+                "mean": 130.5100190840973,
+                "std": 69.80775314440295
             },
             "Low": {
-                "mean": 130.48602335387372,
-                "std": 68.7621048057474
+                "mean": 128.58105968318156,
+                "std": 68.10992991934665
             },
             "Close": {
-                "mean": 131.49808628122125,
-                "std": 69.67857838892895
+                "mean": 129.56619817411593,
+                "std": 68.99059179892184
             },
             "Volume": {
-                "mean": 8.392542314946775,
-                "std": 7.835834169514509
+                "mean": 8.365725070176373,
+                "std": 7.820759794473849
+            },
+            "RSI": {
+                "mean": 50.193791469916356,
+                "std": 12.235870020907942
+            },
+            "MACD_Hist": {
+                "mean": 0.0006262082975402975,
+                "std": 0.74669493415181
+            },
+            "ATR_Norm": {
+                "mean": 0.013283931925396392,
+                "std": 0.008045442883936708
+            },
+            "LogReturns": {
+                "mean": -1.5019971774977453e-05,
+                "std": 0.012491971481293086
+            },
+            "ROC": {
+                "mean": 0.03384150967354659,
+                "std": 3.278616844209684
             }
         },
         "DGB": {
             "Open": {
-                "mean": 0.03592459593191102,
-                "std": 0.02740469306371038
+                "mean": 0.034995978735195936,
+                "std": 0.026934707128053362
             },
             "High": {
-                "mean": 0.036280808221791534,
-                "std": 0.02782712870894221
+                "mean": 0.03533631159351509,
+                "std": 0.027333449858613895
             },
             "Low": {
-                "mean": 0.035566657367646595,
-                "std": 0.026980503037561675
+                "mean": 0.034652574217444415,
+                "std": 0.02652896067822672
             },
             "Close": {
-                "mean": 0.03592466631843877,
-                "std": 0.027400727296980402
+                "mean": 0.03499611964773129,
+                "std": 0.026930745085259465
             },
             "Volume": {
-                "mean": 5.993120878463007,
-                "std": 6.325664895094799
+                "mean": 5.9893120251325245,
+                "std": 6.312454342885023
+            },
+            "RSI": {
+                "mean": 49.884149123924644,
+                "std": 11.837899710970017
+            },
+            "MACD_Hist": {
+                "mean": 2.480350323121665e-07,
+                "std": 0.0002904850492073547
+            },
+            "ATR_Norm": {
+                "mean": 0.01716279728185793,
+                "std": 0.00988973029132346
+            },
+            "LogReturns": {
+                "mean": 3.6891498800284195e-05,
+                "std": 0.01631381965587267
+            },
+            "ROC": {
+                "mean": 0.09563990891565867,
+                "std": 4.119300089673613
             }
         },
         "DOGE": {
             "Open": {
-                "mean": 0.11023280689650804,
-                "std": 0.12266369262661696
+                "mean": 0.10776104807301803,
+                "std": 0.11972342446320161
             },
             "High": {
-                "mean": 0.11138015768906641,
-                "std": 0.12443150489292114
+                "mean": 0.10883773692654584,
+                "std": 0.12138755421007127
             },
             "Low": {
-                "mean": 0.10911168641513472,
-                "std": 0.1209484034474724
+                "mean": 0.10669439451507001,
+                "std": 0.11808064630745158
             },
             "Close": {
-                "mean": 0.11026284999186693,
-                "std": 0.1227329895054217
+                "mean": 0.10777990561689575,
+                "std": 0.11977295364817934
             },
             "Volume": {
-                "mean": 7.395557719826354,
-                "std": 7.975549744267792
+                "mean": 7.402201028609418,
+                "std": 7.977890678249063
+            },
+            "RSI": {
+                "mean": 49.895240862464405,
+                "std": 11.4024224779568
+            },
+            "MACD_Hist": {
+                "mean": -9.106329703722237e-07,
+                "std": 0.0011330919848931518
+            },
+            "ATR_Norm": {
+                "mean": 0.01563343563968497,
+                "std": 0.015393242194247743
+            },
+            "LogReturns": {
+                "mean": 0.0002128123327683937,
+                "std": 0.017024679375722968
+            },
+            "ROC": {
+                "mean": 0.22049675842448715,
+                "std": 5.175663365820024
             }
         },
         "ETH": {
             "Open": {
-                "mean": 1792.541922711828,
-                "std": 1386.5523353166084
+                "mean": 1796.4521134737054,
+                "std": 1378.2041426284488
             },
             "High": {
-                "mean": 1802.4136214003604,
-                "std": 1393.6932682569957
+                "mean": 1806.1930984242783,
+                "std": 1385.1503836492193
             },
             "Low": {
-                "mean": 1782.1371360836772,
-                "std": 1379.038338989963
+                "mean": 1786.1851450362944,
+                "std": 1370.9135343005987
             },
             "Close": {
-                "mean": 1792.589197791336,
-                "std": 1386.5476376847796
+                "mean": 1796.529632479397,
+                "std": 1378.2423443137325
             },
             "Volume": {
-                "mean": 9.399037194362561,
-                "std": 9.569963557128512
+                "mean": 9.406123363704387,
+                "std": 9.571170823809835
+            },
+            "RSI": {
+                "mean": 51.59092349067259,
+                "std": 13.122026189950164
+            },
+            "MACD_Hist": {
+                "mean": 0.009933213448459889,
+                "std": 7.343965189149973
+            },
+            "ATR_Norm": {
+                "mean": 0.010889540127889551,
+                "std": 0.006578790191219558
+            },
+            "LogReturns": {
+                "mean": 0.00010229359478933267,
+                "std": 0.009992746978379806
+            },
+            "ROC": {
+                "mean": 0.09617088209869334,
+                "std": 2.6430871984167417
             }
         },
         "IOC": {
             "Open": {
-                "mean": 0.09154303257613627,
-                "std": 0.11108838905549748
+                "mean": 0.08901373549028807,
+                "std": 0.10620991089455141
             },
             "High": {
-                "mean": 0.09407396636273556,
-                "std": 0.12525669340834955
+                "mean": 0.09149370199519416,
+                "std": 0.12048298384801154
             },
             "Low": {
-                "mean": 0.08912380278258203,
-                "std": 0.09807513493150755
+                "mean": 0.08669457498139896,
+                "std": 0.09520731698659665
             },
             "Close": {
-                "mean": 0.09162156457255669,
-                "std": 0.11202566130066278
+                "mean": 0.08911960518379335,
+                "std": 0.10848539259596376
             },
             "Volume": {
-                "mean": 2.5141483644927587,
-                "std": 3.0381345274382374
+                "mean": 2.452721516388814,
+                "std": 3.0139076016853146
+            },
+            "RSI": {
+                "mean": 49.12788707761973,
+                "std": 11.27289434822878
+            },
+            "MACD_Hist": {
+                "mean": 1.1882074317552835e-05,
+                "std": 0.010466140326699146
+            },
+            "ATR_Norm": {
+                "mean": 0.0550774445557874,
+                "std": 0.22910425211550525
+            },
+            "LogReturns": {
+                "mean": -0.00022891716480877237,
+                "std": 0.07755335260035662
+            },
+            "ROC": {
+                "mean": 1.62394782455992,
+                "std": 62.31514638753444
             }
         },
         "LTC": {
             "Open": {
-                "mean": 119.4337040715521,
-                "std": 68.3565697840878
+                "mean": 118.32629608615578,
+                "std": 67.55311729577164
             },
             "High": {
-                "mean": 120.26150598652795,
-                "std": 69.07261968619149
+                "mean": 119.13290363151157,
+                "std": 68.23364510175246
             },
             "Low": {
-                "mean": 118.56615702936112,
-                "std": 67.60748928848754
+                "mean": 117.47415134443634,
+                "std": 66.82248380852056
             },
             "Close": {
-                "mean": 119.43103996305837,
-                "std": 68.35396903938891
+                "mean": 118.32363572948935,
+                "std": 67.54864525621022
             },
             "Volume": {
-                "mean": 8.137625710572198,
-                "std": 8.513607521865694
+                "mean": 8.120995188629447,
+                "std": 8.506571931443512
+            },
+            "RSI": {
+                "mean": 50.62303540357294,
+                "std": 12.496230745123114
+            },
+            "MACD_Hist": {
+                "mean": 0.0006771063560318686,
+                "std": 0.6198295730307886
+            },
+            "ATR_Norm": {
+                "mean": 0.012438381106276998,
+                "std": 0.007499541386823039
+            },
+            "LogReturns": {
+                "mean": 1.1930755614600137e-06,
+                "std": 0.011531660264088696
+            },
+            "ROC": {
+                "mean": 0.04442794940261968,
+                "std": 2.935716750328868
             }
         },
         "MAID": {
             "Open": {
-                "mean": 0.3435772175453992,
-                "std": 0.24965087769571126
+                "mean": 0.33757807660788086,
+                "std": 0.24393349698344668
             },
             "High": {
-                "mean": 0.34628630387353565,
-                "std": 0.2518045235042583
+                "mean": 0.340238734189775,
+                "std": 0.2460047961136087
             },
             "Low": {
-                "mean": 0.34081370609583367,
-                "std": 0.2474837613785244
+                "mean": 0.3348475762179349,
+                "std": 0.24184812994532448
             },
             "Close": {
-                "mean": 0.3435719348725501,
-                "std": 0.24963774863898808
+                "mean": 0.3375734808414779,
+                "std": 0.24392329869322923
             },
             "Volume": {
-                "mean": 4.32190659212604,
-                "std": 4.616505275902094
+                "mean": 4.277860902948156,
+                "std": 4.592228776115151
+            },
+            "RSI": {
+                "mean": 50.57903862937171,
+                "std": 12.80518538544743
+            },
+            "MACD_Hist": {
+                "mean": -9.494456709446598e-07,
+                "std": 0.0021120034979453662
+            },
+            "ATR_Norm": {
+                "mean": 0.015859194813178212,
+                "std": 0.009558065710463779
+            },
+            "LogReturns": {
+                "mean": 1.8003669222145663e-05,
+                "std": 0.018999448689297763
+            },
+            "ROC": {
+                "mean": 0.11492267568629133,
+                "std": 4.754581908357417
             }
         },
         "MONA": {
             "Open": {
-                "mean": 1.5041060052479547,
-                "std": 0.4782743220762762
+                "mean": 1.48176701550826,
+                "std": 0.4873041306593976
             },
             "High": {
-                "mean": 1.5140830634043314,
-                "std": 0.4857390944427945
+                "mean": 1.491578192166531,
+                "std": 0.4945194565464625
             },
             "Low": {
-                "mean": 1.494156148883975,
-                "std": 0.4712288928945262
+                "mean": 1.471997531010943,
+                "std": 0.4805250522020135
             },
             "Close": {
-                "mean": 1.504077335109568,
-                "std": 0.47834598508638354
+                "mean": 1.4817679302523643,
+                "std": 0.487424604858592
             },
             "Volume": {
-                "mean": 5.272277745523327,
-                "std": 5.572295938617449
+                "mean": 5.231920122267199,
+                "std": 5.549266729923617
+            },
+            "RSI": {
+                "mean": 49.58163390844808,
+                "std": 10.63553331997578
+            },
+            "MACD_Hist": {
+                "mean": -2.8447021717221358e-05,
+                "std": 0.006861841939642801
+            },
+            "ATR_Norm": {
+                "mean": 0.012173658026584072,
+                "std": 0.008824125777354419
+            },
+            "LogReturns": {
+                "mean": -2.8377138551600842e-05,
+                "std": 0.010985455331760017
+            },
+            "ROC": {
+                "mean": -0.004205276923602882,
+                "std": 2.7054850097039846
             }
         },
         "NAV": {
             "Open": {
-                "mean": 0.2533455979791872,
-                "std": 0.18103689724908154
+                "mean": 0.24818045240589623,
+                "std": 0.17935946020649948
             },
             "High": {
-                "mean": 0.25597118033770144,
-                "std": 0.18341586735760143
+                "mean": 0.25078703690309656,
+                "std": 0.18175316171348996
             },
             "Low": {
-                "mean": 0.25075392088457477,
-                "std": 0.1786490875142463
+                "mean": 0.24560479140142014,
+                "std": 0.17695299212332938
             },
             "Close": {
-                "mean": 0.2533434667998654,
-                "std": 0.18100984470304202
+                "mean": 0.24818512689707647,
+                "std": 0.17934332424894864
             },
             "Volume": {
-                "mean": 4.236239215806235,
-                "std": 4.633459980576843
+                "mean": 4.237305070246734,
+                "std": 4.631946714753405
+            },
+            "RSI": {
+                "mean": 49.96190659267262,
+                "std": 11.762918235547914
+            },
+            "MACD_Hist": {
+                "mean": 8.357451081287699e-06,
+                "std": 0.0021042140667503124
+            },
+            "ATR_Norm": {
+                "mean": 0.019609282160617515,
+                "std": 0.012602764566435224
+            },
+            "LogReturns": {
+                "mean": 4.382709186946195e-05,
+                "std": 0.018665294018797324
+            },
+            "ROC": {
+                "mean": 0.12315219029103265,
+                "std": 4.374486609924227
             }
         },
         "SYS": {
             "Open": {
-                "mean": 0.25237932582973993,
-                "std": 0.2618536006953651
+                "mean": 0.25497793660500967,
+                "std": 0.26349723902897837
             },
             "High": {
-                "mean": 0.25535644265731966,
-                "std": 0.26488164634928796
+                "mean": 0.25796072420300975,
+                "std": 0.2665434215824582
             },
             "Low": {
-                "mean": 0.24959439298612085,
-                "std": 0.2589716126149006
+                "mean": 0.25219016842980185,
+                "std": 0.2606414082664525
             },
             "Close": {
-                "mean": 0.252374857809246,
-                "std": 0.2618282571366766
+                "mean": 0.25498302312812166,
+                "std": 0.2635095682387678
             },
             "Volume": {
-                "mean": 5.149346768351647,
-                "std": 5.730346853011761
+                "mean": 5.157317653441504,
+                "std": 5.749338817358405
+            },
+            "RSI": {
+                "mean": 50.02599911207315,
+                "std": 11.206478113375681
+            },
+            "MACD_Hist": {
+                "mean": 8.779558284975199e-06,
+                "std": 0.0022761251748668328
+            },
+            "ATR_Norm": {
+                "mean": 0.022239669071639736,
+                "std": 0.012103076384804378
+            },
+            "LogReturns": {
+                "mean": 0.00012555833890809552,
+                "std": 0.0212672947794939
+            },
+            "ROC": {
+                "mean": 0.2044220392151103,
+                "std": 5.435044257829091
             }
         },
         "VTC": {
             "Open": {
-                "mean": 0.41379940851263397,
-                "std": 0.2633851061312723
+                "mean": 0.4050946814967613,
+                "std": 0.259069285020761
             },
             "High": {
-                "mean": 0.4223032223667458,
-                "std": 0.27042672599819917
+                "mean": 0.4134076411453587,
+                "std": 0.26608527679715693
             },
             "Low": {
-                "mean": 0.405746918135205,
-                "std": 0.25767760348775215
+                "mean": 0.3972141360451691,
+                "std": 0.25342296861338115
             },
             "Close": {
-                "mean": 0.4137964356825081,
-                "std": 0.26339612018887915
+                "mean": 0.40507250805030637,
+                "std": 0.2590737885472348
             },
             "Volume": {
-                "mean": 4.329124050800558,
-                "std": 4.680199748910523
+                "mean": 4.319880965480085,
+                "std": 4.659632816944068
+            },
+            "RSI": {
+                "mean": 49.26304703077443,
+                "std": 8.448967782172888
+            },
+            "MACD_Hist": {
+                "mean": 1.184056788766771e-05,
+                "std": 0.004066750252493439
+            },
+            "ATR_Norm": {
+                "mean": 0.0408009119326949,
+                "std": 0.03350858736452864
+            },
+            "LogReturns": {
+                "mean": -6.696792053878564e-05,
+                "std": 0.036037289782051195
+            },
+            "ROC": {
+                "mean": 0.11902758024092921,
+                "std": 6.152130415315854
             }
         },
         "XCP": {
             "Open": {
-                "mean": 5.563525405987488,
-                "std": 6.283920745649039
+                "mean": 5.54839111471383,
+                "std": 6.195982591011191
             },
             "High": {
-                "mean": 5.655294000009978,
-                "std": 6.395323446824736
+                "mean": 5.636148586316464,
+                "std": 6.303205870334745
             },
             "Low": {
-                "mean": 5.459215408048512,
-                "std": 6.164820673028218
+                "mean": 5.447521105034208,
+                "std": 6.0792612472304395
             },
             "Close": {
-                "mean": 5.5622879094830715,
-                "std": 6.2827242193663695
+                "mean": 5.547857899838441,
+                "std": 6.1953608470548875
             },
             "Volume": {
-                "mean": 2.340289614852355,
-                "std": 3.373818742786276
+                "mean": 2.3451041520468565,
+                "std": 3.3648127894532567
+            },
+            "RSI": {
+                "mean": 49.535034431828166,
+                "std": 13.792022557811928
+            },
+            "MACD_Hist": {
+                "mean": 0.00011410145069217452,
+                "std": 0.07144511607785752
+            },
+            "ATR_Norm": {
+                "mean": 0.029299295708450676,
+                "std": 0.0690477590126512
+            },
+            "LogReturns": {
+                "mean": 2.0472023491743723e-05,
+                "std": 0.04541689532049671
+            },
+            "ROC": {
+                "mean": 0.3764627162432895,
+                "std": 10.844436457737265
             }
         },
         "XLM": {
             "Open": {
-                "mean": 0.22074531332624733,
-                "std": 0.14575831684949422
+                "mean": 0.2185644223777087,
+                "std": 0.14375119976344802
             },
             "High": {
-                "mean": 0.2224773950913721,
-                "std": 0.1473805053651911
+                "mean": 0.2202564714067534,
+                "std": 0.14532403903077207
             },
             "Low": {
-                "mean": 0.21895215433657633,
-                "std": 0.1440679790602052
+                "mean": 0.2168300627770144,
+                "std": 0.14210103456345594
             },
             "Close": {
-                "mean": 0.22074096952571096,
-                "std": 0.14575261814199347
+                "mean": 0.218579053050694,
+                "std": 0.14374498717655113
             },
             "Volume": {
-                "mean": 7.382611550211468,
-                "std": 7.824596024347142
+                "mean": 7.35076169963534,
+                "std": 7.81785058971022
+            },
+            "RSI": {
+                "mean": 50.20503270870944,
+                "std": 11.813953955848959
+            },
+            "MACD_Hist": {
+                "mean": 7.172769214014605e-07,
+                "std": 0.0013626581975187894
+            },
+            "ATR_Norm": {
+                "mean": 0.013723183928569858,
+                "std": 0.009528220026252148
+            },
+            "LogReturns": {
+                "mean": 0.00031560932729105516,
+                "std": 0.045636374232087336
+            },
+            "ROC": {
+                "mean": 2.568207299853369,
+                "std": 352.9036628086713
             }
         },
         "XMR": {
             "Open": {
-                "mean": 173.36787759766392,
-                "std": 87.59271238039226
+                "mean": 171.87694844535005,
+                "std": 85.92937793493503
             },
             "High": {
-                "mean": 174.59403291676912,
-                "std": 88.3553482198869
+                "mean": 173.08262885999412,
+                "std": 86.66785686625289
             },
             "Low": {
-                "mean": 172.06611251197083,
-                "std": 86.72683013782479
+                "mean": 170.60203931736828,
+                "std": 85.09763658133703
             },
             "Close": {
-                "mean": 173.36333927804816,
-                "std": 87.57839946661713
+                "mean": 171.87779479760115,
+                "std": 85.9240696655115
             },
             "Volume": {
-                "mean": 8.515045061661656,
-                "std": 7.780121159781707
+                "mean": 8.504319145667695,
+                "std": 7.774678346308013
+            },
+            "RSI": {
+                "mean": 51.214284184650786,
+                "std": 11.546607105981485
+            },
+            "MACD_Hist": {
+                "mean": 0.0008441354142612213,
+                "std": 0.8115480977044268
+            },
+            "ATR_Norm": {
+                "mean": 0.013707154671225156,
+                "std": 0.00805126227117297
+            },
+            "LogReturns": {
+                "mean": 5.137434069508494e-05,
+                "std": 0.012025516806494748
+            },
+            "ROC": {
+                "mean": 0.06453714546712978,
+                "std": 2.944170217267095
             }
         },
         "XRP": {
             "Open": {
-                "mean": 0.5894061611822018,
-                "std": 0.36832071127153143
+                "mean": 0.5828847535435591,
+                "std": 0.3621143429685297
             },
             "High": {
-                "mean": 0.5937694374977807,
-                "std": 0.3721266149607024
+                "mean": 0.587113367978559,
+                "std": 0.36573985784939883
             },
             "Low": {
-                "mean": 0.5848065720678282,
-                "std": 0.36424751889798773
+                "mean": 0.5784513744012691,
+                "std": 0.35826288984148663
             },
             "Close": {
-                "mean": 0.5894274510719159,
-                "std": 0.36834150746538696
+                "mean": 0.5829379431217114,
+                "std": 0.36219363208715627
             },
             "Volume": {
-                "mean": 8.108317263370767,
-                "std": 8.654498919131605
+                "mean": 8.098539876841354,
+                "std": 8.653598678529551
+            },
+            "RSI": {
+                "mean": 50.163859648467984,
+                "std": 11.895721773661657
+            },
+            "MACD_Hist": {
+                "mean": -5.046134384678152e-06,
+                "std": 0.0033407515742424863
+            },
+            "ATR_Norm": {
+                "mean": 0.013303263752452053,
+                "std": 0.01073645931760756
+            },
+            "LogReturns": {
+                "mean": 3.582139300051679e-05,
+                "std": 0.013991623280083824
+            },
+            "ROC": {
+                "mean": 0.0656239037993005,
+                "std": 3.4158223214877315
             }
         }
     },
     "per_crypto_normalization": {
         "BTC": {
             "Open": {
-                "mean": 31443.88025451834,
-                "std": 18143.900139358015
+                "mean": 31528.48242972762,
+                "std": 17966.371884670127
             },
             "High": {
-                "mean": 31581.86868169627,
-                "std": 18227.882775431706
+                "mean": 31666.102601149563,
+                "std": 18048.66037669791
             },
             "Low": {
-                "mean": 31300.600030071262,
-                "std": 18055.564072528083
+                "mean": 31385.389149686092,
+                "std": 17879.748719216128
             },
             "Close": {
-                "mean": 31444.376122861395,
-                "std": 18143.339892511718
+                "mean": 31528.966343355656,
+                "std": 17965.860172846285
             },
             "Volume": {
-                "mean": 9.9609404392526,
-                "std": 9.821214598934064
+                "mean": 9.956156053163392,
+                "std": 9.825617706473642
+            },
+            "RSI": {
+                "mean": 51.28885682484379,
+                "std": 13.325691363556016
+            },
+            "MACD_Hist": {
+                "mean": 0.15727212473448673,
+                "std": 98.09478397025437
+            },
+            "ATR_Norm": {
+                "mean": 0.008379043944091629,
+                "std": 0.00508383313435934
+            },
+            "LogReturns": {
+                "mean": 5.234805557593748e-05,
+                "std": 0.00786457589182347
+            },
+            "ROC": {
+                "mean": 0.050584055047254994,
+                "std": 2.1031288693647108
             }
         },
         "BTS": {
             "Open": {
-                "mean": 0.03707191362571947,
-                "std": 0.024628990457800936
+                "mean": 0.03623220051424164,
+                "std": 0.024231307666368412
             },
             "High": {
-                "mean": 0.03742158950858366,
-                "std": 0.024991396956222267
+                "mean": 0.03657044419552592,
+                "std": 0.024580822100602563
             },
             "Low": {
-                "mean": 0.036715052866422,
-                "std": 0.02425112994468539
+                "mean": 0.035886771821944045,
+                "std": 0.023864608359822445
             },
             "Close": {
-                "mean": 0.03707051776099242,
-                "std": 0.024629404891789473
+                "mean": 0.03623198292815913,
+                "std": 0.024233667910784584
             },
             "Volume": {
-                "mean": 5.721604650959578,
-                "std": 6.0566075832104165
+                "mean": 5.707587320808338,
+                "std": 6.051776036383283
+            },
+            "RSI": {
+                "mean": 49.99844982204763,
+                "std": 12.150248101870899
+            },
+            "MACD_Hist": {
+                "mean": 6.142882372747549e-07,
+                "std": 0.00028827794837476726
+            },
+            "ATR_Norm": {
+                "mean": 0.016245890147792673,
+                "std": 0.010502632080976008
+            },
+            "LogReturns": {
+                "mean": -2.5991963080960588e-05,
+                "std": 0.01585981715045219
+            },
+            "ROC": {
+                "mean": 0.0752360800756724,
+                "std": 4.136220741509659
             }
         },
         "DASH": {
             "Open": {
-                "mean": 131.49986615882867,
-                "std": 69.66356072641995
+                "mean": 129.56749152813703,
+                "std": 68.98153224742329
             },
             "High": {
-                "mean": 132.4699949711929,
-                "std": 70.53185601283126
+                "mean": 130.5100190840973,
+                "std": 69.80775314440295
             },
             "Low": {
-                "mean": 130.48602335387372,
-                "std": 68.7621048057474
+                "mean": 128.58105968318156,
+                "std": 68.10992991934665
             },
             "Close": {
-                "mean": 131.49808628122125,
-                "std": 69.67857838892895
+                "mean": 129.56619817411593,
+                "std": 68.99059179892184
             },
             "Volume": {
-                "mean": 8.392542314946775,
-                "std": 7.835834169514509
+                "mean": 8.365725070176373,
+                "std": 7.820759794473849
+            },
+            "RSI": {
+                "mean": 50.193791469916356,
+                "std": 12.235870020907942
+            },
+            "MACD_Hist": {
+                "mean": 0.0006262082975402975,
+                "std": 0.74669493415181
+            },
+            "ATR_Norm": {
+                "mean": 0.013283931925396392,
+                "std": 0.008045442883936708
+            },
+            "LogReturns": {
+                "mean": -1.5019971774977453e-05,
+                "std": 0.012491971481293086
+            },
+            "ROC": {
+                "mean": 0.03384150967354659,
+                "std": 3.278616844209684
             }
         },
         "DGB": {
             "Open": {
-                "mean": 0.03592459593191102,
-                "std": 0.02740469306371038
+                "mean": 0.034995978735195936,
+                "std": 0.026934707128053362
             },
             "High": {
-                "mean": 0.036280808221791534,
-                "std": 0.02782712870894221
+                "mean": 0.03533631159351509,
+                "std": 0.027333449858613895
             },
             "Low": {
-                "mean": 0.035566657367646595,
-                "std": 0.026980503037561675
+                "mean": 0.034652574217444415,
+                "std": 0.02652896067822672
             },
             "Close": {
-                "mean": 0.03592466631843877,
-                "std": 0.027400727296980402
+                "mean": 0.03499611964773129,
+                "std": 0.026930745085259465
             },
             "Volume": {
-                "mean": 5.993120878463007,
-                "std": 6.325664895094799
+                "mean": 5.9893120251325245,
+                "std": 6.312454342885023
+            },
+            "RSI": {
+                "mean": 49.884149123924644,
+                "std": 11.837899710970017
+            },
+            "MACD_Hist": {
+                "mean": 2.480350323121665e-07,
+                "std": 0.0002904850492073547
+            },
+            "ATR_Norm": {
+                "mean": 0.01716279728185793,
+                "std": 0.00988973029132346
+            },
+            "LogReturns": {
+                "mean": 3.6891498800284195e-05,
+                "std": 0.01631381965587267
+            },
+            "ROC": {
+                "mean": 0.09563990891565867,
+                "std": 4.119300089673613
             }
         },
         "DOGE": {
             "Open": {
-                "mean": 0.11023280689650804,
-                "std": 0.12266369262661696
+                "mean": 0.10776104807301803,
+                "std": 0.11972342446320161
             },
             "High": {
-                "mean": 0.11138015768906641,
-                "std": 0.12443150489292114
+                "mean": 0.10883773692654584,
+                "std": 0.12138755421007127
             },
             "Low": {
-                "mean": 0.10911168641513472,
-                "std": 0.1209484034474724
+                "mean": 0.10669439451507001,
+                "std": 0.11808064630745158
             },
             "Close": {
-                "mean": 0.11026284999186693,
-                "std": 0.1227329895054217
+                "mean": 0.10777990561689575,
+                "std": 0.11977295364817934
             },
             "Volume": {
-                "mean": 7.395557719826354,
-                "std": 7.975549744267792
+                "mean": 7.402201028609418,
+                "std": 7.977890678249063
+            },
+            "RSI": {
+                "mean": 49.895240862464405,
+                "std": 11.4024224779568
+            },
+            "MACD_Hist": {
+                "mean": -9.106329703722237e-07,
+                "std": 0.0011330919848931518
+            },
+            "ATR_Norm": {
+                "mean": 0.01563343563968497,
+                "std": 0.015393242194247743
+            },
+            "LogReturns": {
+                "mean": 0.0002128123327683937,
+                "std": 0.017024679375722968
+            },
+            "ROC": {
+                "mean": 0.22049675842448715,
+                "std": 5.175663365820024
             }
         },
         "ETH": {
             "Open": {
-                "mean": 1792.541922711828,
-                "std": 1386.5523353166084
+                "mean": 1796.4521134737054,
+                "std": 1378.2041426284488
             },
             "High": {
-                "mean": 1802.4136214003604,
-                "std": 1393.6932682569957
+                "mean": 1806.1930984242783,
+                "std": 1385.1503836492193
             },
             "Low": {
-                "mean": 1782.1371360836772,
-                "std": 1379.038338989963
+                "mean": 1786.1851450362944,
+                "std": 1370.9135343005987
             },
             "Close": {
-                "mean": 1792.589197791336,
-                "std": 1386.5476376847796
+                "mean": 1796.529632479397,
+                "std": 1378.2423443137325
             },
             "Volume": {
-                "mean": 9.399037194362561,
-                "std": 9.569963557128512
+                "mean": 9.406123363704387,
+                "std": 9.571170823809835
+            },
+            "RSI": {
+                "mean": 51.59092349067259,
+                "std": 13.122026189950164
+            },
+            "MACD_Hist": {
+                "mean": 0.009933213448459889,
+                "std": 7.343965189149973
+            },
+            "ATR_Norm": {
+                "mean": 0.010889540127889551,
+                "std": 0.006578790191219558
+            },
+            "LogReturns": {
+                "mean": 0.00010229359478933267,
+                "std": 0.009992746978379806
+            },
+            "ROC": {
+                "mean": 0.09617088209869334,
+                "std": 2.6430871984167417
             }
         },
         "IOC": {
             "Open": {
-                "mean": 0.09154303257613627,
-                "std": 0.11108838905549748
+                "mean": 0.08901373549028807,
+                "std": 0.10620991089455141
             },
             "High": {
-                "mean": 0.09407396636273556,
-                "std": 0.12525669340834955
+                "mean": 0.09149370199519416,
+                "std": 0.12048298384801154
             },
             "Low": {
-                "mean": 0.08912380278258203,
-                "std": 0.09807513493150755
+                "mean": 0.08669457498139896,
+                "std": 0.09520731698659665
             },
             "Close": {
-                "mean": 0.09162156457255669,
-                "std": 0.11202566130066278
+                "mean": 0.08911960518379335,
+                "std": 0.10848539259596376
             },
             "Volume": {
-                "mean": 2.5141483644927587,
-                "std": 3.0381345274382374
+                "mean": 2.452721516388814,
+                "std": 3.0139076016853146
+            },
+            "RSI": {
+                "mean": 49.12788707761973,
+                "std": 11.27289434822878
+            },
+            "MACD_Hist": {
+                "mean": 1.1882074317552835e-05,
+                "std": 0.010466140326699146
+            },
+            "ATR_Norm": {
+                "mean": 0.0550774445557874,
+                "std": 0.22910425211550525
+            },
+            "LogReturns": {
+                "mean": -0.00022891716480877237,
+                "std": 0.07755335260035662
+            },
+            "ROC": {
+                "mean": 1.62394782455992,
+                "std": 62.31514638753444
             }
         },
         "LTC": {
             "Open": {
-                "mean": 119.4337040715521,
-                "std": 68.3565697840878
+                "mean": 118.32629608615578,
+                "std": 67.55311729577164
             },
             "High": {
-                "mean": 120.26150598652795,
-                "std": 69.07261968619149
+                "mean": 119.13290363151157,
+                "std": 68.23364510175246
             },
             "Low": {
-                "mean": 118.56615702936112,
-                "std": 67.60748928848754
+                "mean": 117.47415134443634,
+                "std": 66.82248380852056
             },
             "Close": {
-                "mean": 119.43103996305837,
-                "std": 68.35396903938891
+                "mean": 118.32363572948935,
+                "std": 67.54864525621022
             },
             "Volume": {
-                "mean": 8.137625710572198,
-                "std": 8.513607521865694
+                "mean": 8.120995188629447,
+                "std": 8.506571931443512
+            },
+            "RSI": {
+                "mean": 50.62303540357294,
+                "std": 12.496230745123114
+            },
+            "MACD_Hist": {
+                "mean": 0.0006771063560318686,
+                "std": 0.6198295730307886
+            },
+            "ATR_Norm": {
+                "mean": 0.012438381106276998,
+                "std": 0.007499541386823039
+            },
+            "LogReturns": {
+                "mean": 1.1930755614600137e-06,
+                "std": 0.011531660264088696
+            },
+            "ROC": {
+                "mean": 0.04442794940261968,
+                "std": 2.935716750328868
             }
         },
         "MAID": {
             "Open": {
-                "mean": 0.3435772175453992,
-                "std": 0.24965087769571126
+                "mean": 0.33757807660788086,
+                "std": 0.24393349698344668
             },
             "High": {
-                "mean": 0.34628630387353565,
-                "std": 0.2518045235042583
+                "mean": 0.340238734189775,
+                "std": 0.2460047961136087
             },
             "Low": {
-                "mean": 0.34081370609583367,
-                "std": 0.2474837613785244
+                "mean": 0.3348475762179349,
+                "std": 0.24184812994532448
             },
             "Close": {
-                "mean": 0.3435719348725501,
-                "std": 0.24963774863898808
+                "mean": 0.3375734808414779,
+                "std": 0.24392329869322923
             },
             "Volume": {
-                "mean": 4.32190659212604,
-                "std": 4.616505275902094
+                "mean": 4.277860902948156,
+                "std": 4.592228776115151
+            },
+            "RSI": {
+                "mean": 50.57903862937171,
+                "std": 12.80518538544743
+            },
+            "MACD_Hist": {
+                "mean": -9.494456709446598e-07,
+                "std": 0.0021120034979453662
+            },
+            "ATR_Norm": {
+                "mean": 0.015859194813178212,
+                "std": 0.009558065710463779
+            },
+            "LogReturns": {
+                "mean": 1.8003669222145663e-05,
+                "std": 0.018999448689297763
+            },
+            "ROC": {
+                "mean": 0.11492267568629133,
+                "std": 4.754581908357417
             }
         },
         "MONA": {
             "Open": {
-                "mean": 1.5041060052479547,
-                "std": 0.4782743220762762
+                "mean": 1.48176701550826,
+                "std": 0.4873041306593976
             },
             "High": {
-                "mean": 1.5140830634043314,
-                "std": 0.4857390944427945
+                "mean": 1.491578192166531,
+                "std": 0.4945194565464625
             },
             "Low": {
-                "mean": 1.494156148883975,
-                "std": 0.4712288928945262
+                "mean": 1.471997531010943,
+                "std": 0.4805250522020135
             },
             "Close": {
-                "mean": 1.504077335109568,
-                "std": 0.47834598508638354
+                "mean": 1.4817679302523643,
+                "std": 0.487424604858592
             },
             "Volume": {
-                "mean": 5.272277745523327,
-                "std": 5.572295938617449
+                "mean": 5.231920122267199,
+                "std": 5.549266729923617
+            },
+            "RSI": {
+                "mean": 49.58163390844808,
+                "std": 10.63553331997578
+            },
+            "MACD_Hist": {
+                "mean": -2.8447021717221358e-05,
+                "std": 0.006861841939642801
+            },
+            "ATR_Norm": {
+                "mean": 0.012173658026584072,
+                "std": 0.008824125777354419
+            },
+            "LogReturns": {
+                "mean": -2.8377138551600842e-05,
+                "std": 0.010985455331760017
+            },
+            "ROC": {
+                "mean": -0.004205276923602882,
+                "std": 2.7054850097039846
             }
         },
         "NAV": {
             "Open": {
-                "mean": 0.2533455979791872,
-                "std": 0.18103689724908154
+                "mean": 0.24818045240589623,
+                "std": 0.17935946020649948
             },
             "High": {
-                "mean": 0.25597118033770144,
-                "std": 0.18341586735760143
+                "mean": 0.25078703690309656,
+                "std": 0.18175316171348996
             },
             "Low": {
-                "mean": 0.25075392088457477,
-                "std": 0.1786490875142463
+                "mean": 0.24560479140142014,
+                "std": 0.17695299212332938
             },
             "Close": {
-                "mean": 0.2533434667998654,
-                "std": 0.18100984470304202
+                "mean": 0.24818512689707647,
+                "std": 0.17934332424894864
             },
             "Volume": {
-                "mean": 4.236239215806235,
-                "std": 4.633459980576843
+                "mean": 4.237305070246734,
+                "std": 4.631946714753405
+            },
+            "RSI": {
+                "mean": 49.96190659267262,
+                "std": 11.762918235547914
+            },
+            "MACD_Hist": {
+                "mean": 8.357451081287699e-06,
+                "std": 0.0021042140667503124
+            },
+            "ATR_Norm": {
+                "mean": 0.019609282160617515,
+                "std": 0.012602764566435224
+            },
+            "LogReturns": {
+                "mean": 4.382709186946195e-05,
+                "std": 0.018665294018797324
+            },
+            "ROC": {
+                "mean": 0.12315219029103265,
+                "std": 4.374486609924227
             }
         },
         "SYS": {
             "Open": {
-                "mean": 0.25237932582973993,
-                "std": 0.2618536006953651
+                "mean": 0.25497793660500967,
+                "std": 0.26349723902897837
             },
             "High": {
-                "mean": 0.25535644265731966,
-                "std": 0.26488164634928796
+                "mean": 0.25796072420300975,
+                "std": 0.2665434215824582
             },
             "Low": {
-                "mean": 0.24959439298612085,
-                "std": 0.2589716126149006
+                "mean": 0.25219016842980185,
+                "std": 0.2606414082664525
             },
             "Close": {
-                "mean": 0.252374857809246,
-                "std": 0.2618282571366766
+                "mean": 0.25498302312812166,
+                "std": 0.2635095682387678
             },
             "Volume": {
-                "mean": 5.149346768351647,
-                "std": 5.730346853011761
+                "mean": 5.157317653441504,
+                "std": 5.749338817358405
+            },
+            "RSI": {
+                "mean": 50.02599911207315,
+                "std": 11.206478113375681
+            },
+            "MACD_Hist": {
+                "mean": 8.779558284975199e-06,
+                "std": 0.0022761251748668328
+            },
+            "ATR_Norm": {
+                "mean": 0.022239669071639736,
+                "std": 0.012103076384804378
+            },
+            "LogReturns": {
+                "mean": 0.00012555833890809552,
+                "std": 0.0212672947794939
+            },
+            "ROC": {
+                "mean": 0.2044220392151103,
+                "std": 5.435044257829091
             }
         },
         "VTC": {
             "Open": {
-                "mean": 0.41379940851263397,
-                "std": 0.2633851061312723
+                "mean": 0.4050946814967613,
+                "std": 0.259069285020761
             },
             "High": {
-                "mean": 0.4223032223667458,
-                "std": 0.27042672599819917
+                "mean": 0.4134076411453587,
+                "std": 0.26608527679715693
             },
             "Low": {
-                "mean": 0.405746918135205,
-                "std": 0.25767760348775215
+                "mean": 0.3972141360451691,
+                "std": 0.25342296861338115
             },
             "Close": {
-                "mean": 0.4137964356825081,
-                "std": 0.26339612018887915
+                "mean": 0.40507250805030637,
+                "std": 0.2590737885472348
             },
             "Volume": {
-                "mean": 4.329124050800558,
-                "std": 4.680199748910523
+                "mean": 4.319880965480085,
+                "std": 4.659632816944068
+            },
+            "RSI": {
+                "mean": 49.26304703077443,
+                "std": 8.448967782172888
+            },
+            "MACD_Hist": {
+                "mean": 1.184056788766771e-05,
+                "std": 0.004066750252493439
+            },
+            "ATR_Norm": {
+                "mean": 0.0408009119326949,
+                "std": 0.03350858736452864
+            },
+            "LogReturns": {
+                "mean": -6.696792053878564e-05,
+                "std": 0.036037289782051195
+            },
+            "ROC": {
+                "mean": 0.11902758024092921,
+                "std": 6.152130415315854
             }
         },
         "XCP": {
             "Open": {
-                "mean": 5.563525405987488,
-                "std": 6.283920745649039
+                "mean": 5.54839111471383,
+                "std": 6.195982591011191
             },
             "High": {
-                "mean": 5.655294000009978,
-                "std": 6.395323446824736
+                "mean": 5.636148586316464,
+                "std": 6.303205870334745
             },
             "Low": {
-                "mean": 5.459215408048512,
-                "std": 6.164820673028218
+                "mean": 5.447521105034208,
+                "std": 6.0792612472304395
             },
             "Close": {
-                "mean": 5.5622879094830715,
-                "std": 6.2827242193663695
+                "mean": 5.547857899838441,
+                "std": 6.1953608470548875
             },
             "Volume": {
-                "mean": 2.340289614852355,
-                "std": 3.373818742786276
+                "mean": 2.3451041520468565,
+                "std": 3.3648127894532567
+            },
+            "RSI": {
+                "mean": 49.535034431828166,
+                "std": 13.792022557811928
+            },
+            "MACD_Hist": {
+                "mean": 0.00011410145069217452,
+                "std": 0.07144511607785752
+            },
+            "ATR_Norm": {
+                "mean": 0.029299295708450676,
+                "std": 0.0690477590126512
+            },
+            "LogReturns": {
+                "mean": 2.0472023491743723e-05,
+                "std": 0.04541689532049671
+            },
+            "ROC": {
+                "mean": 0.3764627162432895,
+                "std": 10.844436457737265
             }
         },
         "XLM": {
             "Open": {
-                "mean": 0.22074531332624733,
-                "std": 0.14575831684949422
+                "mean": 0.2185644223777087,
+                "std": 0.14375119976344802
             },
             "High": {
-                "mean": 0.2224773950913721,
-                "std": 0.1473805053651911
+                "mean": 0.2202564714067534,
+                "std": 0.14532403903077207
             },
             "Low": {
-                "mean": 0.21895215433657633,
-                "std": 0.1440679790602052
+                "mean": 0.2168300627770144,
+                "std": 0.14210103456345594
             },
             "Close": {
-                "mean": 0.22074096952571096,
-                "std": 0.14575261814199347
+                "mean": 0.218579053050694,
+                "std": 0.14374498717655113
             },
             "Volume": {
-                "mean": 7.382611550211468,
-                "std": 7.824596024347142
+                "mean": 7.35076169963534,
+                "std": 7.81785058971022
+            },
+            "RSI": {
+                "mean": 50.20503270870944,
+                "std": 11.813953955848959
+            },
+            "MACD_Hist": {
+                "mean": 7.172769214014605e-07,
+                "std": 0.0013626581975187894
+            },
+            "ATR_Norm": {
+                "mean": 0.013723183928569858,
+                "std": 0.009528220026252148
+            },
+            "LogReturns": {
+                "mean": 0.00031560932729105516,
+                "std": 0.045636374232087336
+            },
+            "ROC": {
+                "mean": 2.568207299853369,
+                "std": 352.9036628086713
             }
         },
         "XMR": {
             "Open": {
-                "mean": 173.36787759766392,
-                "std": 87.59271238039226
+                "mean": 171.87694844535005,
+                "std": 85.92937793493503
             },
             "High": {
-                "mean": 174.59403291676912,
-                "std": 88.3553482198869
+                "mean": 173.08262885999412,
+                "std": 86.66785686625289
             },
             "Low": {
-                "mean": 172.06611251197083,
-                "std": 86.72683013782479
+                "mean": 170.60203931736828,
+                "std": 85.09763658133703
             },
             "Close": {
-                "mean": 173.36333927804816,
-                "std": 87.57839946661713
+                "mean": 171.87779479760115,
+                "std": 85.9240696655115
             },
             "Volume": {
-                "mean": 8.515045061661656,
-                "std": 7.780121159781707
+                "mean": 8.504319145667695,
+                "std": 7.774678346308013
+            },
+            "RSI": {
+                "mean": 51.214284184650786,
+                "std": 11.546607105981485
+            },
+            "MACD_Hist": {
+                "mean": 0.0008441354142612213,
+                "std": 0.8115480977044268
+            },
+            "ATR_Norm": {
+                "mean": 0.013707154671225156,
+                "std": 0.00805126227117297
+            },
+            "LogReturns": {
+                "mean": 5.137434069508494e-05,
+                "std": 0.012025516806494748
+            },
+            "ROC": {
+                "mean": 0.06453714546712978,
+                "std": 2.944170217267095
             }
         },
         "XRP": {
             "Open": {
-                "mean": 0.5894061611822018,
-                "std": 0.36832071127153143
+                "mean": 0.5828847535435591,
+                "std": 0.3621143429685297
             },
             "High": {
-                "mean": 0.5937694374977807,
-                "std": 0.3721266149607024
+                "mean": 0.587113367978559,
+                "std": 0.36573985784939883
             },
             "Low": {
-                "mean": 0.5848065720678282,
-                "std": 0.36424751889798773
+                "mean": 0.5784513744012691,
+                "std": 0.35826288984148663
             },
             "Close": {
-                "mean": 0.5894274510719159,
-                "std": 0.36834150746538696
+                "mean": 0.5829379431217114,
+                "std": 0.36219363208715627
             },
             "Volume": {
-                "mean": 8.108317263370767,
-                "std": 8.654498919131605
+                "mean": 8.098539876841354,
+                "std": 8.653598678529551
+            },
+            "RSI": {
+                "mean": 50.163859648467984,
+                "std": 11.895721773661657
+            },
+            "MACD_Hist": {
+                "mean": -5.046134384678152e-06,
+                "std": 0.0033407515742424863
+            },
+            "ATR_Norm": {
+                "mean": 0.013303263752452053,
+                "std": 0.01073645931760756
+            },
+            "LogReturns": {
+                "mean": 3.582139300051679e-05,
+                "std": 0.013991623280083824
+            },
+            "ROC": {
+                "mean": 0.0656239037993005,
+                "std": 3.4158223214877315
             }
         }
     },
@@ -1284,11 +2136,11 @@
         "window_size": 24,
         "sequence_length": 6,
         "num_cryptos": 17,
-        "num_features": 5,
+        "num_features": 10,
         "num_nodes": 408,
-        "num_windows_train": 21031,
-        "num_windows_valid": 2603,
-        "num_windows_test": 2604
+        "num_windows_train": 19931,
+        "num_windows_valid": 2466,
+        "num_windows_test": 2467
     },
     "adjacency_matrix": {
         "lagged_cross_correlation": {
