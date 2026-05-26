@@ -18,6 +18,7 @@ authors = [
 # Required dependencies ------------------------------------------------------------------------------------------------
 dependencies = [
     "pandas==3.0.2",
+    "pandas-ta==0.4.71b0",
     "numpy==2.4.4",
     "torch==2.11.0",
     "scikit-learn==1.8.0",
