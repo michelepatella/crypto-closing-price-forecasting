@@ -3,6 +3,7 @@
 Feature engineering module for technical indicators using pandas TA.
 """
 
+import numpy as np
 import pandas as pd
 import pandas_ta as ta
 
@@ -11,11 +12,14 @@ from const import (
     ATR_PERIOD,
     CLOSE_COLUMN,
     HIGH_COLUMN,
+    LOG_RETURNS_COLUMN,
     LOW_COLUMN,
     MACD_FAST,
     MACD_HIST_COLUMN,
     MACD_SIGNAL,
     MACD_SLOW,
+    ROC_COLUMN,
+    ROC_PERIOD,
     RSI_COLUMN,
     RSI_PERIOD,
 )
@@ -25,9 +29,11 @@ def calculate_technical_indicators(df: pd.DataFrame) -> pd.DataFrame:
     """Calculate technical indicators for the dataset.
 
     Adds the following columns to the dataframe:
-    - RSI(14): Relative Strength Index
-    - MACD_Hist: MACD Histogram (MACD - Signal)
-    - ATR_Norm: Normalized Average True Range (ATR / Close)
+    - RSI(14): Relative Strength Index (momentum/reversal)
+    - MACD_Hist: MACD Histogram (trend direction)
+    - ATR_Norm: Normalized Average True Range (relative volatility)
+    - LogReturns: Logarithmic returns (price momentum)
+    - ROC(7): Rate of Change over 7 periods (momentum indicator)
 
     Args:
         df (pd.DataFrame): Input dataframe with OHLCV data.
@@ -86,5 +92,20 @@ def calculate_technical_indicators(df: pd.DataFrame) -> pd.DataFrame:
         df[ATR_NORM_COLUMN] = atr / df[CLOSE_COLUMN]
     else:
         df[ATR_NORM_COLUMN] = pd.NA
+
+    # ============================================
+    # Log Returns
+    # ============================================
+    # Calculate logarithmic returns
+    df[LOG_RETURNS_COLUMN] = np.log(
+        df[CLOSE_COLUMN] / df[CLOSE_COLUMN].shift(1),
+    )
+
+    # ============================================
+    # ROC (Rate of Change)
+    # ============================================
+    # Calculate Rate of Change
+    roc = ta.roc(df[CLOSE_COLUMN], length=ROC_PERIOD)
+    df[ROC_COLUMN] = roc
 
     return df
