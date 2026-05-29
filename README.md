@@ -4,7 +4,7 @@
 <div align="center">
   <h1 align="center">Cryptocurrency Closing Price Forecasting</h1>
   <p align="center">
-    ML pipeline for closing price forecasting <br> across 17 major cryptocurrencies.
+    ML pipeline for closing price forecasting across 17 major cryptocurrencies.
   </p>
   <p align="center">
   </p>
