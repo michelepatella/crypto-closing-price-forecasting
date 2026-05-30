@@ -62,7 +62,7 @@
 
 ### Prerequisites
 
-**Python**
+**Python**  
 Required version: >=3.13
 
 > [!WARNING]
