@@ -34,13 +34,6 @@
         <li><a href="#results-highlights">Results Highlights</a></li>
       </ul>
     </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
     <li><a href="#license">License</a></li>
   </ul>
 </details>
@@ -52,38 +45,12 @@
 ### ML Pipeline Overview
 
 
+
 ### Results Highlights
 
 
 
 <p align="right"><a href="#readme-top">Top ↑</a></p>
-
-## Getting Started
-
-### Prerequisites
-
-**Python**  
-Required version: >=3.13
-
-> [!WARNING]
-> Compatibility with earlier or later Python versions has not been tested.
-
-### Installation
-
-Install the package directly from GitHub:
-```sh
-pip install git+https://github.com/michelepatella/crypto-closing-price-forecasting.git
-```
-
-Alternatively, for development setup:
-```sh
-git clone https://github.com/michelepatella/crypto-closing-price-forecasting.git
-cd crypto-closing-price-forecasting
-pip install -e .
-```
-
-<p align="right"><a href="#readme-top">Top ↑</a></p>
-
 
 ## License
 
