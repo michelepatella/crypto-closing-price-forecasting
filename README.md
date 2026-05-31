@@ -31,7 +31,7 @@
 
 - **Data Preparation & Feature Engineering**: Designed an end-to-end preprocessing pipeline including data cleaning, forward-fill imputation, log-transformed volume normalization, per-asset z-score standardization, technical indicator generation (RSI, MACD, ATR, ROC, log returns), leakage-free chronological train/validation/test splitting, sliding-window sequence generation, and construction of dynamic lagged cross-correlation graph adjacency matrices.
 
-- **Spatio-Temporal Graph Modeling**: Trained a T-MTGNN model that jointly models temporal dynamics and cross-asset dependencies through self-attention mechanisms and graph diffusion, optimized with AdamW, Huber loss, gradient clipping, adaptive learning-rate scheduling, and early stopping.
+- **Spatio-Temporal Graph Modeling**: Trained a [T-MTGNN](https://github.com/michelepatella/tmtgnn) model that jointly models temporal dynamics and cross-asset dependencies through self-attention mechanisms and graph diffusion, optimized with AdamW, Huber loss, gradient clipping, adaptive learning-rate scheduling, and early stopping.
 
 - **Model Evaluation & Performance Analysis**: Assessed forecasting performance on denormalized per-asset predictions using MAE, RMSE, MAPE, and Directional Accuracy, enabling comprehensive evaluation across cryptocurrencies with heterogeneous price scales and volatility regimes.
 
@@ -56,6 +56,8 @@
 - **Small-cap cryptocurrencies:**
   - SYS — **0.75% MAPE**, **$0.0009 MAE**
   - XCP — **1.18% MAPE**, **$0.0373 MAE**
+
+> You can found complete results of the latest release [here](https://github.com/michelepatella/crypto-closing-price-forecasting/releases/latest).
 
 <p align="right"><a href="#readme-top">Top ↑</a></p>
 
