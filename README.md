@@ -57,7 +57,7 @@
   - SYS — **0.75% MAPE**, **$0.0009 MAE**
   - XCP — **1.18% MAPE**, **$0.0373 MAE**
 
-> You can found complete results of the latest release [here](https://github.com/michelepatella/crypto-closing-price-forecasting/releases/latest).
+> Discover complete results of the latest release [here](https://github.com/michelepatella/crypto-closing-price-forecasting/releases/latest).
 
 <p align="right"><a href="#readme-top">Top ↑</a></p>
 
